@@ -13,7 +13,7 @@
   <a href="https://github.com/Alan-Cusack/blockexpanse/actions"><img src="https://img.shields.io/github/actions/workflow/status/Alan-Cusack/blockexpanse/test.yml?branch=main&label=CI" alt="CI" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-blue" alt="License" /></a>
   <img src="https://img.shields.io/badge/npm%20scope-@blockexpanse-6880ff" alt="npm scope" />
-  <img src="https://img.shields.io/badge/version-1.1.0-6880ff" alt="version" />
+  <img src="https://img.shields.io/badge/version-0.0.1-6880ff" alt="version" />
 </p>
 
 <p align="center">
@@ -31,7 +31,7 @@ Like [BlockNote](https://www.blocknotejs.org/) focuses on a polished out-of-the-
 |               | BlockExpanse                                                 |
 | ------------- | ------------------------------------------------------------ |
 | npm scope     | `@blockexpanse` (fully isolated from upstream `@blocksuite`) |
-| Version       | `1.1.0` (independent release from `1.0.0`)                   |
+| Version       | `0.0.1` (independent release)                                |
 | Upstream base | BlockSuite `v0.19.5`                                         |
 | License       | [MPL 2.0](./LICENSE)                                         |
 
@@ -105,7 +105,7 @@ editor.doc = doc;
 **Install from CNB registry** (configure registry in your host project):
 
 ```sh
-yarn add @blockexpanse/presets@1.1.0 @blockexpanse/blocks@1.1.0 @blockexpanse/store@1.1.0 yjs
+yarn add @blockexpanse/presets@0.0.1 @blockexpanse/blocks@0.0.1 @blockexpanse/store@0.0.1 yjs
 ```
 
 ### Architecture

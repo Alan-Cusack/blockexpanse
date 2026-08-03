@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/sync",
-  "version": "1.1.0",
+  "version": "0.0.1",
   "description": "BlockExpanse data synchronization engine abstraction and implementation.",
   "type": "module",
   "repository": {

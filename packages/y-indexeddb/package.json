@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/y-indexeddb",
-  "version": "0.10.0-canary.9",
+  "version": "0.0.1",
   "description": "IndexedDB database adapter for Yjs (vendored from @toeverything/y-indexeddb)",
   "private": true,
   "type": "module",

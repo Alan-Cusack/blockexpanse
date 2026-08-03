@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/data-view",
-  "version": "1.1.0",
+  "version": "0.0.1",
   "description": "Views of database in affine",
   "type": "module",
   "repository": {

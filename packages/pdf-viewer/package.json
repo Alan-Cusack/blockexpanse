@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/pdf-viewer",
-  "version": "0.1.1",
+  "version": "0.0.1",
   "description": "PDF viewer built on PDFium WASM for BlockExpanse (vendored from @toeverything/pdf-viewer)",
   "private": true,
   "type": "module",

@@ -13,7 +13,7 @@
   <a href="https://github.com/Alan-Cusack/blockexpanse/actions"><img src="https://img.shields.io/github/actions/workflow/status/Alan-Cusack/blockexpanse/test.yml?branch=main&label=CI" alt="CI" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-blue" alt="License" /></a>
   <img src="https://img.shields.io/badge/npm%20scope-@blockexpanse-6880ff" alt="npm scope" />
-  <img src="https://img.shields.io/badge/version-1.1.0-6880ff" alt="version" />
+  <img src="https://img.shields.io/badge/version-0.0.1-6880ff" alt="version" />
 </p>
 
 <p align="center">
@@ -31,7 +31,7 @@
 |           | BlockExpanse                                     |
 | --------- | ------------------------------------------------ |
 | npm scope | `@blockexpanse`（与上游 `@blocksuite` 完全隔离） |
-| 当前版本  | `1.1.0`（自 `1.0.0` 起独立发版）                 |
+| 当前版本  | `0.0.1`（独立发版）                              |
 | 上游基线  | BlockSuite `v0.19.5`                             |
 | 协议      | [MPL 2.0](./LICENSE)                             |
 
@@ -105,7 +105,7 @@ editor.doc = doc;
 **从 CNB 安装**（主项目需配置同一 registry）：
 
 ```sh
-yarn add @blockexpanse/presets@1.1.0 @blockexpanse/blocks@1.1.0 @blockexpanse/store@1.1.0 yjs
+yarn add @blockexpanse/presets@0.0.1 @blockexpanse/blocks@0.0.1 @blockexpanse/store@0.0.1 yjs
 ```
 
 ### 架构
