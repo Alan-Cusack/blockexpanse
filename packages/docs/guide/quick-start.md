@@ -96,7 +96,7 @@ For the `doc.getBlockByFlavour` and `doc.updateBlock` APIs used here, see [Block
 
 - Read the [Concepts Cheat Sheet](./concepts) for a 5-minute tour of the vocabulary (flavour, schema, effects, …).
 - Follow the [Custom Block Tutorial](./custom-block-tutorial) to build your first block in 10 minutes.
-- Try collaborative editing [following the steps in BUILDING.md](https://github.com/Alan-Cusack/blockexpanse/blob/master/BUILDING.md#test-collaboration).
+- Set up [collaboration](./collaboration) - local persistence, cross-tab, or real-time WebSocket in one line.
 - Browse the [component types](./component-types) and [BlockExpanse components](../components/overview).
 
 Note that BlockExpanse is under active development. For questions or feedback, [open an issue](https://github.com/Alan-Cusack/blockexpanse/issues)!

@@ -210,6 +210,7 @@ export default ({ mode }) => {
           main: resolve(__dirname, 'index.html'),
           'starter/': resolve(__dirname, 'starter/index.html'),
           'minimal/': resolve(__dirname, 'minimal/index.html'),
+          'collab/': resolve(__dirname, 'collab/index.html'),
           'examples/basic/page': resolve(
             __dirname,
             'examples/basic/page/index.html'

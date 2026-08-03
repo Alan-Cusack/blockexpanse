@@ -1,0 +1,21 @@
+{
+  "name": "@blockexpanse/sync-websocket",
+  "version": "0.0.1",
+  "private": true,
+  "description": "WebSocket sync provider for BlockExpanse collaboration",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "dependencies": {
+    "@blockexpanse/global": "workspace:*",
+    "@blockexpanse/store": "workspace:*",
+    "@blockexpanse/sync": "workspace:*",
+    "y-protocols": "^1.0.6",
+    "yjs": "^13.6.18"
+  }
+}

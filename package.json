@@ -36,7 +36,6 @@
     "size:generate": "./scripts/size-generate.sh",
     "ci:version": "changeset version && yarn install --no-frozen-lockfile",
     "ci:publish": "yarn build:packages && yarn workspaces foreach -Ap --no-private npm publish --access public --tag latest",
-    "ci:publish:cnb": "node ./scripts/publish-cnb.mjs",
     "ci:version:canary": "changeset version --snapshot canary && yarn install --no-frozen-lockfile",
     "ci:publish:canary": "yarn build:packages && yarn workspaces foreach -Ap --no-private npm publish --access public --tag canary",
     "postinstall": "husky",

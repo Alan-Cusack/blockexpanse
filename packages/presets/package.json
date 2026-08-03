@@ -26,6 +26,8 @@
     "@blockexpanse/global": "workspace:*",
     "@blockexpanse/inline": "workspace:*",
     "@blockexpanse/store": "workspace:*",
+    "@blockexpanse/sync": "workspace:*",
+    "@blockexpanse/sync-websocket": "workspace:*",
     "@blockexpanse/theme": "workspace:*",
     "@floating-ui/dom": "^1.6.10",
     "@lottiefiles/dotlottie-wc": "^0.4.0",

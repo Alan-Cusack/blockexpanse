@@ -1991,6 +1991,8 @@ __metadata:
     "@blockexpanse/global": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
     "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/sync": "workspace:*"
+    "@blockexpanse/sync-websocket": "workspace:*"
     "@blockexpanse/theme": "workspace:*"
     "@floating-ui/dom": "npm:^1.6.10"
     "@lottiefiles/dotlottie-wc": "npm:^0.4.0"
@@ -2026,6 +2028,18 @@ __metadata:
     zod: "npm:^3.23.8"
   peerDependencies:
     yjs: ^13.6.18
+  languageName: unknown
+  linkType: soft
+
+"@blockexpanse/sync-websocket@workspace:*, @blockexpanse/sync-websocket@workspace:packages/sync-websocket":
+  version: 0.0.0-use.local
+  resolution: "@blockexpanse/sync-websocket@workspace:packages/sync-websocket"
+  dependencies:
+    "@blockexpanse/global": "workspace:*"
+    "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/sync": "workspace:*"
+    y-protocols: "npm:^1.0.6"
+    yjs: "npm:^13.6.18"
   languageName: unknown
   linkType: soft
 
@@ -6436,6 +6450,12 @@ __metadata:
   checksum: 10/b7904e66ed0bdfc813c06ea6c3e35eafecb104369dbf5356d0f416af90c1546de3b74e5b63506f0629acf5e16a6f87c3798f16233dcff086e9129383aa02ab55
   languageName: node
   linkType: hard
+
+"blockexpanse-sync-server@workspace:packages/sync-websocket-server":
+  version: 0.0.0-use.local
+  resolution: "blockexpanse-sync-server@workspace:packages/sync-websocket-server"
+  languageName: unknown
+  linkType: soft
 
 "blockexpanse@workspace:.":
   version: 0.0.0-use.local
