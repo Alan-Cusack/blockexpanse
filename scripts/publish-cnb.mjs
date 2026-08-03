@@ -13,7 +13,7 @@ if (!token) {
   process.exit(1);
 }
 
-const registry = 'https://npm.cnb.cool/LiaoJ/blockexpanse-server/-/packages/';
+const registry = 'https://npm.cnb.cool/LiaoJ/blockexpanse/-/packages/';
 const env = {
   ...process.env,
   // Yarn reads these without needing ${CNB_TOKEN} in .yarnrc.yml
