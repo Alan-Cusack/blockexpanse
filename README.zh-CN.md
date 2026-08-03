@@ -201,19 +201,6 @@ import {
 // ]
 ```
 
-### 发布到 CNB
-
-日常 `yarn install` / `yarn dev` / `git commit` **不需要** `CNB_TOKEN`：
-
-```sh
-export CNB_TOKEN=你的令牌
-yarn ci:publish:cnb
-```
-
-发布前请在 `scripts/publish-cnb.mjs` 中配置 CNB registry 地址。
-
-若本机 `~/.yarnrc.yml` 含 `${CNB_TOKEN}` 会导致所有 Yarn 命令报错，请删除或仅在发布时 `export`。
-
 ### 其他命令
 
 ```sh

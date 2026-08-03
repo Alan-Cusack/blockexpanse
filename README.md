@@ -201,19 +201,6 @@ import {
 // ]
 ```
 
-### Publish to CNB
-
-Daily dev does **not** require `CNB_TOKEN`. Only when publishing:
-
-```sh
-export CNB_TOKEN=your_token
-yarn ci:publish:cnb
-```
-
-Configure your CNB registry URL in `scripts/publish-cnb.mjs`.
-
-> If your global `~/.yarnrc.yml` contains a literal `${CNB_TOKEN}`, every Yarn command will fail. Remove it and only `export CNB_TOKEN` at publish time.
-
 ### Other Commands
 
 ```sh
