@@ -54,16 +54,6 @@ jobs:
       - name: Run unit tests
         run: yarn exec vitest run --coverage --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
-        # The coverage seems not working now, re-enable it when it's fixed
-      - name: Upload unit test coverage results
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./.coverage/unit/lcov.info
-          flags: unittest
-          name: blockexpanse
-          fail_ci_if_error: false
-
       - name: Upload test results
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
@@ -117,18 +107,6 @@ jobs:
 
       - name: Run playwright test
         run: yarn test --forbid-only --shard=${{ matrix.shard }}/${{ strategy.job-total }}
-
-      #      - name: Collect code coverage report
-      #        run: yarn exec nyc report -t .nyc_output --reporter=lcov
-
-      - name: Upload E2E test coverage results
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./.coverage/lcov.info
-          flags: e2etest
-          name: blockexpanse
-          fail_ci_if_error: false
 
       - name: Upload test results
         if: ${{ failure() }}
