@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/y-indexeddb",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "IndexedDB database adapter for Yjs (vendored from @toeverything/y-indexeddb)",
   "private": true,
   "type": "module",

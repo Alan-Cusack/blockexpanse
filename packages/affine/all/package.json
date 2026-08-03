@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/affine",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "BlockExpanse affine bundle",
   "type": "module",
   "repository": {

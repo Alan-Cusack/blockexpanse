@@ -1,5 +1,17 @@
 # @blockexpanse/data-view
 
+## 1.0.0
+
+### Patch Changes
+
+- @blockexpanse/affine-components@1.0.0
+- @blockexpanse/affine-shared@1.0.0
+- @blockexpanse/block-std@1.0.0
+- @blockexpanse/global@1.0.0
+- @blockexpanse/store@1.0.0
+- @blockexpanse/icons@1.0.0
+- @blockexpanse/theme@1.0.0
+
 ## 0.19.5
 
 ### Patch Changes

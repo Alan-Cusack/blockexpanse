@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/affine-block-list",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "List block for BlockExpanse.",
   "type": "module",
   "repository": {

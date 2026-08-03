@@ -1,5 +1,7 @@
 # @blockexpanse/global
 
+## 1.0.0
+
 ## 0.19.5
 
 ### Patch Changes

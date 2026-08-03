@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/sync-websocket",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "description": "WebSocket sync provider for BlockExpanse collaboration",
   "type": "module",
