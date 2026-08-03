@@ -1,0 +1,64 @@
+{
+  "name": "@blockexpanse/icons",
+  "version": "1.1.0",
+  "description": "Icon set for BlockExpanse (vendored from upstream @toeverything/icons).",
+  "type": "module",
+  "license": "MIT",
+  "author": "toeverything",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/toeverything/icons.git"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "node ./scripts/build.mjs"
+  },
+  "exports": {
+    "./lit": {
+      "types": "./bundled/lit.d.ts",
+      "import": "./bundled/lit.mjs",
+      "require": "./bundled/lit.js"
+    },
+    "./rc": {
+      "types": "./bundled/rc.d.ts",
+      "import": "./bundled/rc.mjs",
+      "require": "./bundled/rc.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      "./lit": {
+        "types": "./bundled/lit.d.ts",
+        "import": "./bundled/lit.mjs",
+        "require": "./bundled/lit.js"
+      },
+      "./rc": {
+        "types": "./bundled/rc.d.ts",
+        "import": "./bundled/rc.mjs",
+        "require": "./bundled/rc.js"
+      }
+    }
+  },
+  "files": [
+    "bundled",
+    "LICENSE",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "@types/react": "^18.0.25",
+    "lit": "^3.1.1",
+    "react": "^18.2.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "lit": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  }
+}

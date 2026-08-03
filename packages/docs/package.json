@@ -1,0 +1,34 @@
+{
+  "name": "@blockexpanse/docs",
+  "version": "1.1.0",
+  "description": "BlockExpanse documentation",
+  "private": true,
+  "keywords": [],
+  "author": "toeverything",
+  "repository": "Alan-Cusack/blockexpanse",
+  "license": "MPL-2.0",
+  "type": "module",
+  "devDependencies": {
+    "typedoc": "^0.27.0",
+    "typedoc-plugin-markdown": "4.3.2",
+    "vite-plugin-wasm": "^3.3.0",
+    "vitepress": "1.5.0",
+    "vue": "^3.4.38"
+  },
+  "scripts": {
+    "typedoc": "yarn run -T build:packages && typedoc --options ../../typedoc.json",
+    "dev": "yarn run typedoc && vitepress dev --port 5200",
+    "dev:nobuild": "vitepress dev --port 5200",
+    "build": "yarn run typedoc && vitepress build",
+    "build:vercel": "yarn run typedoc && vitepress build",
+    "preview": "yarn run typedoc && vitepress preview"
+  },
+  "dependencies": {
+    "@blockexpanse/blocks": "workspace:*",
+    "@blockexpanse/presets": "workspace:*",
+    "@blockexpanse/store": "workspace:*",
+    "date-fns": "^4.0.0",
+    "markdown-it-container": "^4.0.0",
+    "vitepress-plugin-sandpack": "^1.1.4"
+  }
+}

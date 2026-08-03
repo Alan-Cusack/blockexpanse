@@ -1,0 +1,13 @@
+import {
+  BlockViewExtension,
+  CommandExtension,
+  type ExtensionType,
+} from '@blockexpanse/block-std';
+import { literal } from 'lit/static-html.js';
+
+import { commands } from './commands/index.js';
+
+export const EdgelessTextBlockSpec: ExtensionType[] = [
+  CommandExtension(commands),
+  BlockViewExtension('affine:edgeless-text', literal`affine-edgeless-text`),
+];

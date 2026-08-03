@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+
+      - name: Create Release Pull Request
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: yarn ci:version
+          commit: 'chore: version packages'
+          title: 'chore: version packages'
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+
+      - name: Build packages
+        run: yarn build:packages
+
+      - name: Publish to NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          yarn config set npmAuthToken ${{ secrets.NPM_TOKEN }}
+          yarn ci:publish
+          rm ".npmrc"
+          yarn config unset npmAuthToken
+
+      - name: Get package version
+        run: |
+          BLOCKEXPANSE_VERSION=$(jq -r ".version" packages/blocks/package.json)
+          echo "BLOCKEXPANSE_RELEASE_TAG=v${BLOCKEXPANSE_VERSION}" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release
+        id: release
+        uses: ncipollo/release-action@v1
+        with:
+          commit: main
+          tag: '${{ env.BLOCKEXPANSE_RELEASE_TAG }}'
+          body: 'Please refer to [CHANGELOG.md](https://github.com/Alan-Cusack/blockexpanse/blob/${{ env.BLOCKEXPANSE_RELEASE_TAG }}/packages/blocks/CHANGELOG.md) for details.'
+          token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Send release notification
+        if: steps.release.outcome == 'success'
+        id: slack
+        uses: slackapi/slack-github-action@v1.27.1
+        with:
+          payload: |
+            { "message": "[BlockExpanse Release]: New BlockExpanse version ${{ env.BLOCKEXPANSE_RELEASE_TAG }} has been released to NPM." }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
