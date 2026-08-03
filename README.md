@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-  <strong>BlockExpanse</strong> - A block-based document editor & whiteboard toolkit<br/>
-  <strong>BlockExpanse</strong> - 块级文档编辑器与白板工具包
+  <strong>BlockExpanse</strong> - A framework-agnostic block editor with docs + whiteboard<br/>
+  <strong>BlockExpanse</strong> - 框架无关的块编辑器,文档与白板一体
 </p>
 
 <p align="center">
@@ -24,18 +24,30 @@
 
 ### Overview
 
-**BlockExpanse** is an independent fork and customization of [BlockSuite](https://github.com/toeverything/blocksuite) **v0.19.5** - the open-source block editor framework originally built for [AFFiNE](https://affine.pro/).
+**BlockExpanse** is an open-source block editor toolkit that bundles a **Notion-style document editor** and an **infinite-canvas whiteboard** into a single framework-agnostic package. Build rich editing experiences in Vue, React, or vanilla JS - no React lock-in.
 
-Like [BlockNote](https://www.blocknotejs.org/) focuses on a polished out-of-the-box React editor, BlockExpanse (via BlockSuite) provides **Web Components**–based editors that are **framework-agnostic** (Vue, React, or vanilla JS). You can embed a full document editor and canvas whiteboard in your app, extend them with custom blocks, and wire up collaboration through CRDT (Yjs).
+Every editor is a native **Web Component**. Mount it with a few lines of code, extend it with custom blocks, and wire up real-time collaboration through CRDT (Yjs). An AI panel and edgeless copilot surface are built in - just plug in your LLM.
 
-|               | BlockExpanse                                                 |
-| ------------- | ------------------------------------------------------------ |
-| npm scope     | `@blockexpanse` (fully isolated from upstream `@blocksuite`) |
-| Version       | `0.0.1` (independent release)                                |
-| Upstream base | BlockSuite `v0.19.5`                                         |
-| License       | [MPL 2.0](./LICENSE)                                         |
+|           | BlockExpanse                       |
+| --------- | ---------------------------------- |
+| npm scope | `@blockexpanse` (published to npm) |
+| Version   | `0.0.1`                            |
+| License   | [MPL 2.0](./LICENSE)               |
 
-> **Maintenance:** This fork is actively maintained. Features such as i18n, AI integration hooks, and table improvements will evolve based on product needs - contributions and feedback are welcome.
+### Why BlockExpanse?
+
+BlockExpanse is built on [BlockSuite](https://github.com/toeverything/blocksuite) `v0.19.5` (the engine behind [AFFiNE](https://affine.pro/)), maintained as an independent fork focused on framework-agnostic DX.
+
+|                       | BlockNote            | BlockExpanse                           |
+| --------------------- | -------------------- | -------------------------------------- |
+| Whiteboard (Edgeless) | ❌                   | ✅ Canvas + Doc, seamless mode switch  |
+| Framework             | React only           | Web Components (Vue / React / vanilla) |
+| Collaboration         | Yjs (bolt-on)        | CRDT-native data flow                  |
+| AI surface            | Add-on (XL tier)     | Built-in AI Panel + Edgeless Copilot   |
+| Custom blocks         | React component spec | Lit/Web Component spec                 |
+| License               | MPL-2.0 / GPL (XL)   | MPL-2.0                                |
+
+> **Actively maintained.** Issues and pull requests are welcome at [github.com/Alan-Cusack/blockexpanse](https://github.com/Alan-Cusack/blockexpanse).
 
 ### What You Get
 
@@ -85,27 +97,32 @@ yarn dev
 | http://localhost:5173/starter/      | Starter preset list                     |
 | http://localhost:5173               | Full demo (persistence & collaboration) |
 
-**Minimal embed (with i18n):**
+**Minimal embed:**
 
 ```ts
 import { createEmptyDoc, PageEditor } from '@blockexpanse/presets';
-import {
-  createBuiltinI18n,
-  I18nExtension,
-} from '@blockexpanse/affine-shared/services';
+import { effects as blocksEffects } from '@blockexpanse/blocks/effects';
+import { effects as presetsEffects } from '@blockexpanse/presets/effects';
+import { Text } from '@blockexpanse/store';
+import '@blockexpanse/theme/style.css';
 
-const i18n = createBuiltinI18n({ locale: 'zh-CN' }); // or 'en'
+// Register all Web Components (required)
+blocksEffects();
+presetsEffects();
 
-const { doc } = createEmptyDoc();
+const doc = createEmptyDoc().init();
 const editor = new PageEditor();
 editor.doc = doc;
-// Mount editor and register extensions, e.g. I18nExtension(i18n)
+document.body.appendChild(editor);
+
+const paragraph = doc.getBlockByFlavour('affine:paragraph')[0];
+doc.updateBlock(paragraph, { text: new Text('Hello BlockExpanse!') });
 ```
 
-**Install from CNB registry** (configure registry in your host project):
+**Install:**
 
 ```sh
-yarn add @blockexpanse/presets@0.0.1 @blockexpanse/blocks@0.0.1 @blockexpanse/store@0.0.1 yjs
+npm install @blockexpanse/presets @blockexpanse/blocks @blockexpanse/store @blockexpanse/theme yjs
 ```
 
 ### Architecture

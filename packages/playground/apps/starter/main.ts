@@ -1,3 +1,9 @@
+/**
+ * Full-featured BlockExpanse starter: i18n, AI panel, collaboration,
+ * side panels (outline, frame, comments), and mode switching.
+ *
+ * For the minimal editor-only setup, see apps/minimal/ (http://localhost:5173/minimal/).
+ */
 import {
   type ExtensionType,
   WidgetViewMapExtension,

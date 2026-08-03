@@ -16,7 +16,9 @@
       deps: {
         yjs: 'latest',
         '@blockexpanse/theme': 'latest',
-        '@blockexpanse/presets': 'canary',
+        '@blockexpanse/presets': 'latest',
+        '@blockexpanse/blocks': 'latest',
+        '@blockexpanse/store': 'latest',
       },
     }"
     :code-options="codeOptions"

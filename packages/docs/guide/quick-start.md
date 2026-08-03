@@ -3,7 +3,7 @@
 For a swift start with **BlockExpanse** (`@blockexpanse/*`), you can run the playground in this repo or install packages into your project.
 
 ::: info
-BlockExpanse packages are published under `@blockexpanse/*`. Run `yarn dev` in this repo to try the playground.
+BlockExpanse packages are published under `@blockexpanse/*` on npm. Run `yarn dev` in this repo to try the playground.
 :::
 
 ## Bootstrap Project
@@ -21,53 +21,80 @@ Open [http://localhost:5173/starter/?init](http://localhost:5173/starter/?init) 
 
 ## Init From Scratch
 
-To use BlockExpanse in your existing project, simply install these core packages:
+To use BlockExpanse in your existing project, install these core packages:
 
 ```sh
-yarn install \
-  @blockexpanse/presets@canary \
-  @blockexpanse/blocks@canary \
-  @blockexpanse/store@canary
+npm install @blockexpanse/presets @blockexpanse/blocks @blockexpanse/store @blockexpanse/theme yjs
 ```
 
 Key takeaways in the snippet above:
 
-- The `@blockexpanse/presets` package contains the prebuilt editors and opt-in additional UI components.
-- To work with the BlockExpanse document model and first-party blocks, the `@blockexpanse/store` and `@blockexpanse/blocks` packages are required.
-- The BlockExpanse `canary` versions are released daily based on the master branch, which is also used in production in [AFFiNE](https://github.com/toeverything/AFFiNE).
+- The `@blockexpanse/presets` package contains the prebuilt editors (`PageEditor`, `EdgelessEditor`) and opt-in UI fragments.
+- `@blockexpanse/store` and `@blockexpanse/blocks` provide the document model and first-party blocks.
+- `@blockexpanse/theme` provides the `--affine-*` CSS variables the editors consume.
+- `yjs` is the peer dependency powering the CRDT document model.
 
 Then you can use the prebuilt `PageEditor` out of the box, with an initialized `doc` instance attached as its document model:
 
-::: code-sandbox {coderHeight=420 previewHeight=300}
+::: code-sandbox {coderHeight=460 previewHeight=300}
 
 ```ts /index.ts [active]
 import { createEmptyDoc, PageEditor } from '@blockexpanse/presets';
+import { effects as blocksEffects } from '@blockexpanse/blocks/effects';
+import { effects as presetsEffects } from '@blockexpanse/presets/effects';
 import { Text } from '@blockexpanse/store';
+import '@blockexpanse/theme/style.css';
 
-(async () => {
-  // Init editor with default block tree
-  const doc = createEmptyDoc().init();
-  const editor = new PageEditor();
-  editor.doc = doc;
-  document.body.appendChild(editor);
+// 1. Register all Web Components (required before rendering)
+blocksEffects();
+presetsEffects();
 
-  // Update block node with some initial text content
-  const paragraphs = doc.getBlockByFlavour('affine:paragraph');
-  const paragraph = paragraphs[0];
-  doc.updateBlock(paragraph, { text: new Text('Hello World!') });
-})();
+// 2. Create an empty doc and initialize the default block tree
+const doc = createEmptyDoc().init();
+
+// 3. Mount the editor
+const editor = new PageEditor();
+editor.doc = doc;
+document.body.appendChild(editor);
+
+// 4. Write some content into the first paragraph
+const paragraph = doc.getBlockByFlavour('affine:paragraph')[0];
+doc.updateBlock(paragraph, { text: new Text('Hello BlockExpanse!') });
 ```
 
 :::
 
-The `PageEditor` here is a standard web component that can also be reused with `<page-editor>` HTML tag. Another `EdgelessEditor` also works similarly - simply attach the `editor` with a `doc` and you are all set.
+### What each step does
 
-For the `doc.getBlockByFlavour` and `doc.updateBlock` APIs used here, please see the [introduction](./working-with-block-tree#block-tree-basics) about block tree basics for further details.
+| Step                                      | Why it's needed                                                                                                                                                                                   |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `blocksEffects()` + `presetsEffects()`    | BlockExpanse editors are Web Components. These calls register every block, widget, and editor element (`<page-editor>`, `<affine-page-root>`, …) with the browser. Skip this and nothing renders. |
+| `createEmptyDoc().init()`                 | Creates a `Doc` with the default block tree (`affine:page` → `affine:surface` → `affine:note` → `affine:paragraph`). `init()` scaffolds that tree so the editor has something to render.          |
+| `@import '@blockexpanse/theme/style.css'` | Injects all `--affine-*` CSS variables (colors, fonts, shadows). Without it the editor renders unstyled.                                                                                          |
+| `editor.doc = doc`                        | Attaches the document model to the editor component.                                                                                                                                              |
 
-As the next step, you can choose to:
+### Using the editor as an HTML tag
 
-- Explore how BlockExpanse break down editors into different [component types](./component-types). Taking a look at the list of [BlockExpanse components](../components/overview) may also be helpful.
-- Try collaborative editing [following the steps](https://github.com/Alan-Cusack/blockexpanse/blob/master/BUILDING.md#test-collaboration).
-- Learn about [basic concepts](./working-with-block-tree) in BlockExpanse framework that are used throughout the development of editors.
+`PageEditor` is a standard Web Component, so you can also use it declaratively:
 
-Note that BlockExpanse is still under rapid development. For any questions or feedback, feel free to let us know!
+```html
+<page-editor></page-editor>
+```
+
+```ts
+const editor = document.querySelector('page-editor');
+editor.doc = createEmptyDoc().init();
+```
+
+`EdgelessEditor` (the whiteboard mode) works the same way — swap `PageEditor` for `EdgelessEditor` (or `<edgeless-editor>`). To switch between Doc and Edgeless modes on the same page, use `AffineEditorContainer`.
+
+For the `doc.getBlockByFlavour` and `doc.updateBlock` APIs used here, see [Block Tree Basics](./working-with-block-tree#block-tree-basics).
+
+### Next steps
+
+- Read the [Concepts Cheat Sheet](./concepts) for a 5-minute tour of the vocabulary (flavour, schema, effects, …).
+- Follow the [Custom Block Tutorial](./custom-block-tutorial) to build your first block in 10 minutes.
+- Try collaborative editing [following the steps in BUILDING.md](https://github.com/Alan-Cusack/blockexpanse/blob/master/BUILDING.md#test-collaboration).
+- Browse the [component types](./component-types) and [BlockExpanse components](../components/overview).
+
+Note that BlockExpanse is under active development. For questions or feedback, [open an issue](https://github.com/Alan-Cusack/blockexpanse/issues)!

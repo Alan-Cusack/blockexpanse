@@ -8,6 +8,22 @@ This documentation ships with **BlockExpanse**. Install packages as `@blockexpan
 
 ---
 
+## Who is this for
+
+BlockExpanse is for developers who want a **Notion-style document editor** and/or an **infinite-canvas whiteboard** in their app, without being locked into React. Because every editor is a native Web Component, you can mount it from Vue, React, Svelte, or plain HTML with the same API.
+
+If you've looked at [BlockNote](https://www.blocknotejs.org/) but need a whiteboard mode, framework-agnostic components, or CRDT-native collaboration, BlockExpanse is the alternative.
+
+## What makes it different
+
+- **Docs + Whiteboard in one toolkit.** `PageEditor` (block document) and `EdgelessEditor` (canvas) share the same document model and can switch modes on the same page via `AffineEditorContainer`.
+- **Framework-agnostic Web Components.** No React dependency. Use any framework or none.
+- **CRDT-native data flow.** Collaboration is built on the document model itself (Yjs), not bolted on as an afterthought.
+- **AI-ready surface.** An AI Panel widget and Edgeless Copilot are built in - you provide the LLM backend.
+- **Built on BlockSuite.** Inheriting the engine behind [AFFiNE](https://affine.pro/), maintained as an independent fork. Think of BlockExpanse vs AFFiNE as Monaco vs VS Code - same engine, independently maintained, web-component-first.
+
+---
+
 BlockExpanse is a toolkit for building editors and collaborative applications. It implements a series of content editing infrastructures, UI components and editors independently.
 
 You can consider BlockExpanse as a [UI component library](../components/overview) for building various editors, based on a minimized vanilla framework as their runtime. With BlockExpanse, you can:

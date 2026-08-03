@@ -6,12 +6,17 @@ export const guide: DefaultTheme.NavItem[] = [
     items: [
       { text: 'Overview', link: 'guide/overview' },
       { text: 'Quick Start', link: 'guide/quick-start' },
+      { text: 'Concepts Cheat Sheet', link: 'guide/concepts' },
     ],
   },
   {
     text: 'Framework Guide',
     items: [
       { text: 'Component Types', link: 'guide/component-types' },
+      {
+        text: 'Custom Block Tutorial',
+        link: 'guide/custom-block-tutorial',
+      },
       {
         text: 'Working with Block Tree',
         // @ts-ignore

@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-  <strong>BlockExpanse</strong> — 块级文档编辑器与白板工具包<br/>
-  <strong>BlockExpanse</strong> — A block-based document editor & whiteboard toolkit
+  <strong>BlockExpanse</strong> - 框架无关的块编辑器,文档与白板一体<br/>
+  <strong>BlockExpanse</strong> - A framework-agnostic block editor with docs + whiteboard
 </p>
 
 <p align="center">
@@ -24,18 +24,30 @@
 
 ### 概述
 
-**BlockExpanse** 是基于 [BlockSuite](https://github.com/toeverything/blocksuite) **v0.19.5** 的独立 fork 与定制版本。BlockSuite 是 [AFFiNE](https://affine.pro/) 知识库背后的开源块编辑器框架。
+**BlockExpanse** 是一个开源块编辑器工具包,把**类 Notion 文档编辑器**和**无限画布白板**打包成一个框架无关的组件。用 Vue、React 或原生 JS 都能集成,不绑定 React。
 
-若 [BlockNote](https://www.blocknotejs.org/) 侧重「开箱即用的 React 块编辑器」，BlockExpanse（继承 BlockSuite）则提供基于 **Web Components** 的编辑器，**与框架无关**（Vue、React 或原生 JS 均可集成）。你可以嵌入完整的文档编辑器与画布白板，扩展自定义 Block，并通过 CRDT（Yjs）实现协同。
+每个编辑器都是原生 **Web Component**。几行代码挂载,自定义 Block 扩展,通过 CRDT(Yjs)接入实时协同。AI 面板与白板 Copilot 内置预留,接入你的 LLM 即可。
 
-|           | BlockExpanse                                     |
-| --------- | ------------------------------------------------ |
-| npm scope | `@blockexpanse`（与上游 `@blocksuite` 完全隔离） |
-| 当前版本  | `0.0.1`（独立发版）                              |
-| 上游基线  | BlockSuite `v0.19.5`                             |
-| 协议      | [MPL 2.0](./LICENSE)                             |
+|           | BlockExpanse                |
+| --------- | --------------------------- |
+| npm scope | `@blockexpanse`(发布到 npm) |
+| 当前版本  | `0.0.1`                     |
+| 协议      | [MPL 2.0](./LICENSE)        |
 
-> **维护说明：** 本 fork 会根据业务需求持续更新与维护，包括国际化、AI 接入能力、表格等定制功能。欢迎 issue 与 PR。
+### 为什么选 BlockExpanse?
+
+BlockExpanse 基于 [BlockSuite](https://github.com/toeverything/blocksuite) `v0.19.5`([AFFiNE](https://affine.pro/) 背后的引擎),作为独立 fork 维护,聚焦框架无关的开发体验。
+
+|                | BlockNote         | BlockExpanse                       |
+| -------------- | ----------------- | ---------------------------------- |
+| 白板(Edgeless) | ❌                | ✅ 画布 + 文档,无缝切换            |
+| 框架           | 仅 React          | Web Components(Vue / React / 原生) |
+| 协同           | Yjs(外挂)         | CRDT 原生数据流                    |
+| AI 能力        | 附加(XL 付费层)   | 内置 AI 面板 + 白板 Copilot        |
+| 自定义 Block   | React 组件 spec   | Lit / Web Component spec           |
+| 协议           | MPL-2.0 / GPL(XL) | MPL-2.0                            |
+
+> **积极维护中。** 欢迎在 [github.com/Alan-Cusack/blockexpanse](https://github.com/Alan-Cusack/blockexpanse) 提 issue 与 PR。
 
 ### 核心能力
 
@@ -85,27 +97,32 @@ yarn dev
 | http://localhost:5173/starter/      | Starter 预设列表           |
 | http://localhost:5173               | 完整示例（含持久化与协作） |
 
-**最小集成示例（含 i18n）：**
+**最小集成示例：**
 
 ```ts
 import { createEmptyDoc, PageEditor } from '@blockexpanse/presets';
-import {
-  createBuiltinI18n,
-  I18nExtension,
-} from '@blockexpanse/affine-shared/services';
+import { effects as blocksEffects } from '@blockexpanse/blocks/effects';
+import { effects as presetsEffects } from '@blockexpanse/presets/effects';
+import { Text } from '@blockexpanse/store';
+import '@blockexpanse/theme/style.css';
 
-const i18n = createBuiltinI18n({ locale: 'zh-CN' }); // 或 'en'
+// 注册所有 Web Components（必须）
+blocksEffects();
+presetsEffects();
 
-const { doc } = createEmptyDoc();
+const doc = createEmptyDoc().init();
 const editor = new PageEditor();
 editor.doc = doc;
-// 挂载编辑器并注册扩展，例如 I18nExtension(i18n)
+document.body.appendChild(editor);
+
+const paragraph = doc.getBlockByFlavour('affine:paragraph')[0];
+doc.updateBlock(paragraph, { text: new Text('Hello BlockExpanse!') });
 ```
 
-**从 CNB 安装**（主项目需配置同一 registry）：
+**安装：**
 
 ```sh
-yarn add @blockexpanse/presets@0.0.1 @blockexpanse/blocks@0.0.1 @blockexpanse/store@0.0.1 yjs
+npm install @blockexpanse/presets @blockexpanse/blocks @blockexpanse/store @blockexpanse/theme yjs
 ```
 
 ### 架构
