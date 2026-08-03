@@ -122,8 +122,10 @@ doc.updateBlock(paragraph, { text: new Text('Hello BlockExpanse!') });
 **Install:**
 
 ```sh
-npm install @blockexpanse/presets @blockexpanse/blocks @blockexpanse/store @blockexpanse/theme yjs
+npm install @blockexpanse/presets yjs
 ```
+
+> `presets` pulls in `blocks`, `store`, `theme`, and all internal packages as transitive dependencies - one install is all you need.
 
 ### Architecture
 

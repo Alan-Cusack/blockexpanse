@@ -122,8 +122,10 @@ doc.updateBlock(paragraph, { text: new Text('Hello BlockExpanse!') });
 **安装：**
 
 ```sh
-npm install @blockexpanse/presets @blockexpanse/blocks @blockexpanse/store @blockexpanse/theme yjs
+npm install @blockexpanse/presets yjs
 ```
+
+> `presets` 会通过传递依赖自动带入 `blocks`、`store`、`theme` 及所有内部包 —— 装一个就够了。
 
 ### 架构
 

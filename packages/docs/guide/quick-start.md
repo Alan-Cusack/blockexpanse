@@ -21,18 +21,20 @@ Open [http://localhost:5173/starter/?init](http://localhost:5173/starter/?init) 
 
 ## Init From Scratch
 
-To use BlockExpanse in your existing project, install these core packages:
+To use BlockExpanse in your existing project, install the presets package and its peer dependency:
 
 ```sh
-npm install @blockexpanse/presets @blockexpanse/blocks @blockexpanse/store @blockexpanse/theme yjs
+npm install @blockexpanse/presets yjs
 ```
 
-Key takeaways in the snippet above:
+That single command pulls in everything you need - `@blockexpanse/blocks`, `@blockexpanse/store`, `@blockexpanse/theme`, and all internal packages come in as transitive dependencies of `presets`.
 
-- The `@blockexpanse/presets` package contains the prebuilt editors (`PageEditor`, `EdgelessEditor`) and opt-in UI fragments.
-- `@blockexpanse/store` and `@blockexpanse/blocks` provide the document model and first-party blocks.
-- `@blockexpanse/theme` provides the `--affine-*` CSS variables the editors consume.
-- `yjs` is the peer dependency powering the CRDT document model.
+What you get:
+
+- `@blockexpanse/presets` - the prebuilt editors (`PageEditor`, `EdgelessEditor`) and opt-in UI fragments.
+- `@blockexpanse/blocks` + `@blockexpanse/store` (transitive) - first-party blocks and the CRDT document model.
+- `@blockexpanse/theme` (transitive) - the `--affine-*` CSS variables the editors consume.
+- `yjs` (peer) - the CRDT runtime powering the document model.
 
 Then you can use the prebuilt `PageEditor` out of the box, with an initialized `doc` instance attached as its document model:
 
