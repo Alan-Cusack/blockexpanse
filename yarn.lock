@@ -1919,6 +1919,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@blockexpanse/pdf-viewer-types@workspace:*, @blockexpanse/pdf-viewer-types@workspace:packages/pdf-viewer-types":
+  version: 0.0.0-use.local
+  resolution: "@blockexpanse/pdf-viewer-types@workspace:packages/pdf-viewer-types"
+  languageName: unknown
+  linkType: soft
+
+"@blockexpanse/pdf-viewer@workspace:packages/pdf-viewer":
+  version: 0.0.0-use.local
+  resolution: "@blockexpanse/pdf-viewer@workspace:packages/pdf-viewer"
+  dependencies:
+    "@blockexpanse/pdf-viewer-types": "workspace:*"
+    "@blockexpanse/pdfium": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@blockexpanse/pdfium@workspace:*, @blockexpanse/pdfium@workspace:packages/pdfium":
+  version: 0.0.0-use.local
+  resolution: "@blockexpanse/pdfium@workspace:packages/pdfium"
+  dependencies:
+    "@types/emscripten": "npm:^1.39.13"
+  languageName: unknown
+  linkType: soft
+
 "@blockexpanse/playground@workspace:packages/playground":
   version: 0.0.0-use.local
   resolution: "@blockexpanse/playground@workspace:packages/playground"
@@ -2015,6 +2038,23 @@ __metadata:
     y-protocols: "npm:^1.0.6"
   peerDependencies:
     yjs: ^13.6.15
+  languageName: unknown
+  linkType: soft
+
+"@blockexpanse/theme@workspace:packages/theme":
+  version: 0.0.0-use.local
+  resolution: "@blockexpanse/theme@workspace:packages/theme"
+  languageName: unknown
+  linkType: soft
+
+"@blockexpanse/y-indexeddb@workspace:packages/y-indexeddb":
+  version: 0.0.0-use.local
+  resolution: "@blockexpanse/y-indexeddb@workspace:packages/y-indexeddb"
+  dependencies:
+    idb: "npm:^7.1.1"
+    y-provider: "npm:0.10.0-canary.9"
+  peerDependencies:
+    yjs: ^13
   languageName: unknown
   linkType: soft
 
@@ -4985,6 +5025,13 @@ __metadata:
   dependencies:
     "@types/trusted-types": "npm:*"
   checksum: 10/e544b3ce53c41215cabff3d89256ff707c7ee8e0c9a1b5034b22014725d288b16e6942cdcdeeb4221c578c3421a6a4721aa0676431f55d7abd18c07368855c5e
+  languageName: node
+  linkType: hard
+
+"@types/emscripten@npm:^1.39.13":
+  version: 1.41.5
+  resolution: "@types/emscripten@npm:1.41.5"
+  checksum: 10/60dfcced39b2d0c94f31907c5cf5d97fe06ed35ed6cb134650a1a96bae861302722d4a6f459b484ea09588cde70cbcc034974454a746be3ce9688b52398d2953
   languageName: node
   linkType: hard
 

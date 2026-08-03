@@ -1,0 +1,49 @@
+{
+  "name": "@blockexpanse/theme",
+  "version": "1.1.0",
+  "description": "Design tokens and CSS variables for BlockExpanse (vendored from @toeverything/theme)",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alan-Cusack/blockexpanse.git",
+    "directory": "packages/theme"
+  },
+  "scripts": {
+    "build": "tsc && node ../../scripts/copy-theme-css.mjs"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "keywords": [
+    "theme",
+    "design-tokens",
+    "css-variables"
+  ],
+  "author": "toeverything",
+  "license": "MPL-2.0",
+  "exports": {
+    ".": "./src/index.ts",
+    "./v2": "./src/v2/index.ts",
+    "./style.css": "./src/style.css"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "./v2": {
+        "types": "./dist/v2/index.d.ts",
+        "import": "./dist/v2/index.js"
+      },
+      "./style.css": "./dist/style.css"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "name": "@blockexpanse/pdf-viewer",
+  "version": "0.1.1",
+  "description": "PDF viewer built on PDFium WASM for BlockExpanse (vendored from @toeverything/pdf-viewer)",
+  "private": true,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alan-Cusack/blockexpanse.git",
+    "directory": "packages/pdf-viewer"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "pdf",
+    "pdfium",
+    "viewer"
+  ],
+  "author": "toeverything",
+  "license": "MPL-2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "dist",
+    "!src/__tests__",
+    "!dist/__tests__"
+  ],
+  "dependencies": {
+    "@blockexpanse/pdf-viewer-types": "workspace:*",
+    "@blockexpanse/pdfium": "workspace:*"
+  }
+}

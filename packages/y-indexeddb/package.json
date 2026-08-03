@@ -1,0 +1,37 @@
+{
+  "name": "@blockexpanse/y-indexeddb",
+  "version": "0.10.0-canary.9",
+  "description": "IndexedDB database adapter for Yjs (vendored from @toeverything/y-indexeddb)",
+  "private": true,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alan-Cusack/blockexpanse.git",
+    "directory": "packages/y-indexeddb"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "indexeddb",
+    "yjs",
+    "yjs-adapter"
+  ],
+  "author": "toeverything",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "dependencies": {
+    "idb": "^7.1.1",
+    "y-provider": "0.10.0-canary.9"
+  },
+  "peerDependencies": {
+    "yjs": "^13"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "@blockexpanse/pdf-viewer-types",
+  "version": "0.1.1",
+  "description": "PDF Viewer types for BlockExpanse (vendored from @toeverything/pdf-viewer-types)",
+  "private": true,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alan-Cusack/blockexpanse.git",
+    "directory": "packages/pdf-viewer-types"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "pdf",
+    "pdfium",
+    "types"
+  ],
+  "author": "toeverything",
+  "license": "MPL-2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "dist"
+  ]
+}

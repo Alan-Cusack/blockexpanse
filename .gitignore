@@ -2,6 +2,7 @@
 .idea
 .vscode/*
 .zed
+.zcode
 !.vscode/tasks.json
 !.vscode/settings.template.json
 !.vscode/launch.template.json
@@ -20,6 +21,9 @@ playwright/.cache/
 
 # Build out
 dist/
+# Exception: packages/pdfium/dist ships vendored (non-rebuildable) PDFium WASM + glue
+!packages/pdfium/dist/
+!packages/pdfium/dist/**
 build
 temp
 tsconfig.tsbuildinfo
