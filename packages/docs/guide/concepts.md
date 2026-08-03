@@ -67,6 +67,10 @@ The full definition of a block type, combining four parts:
 
 A spec is registered so the editor knows how to render and manage that block type.
 
+::: tip Shortcut
+Use the `defineBlock()` helper from `@blockexpanse/presets` to generate the schema + spec in one call, instead of assembling them manually. See the [Custom Block Tutorial](./custom-block-tutorial).
+:::
+
 ### View (BlockComponent)
 
 A Lit `LitElement` subclass that renders the block's UI. The `@customElement` decorator (or `customElements.define`) registers it. The view reads from the block model and emits updates.

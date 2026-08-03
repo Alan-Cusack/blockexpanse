@@ -76,7 +76,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./schemas": "./src/schemas.ts",
-    "./effects": "./src/effects.ts"
+    "./effects": "./src/effects.ts",
+    "./widgets/slash-menu": "./src/root-block/widgets/slash-menu/index.ts",
+    "./widgets/slash-menu/config": "./src/root-block/widgets/slash-menu/config.ts"
   },
   "publishConfig": {
     "access": "public",
@@ -90,6 +92,14 @@
       "./schemas": {
         "types": "./dist/schemas.d.ts",
         "import": "./dist/schemas.js"
+      },
+      "./widgets/slash-menu": {
+        "types": "./dist/root-block/widgets/slash-menu/index.d.ts",
+        "import": "./dist/root-block/widgets/slash-menu/index.js"
+      },
+      "./widgets/slash-menu/config": {
+        "types": "./dist/root-block/widgets/slash-menu/config.d.ts",
+        "import": "./dist/root-block/widgets/slash-menu/config.js"
       },
       "./effects": {
         "types": "./dist/effects.d.ts",

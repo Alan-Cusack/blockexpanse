@@ -46,6 +46,8 @@ export type AffineSlashMenuItemGenerator = SlashMenuItemGenerator;
 export type AffineSlashSubMenu = SlashSubMenu;
 export type AffineSlashMenuGroupDivider = SlashMenuGroupDivider;
 
+export { defaultSlashMenuConfig } from './config.js';
+
 export {
   createSlashMenuConfig,
   localizeSlashMenuConfig,

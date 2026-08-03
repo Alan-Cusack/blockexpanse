@@ -1,3 +1,13 @@
+export { defineBlock } from './define-block.js';
+export type { DefineBlockOptions, DefinedBlock } from './define-block.js';
+
+export { addSlashMenuItem, defaultSlashMenuConfig } from './slash-menu.js';
+export type {
+  AffineSlashMenuContext,
+  SlashMenuConfig,
+  SlashMenuItemOptions,
+} from './slash-menu.js';
+
 import type {
   AwarenessSource,
   BlobSource,
