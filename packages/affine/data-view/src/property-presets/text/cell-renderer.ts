@@ -1,4 +1,4 @@
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { css, html, unsafeCSS } from 'lit';
 import { query } from 'lit/decorators.js';
 

@@ -1572,10 +1572,10 @@ __metadata:
     "@blockexpanse/icons": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
     "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/theme": "workspace:*"
     "@floating-ui/dom": "npm:^1.6.10"
     "@lit/context": "npm:^1.1.2"
     "@preact/signals-core": "npm:^1.8.0"
-    "@toeverything/theme": "npm:^1.1.1"
     lit: "npm:^3.2.0"
     minimatch: "npm:^10.0.1"
     zod: "npm:^3.23.8"
@@ -1593,10 +1593,10 @@ __metadata:
     "@blockexpanse/global": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
     "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/theme": "workspace:*"
     "@floating-ui/dom": "npm:^1.6.10"
     "@lit/context": "npm:^1.1.2"
     "@preact/signals-core": "npm:^1.8.0"
-    "@toeverything/theme": "npm:^1.1.1"
     "@types/mdast": "npm:^4.0.4"
     lit: "npm:^3.2.0"
     minimatch: "npm:^10.0.1"
@@ -1615,10 +1615,10 @@ __metadata:
     "@blockexpanse/global": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
     "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/theme": "workspace:*"
     "@floating-ui/dom": "npm:^1.6.10"
     "@lit/context": "npm:^1.1.2"
     "@preact/signals-core": "npm:^1.8.0"
-    "@toeverything/theme": "npm:^1.1.1"
     "@types/mdast": "npm:^4.0.4"
     lit: "npm:^3.2.0"
     minimatch: "npm:^10.0.1"
@@ -1637,9 +1637,9 @@ __metadata:
     "@blockexpanse/global": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
     "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/theme": "workspace:*"
     "@lit/context": "npm:^1.1.2"
     "@preact/signals-core": "npm:^1.8.0"
-    "@toeverything/theme": "npm:^1.1.1"
     "@types/dompurify": "npm:^3.0.5"
     "@types/lodash.chunk": "npm:^4.2.9"
     fractional-indexing: "npm:^3.2.0"
@@ -1661,11 +1661,11 @@ __metadata:
     "@blockexpanse/icons": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
     "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/theme": "workspace:*"
     "@floating-ui/dom": "npm:^1.6.10"
     "@lit/context": "npm:^1.1.2"
     "@lottiefiles/dotlottie-wc": "npm:^0.4.0"
     "@preact/signals-core": "npm:^1.8.0"
-    "@toeverything/theme": "npm:^1.1.1"
     "@types/katex": "npm:^0.16.7"
     "@types/lodash.clonedeep": "npm:^4.5.9"
     date-fns: "npm:^4.0.0"
@@ -1701,10 +1701,10 @@ __metadata:
     "@blockexpanse/icons": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
     "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/theme": "workspace:*"
     "@floating-ui/dom": "npm:^1.6.10"
     "@lit/context": "npm:^1.1.2"
     "@preact/signals-core": "npm:^1.8.0"
-    "@toeverything/theme": "npm:^1.1.1"
     "@types/hast": "npm:^3.0.4"
     "@types/lodash.clonedeep": "npm:^4.5.9"
     "@types/lodash.mergewith": "npm:^4"
@@ -1725,8 +1725,8 @@ __metadata:
     "@blockexpanse/affine-shared": "workspace:*"
     "@blockexpanse/block-std": "workspace:*"
     "@blockexpanse/global": "workspace:*"
+    "@blockexpanse/theme": "workspace:*"
     "@preact/signals-core": "npm:^1.8.0"
-    "@toeverything/theme": "npm:^1.1.1"
     lit: "npm:^3.2.0"
   languageName: unknown
   linkType: soft
@@ -1783,11 +1783,11 @@ __metadata:
     "@blockexpanse/icons": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
     "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/theme": "workspace:*"
     "@emotion/css": "npm:^11.13.5"
     "@floating-ui/dom": "npm:^1.6.10"
     "@lit/context": "npm:^1.1.2"
     "@preact/signals-core": "npm:^1.8.0"
-    "@toeverything/theme": "npm:^1.1.1"
     "@types/dompurify": "npm:^3.0.5"
     "@types/hast": "npm:^3.0.4"
     "@types/katex": "npm:^0.16.7"
@@ -1836,11 +1836,11 @@ __metadata:
     "@blockexpanse/global": "workspace:*"
     "@blockexpanse/icons": "workspace:*"
     "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/theme": "workspace:*"
     "@emotion/hash": "npm:^0.9.2"
     "@floating-ui/dom": "npm:^1.6.10"
     "@lit/context": "npm:^1.1.2"
     "@preact/signals-core": "npm:^1.8.0"
-    "@toeverything/theme": "npm:^1.1.1"
     date-fns: "npm:^4.0.0"
     lit: "npm:^3.2.0"
     zod: "npm:^3.23.8"
@@ -1925,7 +1925,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@blockexpanse/pdf-viewer@workspace:packages/pdf-viewer":
+"@blockexpanse/pdf-viewer@workspace:*, @blockexpanse/pdf-viewer@workspace:packages/pdf-viewer":
   version: 0.0.0-use.local
   resolution: "@blockexpanse/pdf-viewer@workspace:packages/pdf-viewer"
   dependencies:
@@ -1953,13 +1953,14 @@ __metadata:
     "@blockexpanse/data-view": "workspace:*"
     "@blockexpanse/global": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
+    "@blockexpanse/pdf-viewer": "workspace:*"
+    "@blockexpanse/pdfium": "workspace:*"
     "@blockexpanse/presets": "workspace:*"
     "@blockexpanse/store": "workspace:*"
     "@blockexpanse/sync": "workspace:*"
+    "@blockexpanse/y-indexeddb": "workspace:*"
     "@preact/signals-core": "npm:^1.8.0"
     "@shoelace-style/shoelace": "npm:2.19.0"
-    "@toeverything/pdf-viewer": "npm:^0.1.1"
-    "@toeverything/y-indexeddb": "npm:0.10.0-canary.9"
     "@tweakpane/core": "npm:^2.0.4"
     "@types/katex": "npm:^0.16.7"
     "@types/micromatch": "npm:^4.0.9"
@@ -1990,10 +1991,10 @@ __metadata:
     "@blockexpanse/global": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
     "@blockexpanse/store": "workspace:*"
+    "@blockexpanse/theme": "workspace:*"
     "@floating-ui/dom": "npm:^1.6.10"
     "@lottiefiles/dotlottie-wc": "npm:^0.4.0"
     "@preact/signals-core": "npm:^1.8.0"
-    "@toeverything/theme": "npm:^1.1.1"
     lit: "npm:^3.2.0"
     zod: "npm:^3.23.8"
   languageName: unknown
@@ -2041,13 +2042,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@blockexpanse/theme@workspace:packages/theme":
+"@blockexpanse/theme@workspace:*, @blockexpanse/theme@workspace:packages/theme":
   version: 0.0.0-use.local
   resolution: "@blockexpanse/theme@workspace:packages/theme"
   languageName: unknown
   linkType: soft
 
-"@blockexpanse/y-indexeddb@workspace:packages/y-indexeddb":
+"@blockexpanse/y-indexeddb@workspace:*, @blockexpanse/y-indexeddb@workspace:packages/y-indexeddb":
   version: 0.0.0-use.local
   resolution: "@blockexpanse/y-indexeddb@workspace:packages/y-indexeddb"
   dependencies:
@@ -4800,50 +4801,6 @@ __metadata:
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
   checksum: 10/49821459d81c6bc435d97128d6386ca24f1e4b3ba8e46cb5a96fe3643efa6e002d88c1b02b7f2ec58da593e805c59b78d7fdf0db565c1f02ba782f63ee984040
-  languageName: node
-  linkType: hard
-
-"@toeverything/pdf-viewer-types@npm:0.1.1":
-  version: 0.1.1
-  resolution: "@toeverything/pdf-viewer-types@npm:0.1.1"
-  checksum: 10/cd7e7785097924778899febaaffecb893451aa9eb0117a5b28047004f788efb6ec1facab74e93d6ac3464033d9a4ad57f09f83c6f45ab3ebf67ceedf2180fd23
-  languageName: node
-  linkType: hard
-
-"@toeverything/pdf-viewer@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@toeverything/pdf-viewer@npm:0.1.1"
-  dependencies:
-    "@toeverything/pdf-viewer-types": "npm:0.1.1"
-    "@toeverything/pdfium": "npm:0.1.1"
-  checksum: 10/7fc4ac3156504467517ed4d99d5ba5ccd3beae0759464a6a9a3a62f2fc09acff44fbee9c2451cc437d97313c51746a631fb0d367b365f19469079588ba7c5ce0
-  languageName: node
-  linkType: hard
-
-"@toeverything/pdfium@npm:0.1.1":
-  version: 0.1.1
-  resolution: "@toeverything/pdfium@npm:0.1.1"
-  checksum: 10/3d832eaef3ea4aba142561ed8529e216ed739026e7680e5d4fcd05d56fdd458a06273d6b18f1dbc0af9edcc538fa6fd0246757ebb4957a048a8d69bbf579549a
-  languageName: node
-  linkType: hard
-
-"@toeverything/theme@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@toeverything/theme@npm:1.1.1"
-  checksum: 10/a4df493ec8c43312d2b0caa5ec0fa296732042e169ffaef57e115c44f82ca13cb75679c95cf3ba12fc25c73a9dda8a6331196d145acb27445e08e0eafd7fc78a
-  languageName: node
-  linkType: hard
-
-"@toeverything/y-indexeddb@npm:0.10.0-canary.9":
-  version: 0.10.0-canary.9
-  resolution: "@toeverything/y-indexeddb@npm:0.10.0-canary.9"
-  dependencies:
-    idb: "npm:^7.1.1"
-    nanoid: "npm:^5.0.1"
-    y-provider: "npm:0.10.0-canary.9"
-  peerDependencies:
-    yjs: ^13
-  checksum: 10/126a234f0ef64c24fa8b7a2ab398a14de0e3f34187cd931af07c30551a336e240d58b8236aa78d69544adb429b1457be8d071a04109f86441b39c4a0c98a446e
   languageName: node
   linkType: hard
 
@@ -11686,7 +11643,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^5.0.1, nanoid@npm:^5.0.7":
+"nanoid@npm:^5.0.7":
   version: 5.0.9
   resolution: "nanoid@npm:5.0.9"
   bin:

@@ -1,4 +1,4 @@
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { css, unsafeCSS } from 'lit';
 
 import { scrollbarStyle } from '../../../_common/components/utils.js';

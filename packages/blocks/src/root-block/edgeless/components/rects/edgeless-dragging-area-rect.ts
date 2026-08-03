@@ -1,7 +1,7 @@
 import type { RootBlockModel } from '@blockexpanse/affine-model';
 
 import { WidgetComponent } from '@blockexpanse/block-std';
-import { cssVarV2 } from '@toeverything/theme/v2';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 import { css, html, nothing, unsafeCSS } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
 

@@ -1,5 +1,5 @@
-import { baseTheme } from '@toeverything/theme';
-import { cssVarV2 } from '@toeverything/theme/v2';
+import { baseTheme } from '@blockexpanse/theme';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 import {
   css,
   html,

@@ -11,9 +11,9 @@ import {
   type DisposableClass,
   WithDisposable,
 } from '@blockexpanse/global/utils';
+import { cssVar } from '@blockexpanse/theme';
 import { consume } from '@lit/context';
 import { effect } from '@preact/signals-core';
-import { cssVar } from '@toeverything/theme';
 import { property, state } from 'lit/decorators.js';
 
 import type { EdgelessRootBlockComponent } from '../../../edgeless-root-block.js';

@@ -47,8 +47,8 @@ import {
   WithDisposable,
 } from '@blockexpanse/global/utils';
 import { DocCollection } from '@blockexpanse/store';
+import { baseTheme } from '@blockexpanse/theme';
 import { consume } from '@lit/context';
-import { baseTheme } from '@toeverything/theme';
 import { css, html, LitElement, nothing, unsafeCSS } from 'lit';
 import { property } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';

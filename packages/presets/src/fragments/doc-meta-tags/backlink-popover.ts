@@ -7,7 +7,7 @@ import {
 } from '@blockexpanse/affine-shared/services';
 import { DualLinkIcon16, scrollbarStyle } from '@blockexpanse/blocks';
 import { WithDisposable } from '@blockexpanse/global/utils';
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { css, html, LitElement, unsafeCSS } from 'lit';
 import { state } from 'lit/decorators.js';
 

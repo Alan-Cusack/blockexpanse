@@ -13,8 +13,8 @@ import {
   SignalWatcher,
   WithDisposable,
 } from '@blockexpanse/global/utils';
+import { themeToVar } from '@blockexpanse/theme/v2';
 import { consume } from '@lit/context';
-import { themeToVar } from '@toeverything/theme/v2';
 import { LitElement } from 'lit';
 import { property, state } from 'lit/decorators.js';
 

@@ -12,7 +12,7 @@ import {
   createIcon,
 } from '@blockexpanse/data-view';
 import { EditIcon } from '@blockexpanse/icons/lit';
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { css, nothing, unsafeCSS } from 'lit';
 import { query, state } from 'lit/decorators.js';
 import { html } from 'lit/static-html.js';

@@ -1,5 +1,5 @@
 import { unsafeCSSVarV2 } from '@blockexpanse/affine-shared/theme';
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { css, unsafeCSS } from 'lit';
 
 import {

@@ -57,7 +57,7 @@ import {
   YesterdayIcon,
   YoutubeDuotoneIcon,
 } from '@blockexpanse/icons/lit';
-import { cssVarV2 } from '@toeverything/theme/v2';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 
 import type { PageRootBlockComponent } from '../../page/page-root-block.js';
 import type { AffineLinkedDocWidget } from '../linked-doc/index.js';

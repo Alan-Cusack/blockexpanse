@@ -1,7 +1,7 @@
 import { unsafeCSSVarV2 } from '@blockexpanse/affine-shared/theme';
 import { IS_MOBILE } from '@blockexpanse/global/env';
 import { CloseIcon, SearchIcon } from '@blockexpanse/icons/lit';
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { css, html, unsafeCSS } from 'lit';
 import { query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';

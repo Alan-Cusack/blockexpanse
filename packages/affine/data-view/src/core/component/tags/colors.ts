@@ -1,4 +1,4 @@
-import { cssVarV2 } from '@toeverything/theme/v2';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 
 export type SelectOptionColor = {
   oldColor: string;

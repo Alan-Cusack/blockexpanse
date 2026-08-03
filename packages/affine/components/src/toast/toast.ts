@@ -1,6 +1,6 @@
 import type { EditorHost } from '@blockexpanse/block-std';
 
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { html } from 'lit';
 
 import { createToastContainer } from './create.js';

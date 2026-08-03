@@ -3,7 +3,7 @@ import type { TemplateResult } from 'lit';
 
 import { ShadowlessElement } from '@blockexpanse/block-std';
 import { Point } from '@blockexpanse/global/utils';
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { html } from 'lit';
 import { property } from 'lit/decorators.js';
 

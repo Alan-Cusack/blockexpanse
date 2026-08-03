@@ -1,10 +1,10 @@
 import { assertExists, Slot } from '@blockexpanse/global/utils';
+import { cssVar } from '@blockexpanse/theme';
 import {
   autoUpdate,
   computePosition,
   type ComputePositionReturn,
 } from '@floating-ui/dom';
-import { cssVar } from '@toeverything/theme';
 import { render } from 'lit';
 
 import type { AdvancedPortalOptions, PortalOptions } from './types.js';

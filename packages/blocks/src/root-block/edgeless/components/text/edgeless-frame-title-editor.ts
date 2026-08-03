@@ -10,7 +10,7 @@ import {
   Bound,
   WithDisposable,
 } from '@blockexpanse/global/utils';
-import { cssVarV2 } from '@toeverything/theme/v2';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 import { css, html, nothing } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';

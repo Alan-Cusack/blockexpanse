@@ -16,9 +16,9 @@ import {
   MoreHorizontalIcon,
 } from '@blockexpanse/icons/lit';
 import { nanoid } from '@blockexpanse/store';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 import { flip, offset } from '@floating-ui/dom';
 import { computed, type ReadonlySignal, signal } from '@preact/signals-core';
-import { cssVarV2 } from '@toeverything/theme/v2';
 import { nothing } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';

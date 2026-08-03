@@ -15,7 +15,7 @@ import {
   once,
 } from '@blockexpanse/blocks';
 import { SignalWatcher, WithDisposable } from '@blockexpanse/global/utils';
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { css, html, LitElement, nothing, unsafeCSS } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';

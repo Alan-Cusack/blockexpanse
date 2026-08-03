@@ -12,7 +12,7 @@ import {
 } from '@blockexpanse/affine-shared/services';
 import { unsafeCSSVar } from '@blockexpanse/affine-shared/theme';
 import { WithDisposable } from '@blockexpanse/global/utils';
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import {
   css,
   html,

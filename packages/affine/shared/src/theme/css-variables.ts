@@ -5,8 +5,8 @@ import {
   type AffineCssVariables,
   type AffineTheme,
   cssVar,
-} from '@toeverything/theme';
-import { type AffineThemeKeyV2, cssVarV2 } from '@toeverything/theme/v2';
+} from '@blockexpanse/theme';
+import { type AffineThemeKeyV2, cssVarV2 } from '@blockexpanse/theme/v2';
 import { unsafeCSS } from 'lit';
 
 export const ColorVariables = [

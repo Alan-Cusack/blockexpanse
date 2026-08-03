@@ -23,8 +23,8 @@
     "@blockexpanse/affine-shared": "workspace:*",
     "@blockexpanse/block-std": "workspace:*",
     "@blockexpanse/global": "workspace:*",
+    "@blockexpanse/theme": "workspace:*",
     "@preact/signals-core": "^1.8.0",
-    "@toeverything/theme": "^1.1.1",
     "lit": "^3.2.0"
   },
   "exports": {

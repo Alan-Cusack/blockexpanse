@@ -5,7 +5,7 @@ import {
   requiredProperties,
 } from '@blockexpanse/block-std';
 import { WithDisposable } from '@blockexpanse/global/utils';
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { css, html, LitElement, nothing, unsafeCSS } from 'lit';
 import { property } from 'lit/decorators.js';
 

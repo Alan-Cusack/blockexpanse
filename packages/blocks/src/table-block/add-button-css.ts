@@ -1,5 +1,5 @@
+import { cssVar } from '@blockexpanse/theme';
 import { css } from '@emotion/css';
-import { cssVar } from '@toeverything/theme';
 
 import { tableTheme } from './theme.js';
 

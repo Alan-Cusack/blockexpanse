@@ -130,8 +130,8 @@ const chunkGroups = {
   presets: [require.resolve('@blockexpanse/presets')],
   common: [
     require.resolve('@blockexpanse/icons/lit'),
-    require.resolve('@toeverything/theme'),
-    require.resolve('@toeverything/y-indexeddb'),
+    require.resolve('@blockexpanse/theme'),
+    require.resolve('@blockexpanse/y-indexeddb'),
     require.resolve('@preact/signals-core'),
     require.resolve('@lit/context'),
     require.resolve('lit'),

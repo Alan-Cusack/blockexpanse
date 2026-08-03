@@ -3,7 +3,7 @@ import type { FrameBlockModel } from '@blockexpanse/affine-model';
 import { ThemeProvider } from '@blockexpanse/affine-shared/services';
 import { GfxBlockComponent } from '@blockexpanse/block-std';
 import { Bound } from '@blockexpanse/global/utils';
-import { cssVarV2 } from '@toeverything/theme/v2';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 import { html } from 'lit';
 import { state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';

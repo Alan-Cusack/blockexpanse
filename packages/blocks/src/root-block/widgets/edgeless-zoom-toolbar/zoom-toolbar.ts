@@ -10,8 +10,8 @@ import {
 } from '@blockexpanse/affine-shared/services';
 import { stopPropagation } from '@blockexpanse/affine-shared/utils';
 import { WithDisposable } from '@blockexpanse/global/utils';
+import { baseTheme } from '@blockexpanse/theme';
 import { effect } from '@preact/signals-core';
-import { baseTheme } from '@toeverything/theme';
 import { css, html, LitElement, nothing, unsafeCSS } from 'lit';
 import { property } from 'lit/decorators.js';
 

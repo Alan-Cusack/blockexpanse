@@ -2,7 +2,7 @@ import {
   EMBED_CARD_HEIGHT,
   EMBED_CARD_WIDTH,
 } from '@blockexpanse/affine-shared/consts';
-import { cssVarV2 } from '@toeverything/theme/v2';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 import { css, html, unsafeCSS } from 'lit';
 
 import { embedNoteContentStyles } from '../common/embed-note-content-styles.js';

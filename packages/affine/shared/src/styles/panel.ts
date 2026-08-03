@@ -1,4 +1,4 @@
-import { cssVarV2 } from '@toeverything/theme/v2';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 import { unsafeCSS } from 'lit';
 
 import { FONT_SM } from './font.js';

@@ -1,4 +1,4 @@
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { unsafeCSS } from 'lit';
 
 export const FONT_BASE = unsafeCSS(`

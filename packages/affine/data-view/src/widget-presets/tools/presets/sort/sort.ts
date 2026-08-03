@@ -1,8 +1,8 @@
 import { popupTargetFromElement } from '@blockexpanse/affine-components/context-menu';
 import { IS_MOBILE } from '@blockexpanse/global/env';
 import { SortIcon } from '@blockexpanse/icons/lit';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 import { computed } from '@preact/signals-core';
-import { cssVarV2 } from '@toeverything/theme/v2';
 import { css, html, nothing } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
 

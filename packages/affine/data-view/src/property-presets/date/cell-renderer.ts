@@ -6,9 +6,9 @@ import { DatePicker } from '@blockexpanse/affine-components/date-picker';
 import { createLitPortal } from '@blockexpanse/affine-components/portal';
 import { unsafeCSSVarV2 } from '@blockexpanse/affine-shared/theme';
 import { IS_MOBILE } from '@blockexpanse/global/env';
+import { baseTheme } from '@blockexpanse/theme';
 import { flip, offset } from '@floating-ui/dom';
 import { signal } from '@preact/signals-core';
-import { baseTheme } from '@toeverything/theme';
 import { format } from 'date-fns/format';
 import { css, html, unsafeCSS } from 'lit';
 

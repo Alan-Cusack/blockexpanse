@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from '@blockexpanse/blocks';
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import '@toeverything/theme/style.css';
+import '@blockexpanse/theme/style.css';
 import { beforeEach, describe, expect, test } from 'vitest';
 
 import { getDocRootBlock } from '../utils/edgeless.js';

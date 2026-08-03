@@ -1,12 +1,12 @@
-import type { Document } from '@toeverything/pdf-viewer';
+import type { Document } from '@blockexpanse/pdf-viewer';
 
 import {
   createPDFium,
   PageRenderingflags,
   Runtime,
   Viewer,
-} from '@toeverything/pdf-viewer';
-import wasmUrl from '@toeverything/pdfium/wasm?url';
+} from '@blockexpanse/pdf-viewer';
+import wasmUrl from '@blockexpanse/pdfium/wasm?url';
 
 import { type MessageData, type MessageDataType, MessageOp } from './types';
 

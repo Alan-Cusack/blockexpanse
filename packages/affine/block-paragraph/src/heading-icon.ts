@@ -10,7 +10,7 @@ import {
 } from '@blockexpanse/affine-components/icons';
 import { ShadowlessElement } from '@blockexpanse/block-std';
 import { WithDisposable } from '@blockexpanse/global/utils';
-import { cssVarV2 } from '@toeverything/theme/v2';
+import { cssVarV2 } from '@blockexpanse/theme/v2';
 import { css, html, nothing, unsafeCSS } from 'lit';
 import { property } from 'lit/decorators.js';
 

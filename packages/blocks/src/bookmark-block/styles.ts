@@ -1,5 +1,5 @@
 import { unsafeCSSVar } from '@blockexpanse/affine-shared/theme';
-import { baseTheme } from '@toeverything/theme';
+import { baseTheme } from '@blockexpanse/theme';
 import { css, unsafeCSS } from 'lit';
 
 import { EMBED_CARD_HEIGHT, EMBED_CARD_WIDTH } from '../_common/consts.js';

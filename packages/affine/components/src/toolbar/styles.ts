@@ -2,7 +2,7 @@ import {
   type AffineCssVariables,
   combinedDarkCssVariables,
   combinedLightCssVariables,
-} from '@toeverything/theme';
+} from '@blockexpanse/theme';
 import { unsafeCSS } from 'lit';
 
 const toolbarColorKeys: Array<keyof AffineCssVariables> = [

@@ -17,8 +17,8 @@ import {
   identityI18nFn,
 } from '@blockexpanse/affine-shared/services';
 import { Bound, SignalWatcher } from '@blockexpanse/global/utils';
+import { cssVar } from '@blockexpanse/theme';
 import { effect } from '@preact/signals-core';
-import { cssVar } from '@toeverything/theme';
 import { css, html, LitElement, nothing, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
 

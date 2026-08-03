@@ -6,12 +6,12 @@ import {
   StdIdentifier,
 } from '@blockexpanse/block-std';
 import { type Container, createIdentifier } from '@blockexpanse/global/di';
-import { signal, type Signal } from '@preact/signals-core';
 import {
   type AffineCssVariables,
   combinedDarkCssVariables,
   combinedLightCssVariables,
-} from '@toeverything/theme';
+} from '@blockexpanse/theme';
+import { signal, type Signal } from '@preact/signals-core';
 
 import { isInsideEdgelessEditor } from '../utils/index.js';
 

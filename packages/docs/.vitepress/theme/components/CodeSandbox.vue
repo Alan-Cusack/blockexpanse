@@ -15,7 +15,7 @@
       ...props, // do not forget it
       deps: {
         yjs: 'latest',
-        '@toeverything/theme': 'latest',
+        '@blockexpanse/theme': 'latest',
         '@blockexpanse/presets': 'canary',
       },
     }"
