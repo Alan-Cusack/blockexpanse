@@ -6,7 +6,6 @@ import { extMimeMap, Job } from '@blockexpanse/store';
 
 import { MarkdownAdapter } from '../adapters/markdown/index.js';
 import {
-  defaultImageProxyMiddleware,
   docLinkBaseURLMiddleware,
   fileNameMiddleware,
   titleMiddleware,
@@ -88,7 +87,7 @@ async function importMarkdownToBlock({
 }: ImportMarkdownToBlockOptions) {
   const job = new Job({
     collection: doc.collection,
-    middlewares: [defaultImageProxyMiddleware, docLinkBaseURLMiddleware],
+    middlewares: [docLinkBaseURLMiddleware],
   });
   const adapter = new MarkdownAdapter(job);
   const snapshot = await adapter.toSliceSnapshot({
@@ -124,11 +123,7 @@ async function importMarkdownToDoc({
 }: ImportMarkdownToDocOptions) {
   const job = new Job({
     collection,
-    middlewares: [
-      defaultImageProxyMiddleware,
-      fileNameMiddleware(fileName),
-      docLinkBaseURLMiddleware,
-    ],
+    middlewares: [fileNameMiddleware(fileName), docLinkBaseURLMiddleware],
   });
   const mdAdapter = new MarkdownAdapter(job);
   const page = await mdAdapter.toDoc({
@@ -183,7 +178,6 @@ async function importMarkdownZip({
       const job = new Job({
         collection,
         middlewares: [
-          defaultImageProxyMiddleware,
           fileNameMiddleware(fileNameWithoutExt),
           docLinkBaseURLMiddleware,
         ],

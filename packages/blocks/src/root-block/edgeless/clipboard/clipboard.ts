@@ -909,7 +909,6 @@ export class EdgelessClipboardController extends PageClipboard {
     const replaceRichTextWithSvgElementFunc =
       this._replaceRichTextWithSvgElement.bind(this);
 
-    const imageProxy = host.std.clipboard.configs.get('imageProxy');
     const html2canvasOption = {
       ignoreElements: function (element: Element) {
         if (
@@ -942,8 +941,7 @@ export class EdgelessClipboardController extends PageClipboard {
         replaceRichTextWithSvgElementFunc(element);
       },
       backgroundColor: 'transparent',
-      useCORS: imageProxy ? false : true,
-      proxy: imageProxy,
+      useCORS: true,
     };
 
     const _drawTopLevelBlock = async (

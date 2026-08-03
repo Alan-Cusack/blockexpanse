@@ -2,7 +2,6 @@ import { sha } from '@blockexpanse/global/utils';
 import { type DocCollection, extMimeMap, Job } from '@blockexpanse/store';
 
 import { NotionHtmlAdapter } from '../adapters/notion-html/notion-html.js';
-import { defaultImageProxyMiddleware } from './middlewares.js';
 import { Unzip } from './utils.js';
 
 type ImportNotionZipOptions = {
@@ -107,7 +106,7 @@ async function importNotionZip({
     const pagePromises = Array.from(pagePaths).map(async path => {
       const job = new Job({
         collection: collection,
-        middlewares: [defaultImageProxyMiddleware],
+        middlewares: [],
       });
       const htmlAdapter = new NotionHtmlAdapter(job);
       const assets = job.assetsManager.getAssets();

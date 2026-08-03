@@ -2,11 +2,9 @@ import { ImageBlockSchema } from '@blockexpanse/affine-model';
 import {
   BlockNotionHtmlAdapterExtension,
   type BlockNotionHtmlAdapterMatcher,
-  FetchUtils,
   HastUtils,
+  ingestExternalImageUrl,
 } from '@blockexpanse/affine-shared/adapters';
-import { getFilenameFromContentDisposition } from '@blockexpanse/affine-shared/utils';
-import { sha } from '@blockexpanse/global/utils';
 import {
   type AssetsManager,
   type ASTWalkerContext,
@@ -17,45 +15,11 @@ import {
 async function processImageNode(
   imageURL: string,
   walkerContext: ASTWalkerContext<BlockSnapshot>,
-  assets: AssetsManager,
-  configs: Map<string, string>
+  assets: AssetsManager
 ) {
-  let blobId = '';
-  if (!FetchUtils.fetchable(imageURL)) {
-    const imageURLSplit = imageURL.split('/');
-    while (imageURLSplit.length > 0) {
-      const key = assets
-        .getPathBlobIdMap()
-        .get(decodeURIComponent(imageURLSplit.join('/')));
-      if (key) {
-        blobId = key;
-        break;
-      }
-      imageURLSplit.shift();
-    }
-  } else {
-    const res = await FetchUtils.fetchImage(
-      imageURL,
-      undefined,
-      configs.get('imageProxy') as string
-    );
-    if (!res) {
-      return;
-    }
-    const clonedRes = res.clone();
-    const name =
-      getFilenameFromContentDisposition(
-        res.headers.get('Content-Disposition') ?? ''
-      ) ??
-      (imageURL.split('/').at(-1) ?? 'image') +
-        '.' +
-        (res.headers.get('Content-Type')?.split('/').at(-1) ?? 'png');
-    const file = new File([await res.blob()], name, {
-      type: res.headers.get('Content-Type') ?? '',
-    });
-    blobId = await sha(await clonedRes.arrayBuffer());
-    assets?.getAssets().set(blobId, file);
-    await assets?.writeToBlob(blobId);
+  const blobId = await ingestExternalImageUrl(imageURL, assets);
+  if (!blobId) {
+    return;
   }
   walkerContext
     .openNode(
@@ -91,7 +55,7 @@ export const imageBlockNotionHtmlAdapterMatcher: BlockNotionHtmlAdapterMatcher =
         if (!HastUtils.isElement(o.node)) {
           return;
         }
-        const { assets, walkerContext, configs } = context;
+        const { assets, walkerContext } = context;
         if (!assets) {
           return;
         }
@@ -107,7 +71,7 @@ export const imageBlockNotionHtmlAdapterMatcher: BlockNotionHtmlAdapterMatcher =
                 ? image.properties.src
                 : '';
             if (imageURL) {
-              await processImageNode(imageURL, walkerContext, assets, configs);
+              await processImageNode(imageURL, walkerContext, assets);
             }
             break;
           }
@@ -125,7 +89,7 @@ export const imageBlockNotionHtmlAdapterMatcher: BlockNotionHtmlAdapterMatcher =
                   : '';
             }
             if (imageURL) {
-              await processImageNode(imageURL, walkerContext, assets, configs);
+              await processImageNode(imageURL, walkerContext, assets);
             }
             break;
           }

@@ -18,6 +18,7 @@ export const guide: DefaultTheme.NavItem[] = [
         link: 'guide/custom-block-tutorial',
       },
       { text: 'Collaboration', link: 'guide/collaboration' },
+      { text: 'Blob Storage & Images', link: 'guide/blob-storage' },
       {
         text: 'Working with Block Tree',
         // @ts-ignore

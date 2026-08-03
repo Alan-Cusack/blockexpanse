@@ -12,10 +12,6 @@ import {
 import { FetchUtils } from '@blockexpanse/affine-shared/adapters';
 import { CANVAS_EXPORT_IGNORE_TAGS } from '@blockexpanse/affine-shared/consts';
 import {
-  getImageProxyEndpoint,
-  ImageProxyProvider,
-} from '@blockexpanse/affine-shared/services';
-import {
   isInsidePageEditor,
   matchFlavours,
 } from '@blockexpanse/affine-shared/utils';
@@ -42,12 +38,7 @@ import { FileExporter } from './file-exporter.js';
 
 type Html2CanvasFunction = typeof import('html2canvas').default;
 
-export type ExportOptions = {
-  imageProxyEndpoint: string;
-};
 export class ExportManager {
-  private _exportOptions: ExportOptions;
-
   private _replaceRichTextWithSvgElement = (element: HTMLElement) => {
     const richList = Array.from(element.querySelectorAll('.inline-editor'));
     richList.map(rich => {
@@ -65,11 +56,7 @@ export class ExportManager {
     const imgList = Array.from(element.querySelectorAll('img'));
     // Create an array of promises
     const promises = imgList.map(img => {
-      return FetchUtils.fetchImage(
-        img.src,
-        undefined,
-        this._exportOptions.imageProxyEndpoint
-      )
+      return FetchUtils.fetchLocalImage(img.src)
         .then(response => response && response.blob())
         .then(async blob => {
           if (!blob) return;
@@ -118,13 +105,7 @@ export class ExportManager {
     return this.std.host;
   }
 
-  constructor(readonly std: BlockStdScope) {
-    const endpoint =
-      std.getOptional(ImageProxyProvider)?.endpoint ?? getImageProxyEndpoint();
-    this._exportOptions = {
-      imageProxyEndpoint: endpoint,
-    };
-  }
+  constructor(readonly std: BlockStdScope) {}
 
   private _checkCanContinueToCanvas(pathName: string, editorMode: boolean) {
     if (
@@ -246,8 +227,7 @@ export class ExportManager {
       x: pageLeft - viewport.left,
       width: pageWidth,
       height: viewportHeight,
-      useCORS: this._exportOptions.imageProxyEndpoint ? false : true,
-      proxy: this._exportOptions.imageProxyEndpoint,
+      useCORS: true,
     };
 
     let data: HTMLCanvasElement;
@@ -368,8 +348,7 @@ export class ExportManager {
         this._replaceRichTextWithSvgElement(element);
         await this.replaceImgSrcWithSvg(element);
       },
-      useCORS: this._exportOptions.imageProxyEndpoint ? false : true,
-      proxy: this._exportOptions.imageProxyEndpoint,
+      useCORS: true,
     };
 
     let data: HTMLCanvasElement;

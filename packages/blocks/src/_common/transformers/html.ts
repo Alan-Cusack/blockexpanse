@@ -5,7 +5,6 @@ import { extMimeMap, Job } from '@blockexpanse/store';
 
 import { HtmlAdapter } from '../adapters/html-adapter/html.js';
 import {
-  defaultImageProxyMiddleware,
   docLinkBaseURLMiddleware,
   fileNameMiddleware,
   titleMiddleware,
@@ -78,11 +77,7 @@ async function importHTMLToDoc({
 }: ImportHTMLToDocOptions) {
   const job = new Job({
     collection,
-    middlewares: [
-      defaultImageProxyMiddleware,
-      fileNameMiddleware(fileName),
-      docLinkBaseURLMiddleware,
-    ],
+    middlewares: [fileNameMiddleware(fileName), docLinkBaseURLMiddleware],
   });
   const htmlAdapter = new HtmlAdapter(job);
   const page = await htmlAdapter.toDoc({
@@ -135,7 +130,6 @@ async function importHTMLZip({ collection, imported }: ImportHTMLZipOptions) {
       const job = new Job({
         collection,
         middlewares: [
-          defaultImageProxyMiddleware,
           fileNameMiddleware(fileNameWithoutExt),
           docLinkBaseURLMiddleware,
         ],

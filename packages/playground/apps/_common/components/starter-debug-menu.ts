@@ -9,7 +9,6 @@ import {
   ColorScheme,
   ColorVariables,
   createAssetsArchive,
-  defaultImageProxyMiddleware,
   docLinkBaseURLMiddleware,
   type DocMode,
   DocModeProvider,
@@ -441,7 +440,7 @@ export class StarterDebugMenu extends ShadowlessElement {
       if (!file) return;
       const job = new Job({
         collection: this.collection,
-        middlewares: [defaultImageProxyMiddleware],
+        middlewares: [],
       });
       const htmlAdapter = new NotionHtmlAdapter(job);
       await htmlAdapter.toDoc({

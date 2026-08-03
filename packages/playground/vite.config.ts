@@ -1,6 +1,8 @@
 import type { GetManualChunk } from 'rollup';
 import type { Plugin } from 'vite';
 
+import react from '@vitejs/plugin-react';
+import vue from '@vitejs/plugin-vue';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { cpus } from 'node:os';
@@ -173,6 +175,8 @@ export default ({ mode }) => {
     plugins: [
       hmrPlugin,
       sourcemapExclude(),
+      react({ include: [/\/apps\/react\//] }),
+      vue(),
       enableIstanbul &&
         istanbul({
           cwd: fileURLToPath(new URL('../..', import.meta.url)),
@@ -191,7 +195,7 @@ export default ({ mode }) => {
       target: 'es2018',
     },
     resolve: {
-      extensions: ['.ts', '.js'],
+      extensions: ['.ts', '.tsx', '.js', '.jsx', '.vue'],
     },
     build: {
       target: 'es2022',
@@ -211,6 +215,8 @@ export default ({ mode }) => {
           'starter/': resolve(__dirname, 'starter/index.html'),
           'minimal/': resolve(__dirname, 'minimal/index.html'),
           'collab/': resolve(__dirname, 'collab/index.html'),
+          'react/': resolve(__dirname, 'react/index.html'),
+          'vue/': resolve(__dirname, 'vue/index.html'),
           'examples/basic/page': resolve(
             __dirname,
             'examples/basic/page/index.html'

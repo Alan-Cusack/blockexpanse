@@ -11,7 +11,6 @@ import {
   NotionTextAdapter,
 } from '../../_common/adapters/index.js';
 import {
-  defaultImageProxyMiddleware,
   replaceIdMiddleware,
   titleMiddleware,
 } from '../../_common/transformers/middlewares.js';
@@ -59,7 +58,6 @@ export class PageClipboard {
     this._std.clipboard.use(paste);
     this._std.clipboard.use(replaceIdMiddleware);
     this._std.clipboard.use(titleMiddleware);
-    this._std.clipboard.use(defaultImageProxyMiddleware);
 
     this._disposables.add({
       dispose: () => {
@@ -80,7 +78,6 @@ export class PageClipboard {
         this._std.clipboard.unuse(paste);
         this._std.clipboard.unuse(replaceIdMiddleware);
         this._std.clipboard.unuse(titleMiddleware);
-        this._std.clipboard.unuse(defaultImageProxyMiddleware);
       },
     });
   };

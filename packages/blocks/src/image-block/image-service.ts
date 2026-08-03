@@ -1,7 +1,6 @@
 import { ImageBlockSchema } from '@blockexpanse/affine-model';
 import {
   DragHandleConfigExtension,
-  setImageProxyEndpoint,
   TelemetryProvider,
 } from '@blockexpanse/affine-shared/services';
 import {
@@ -26,9 +25,6 @@ import { addSiblingImageBlock } from './utils.js';
 
 export class ImageBlockService extends BlockService {
   static override readonly flavour = ImageBlockSchema.model.flavour;
-
-  /** @deprecated Prefer `ImageProxyExtension(endpoint)`. */
-  static setImageProxyURL = setImageProxyEndpoint;
 
   private _fileDropOptions: FileDropOptions = {
     flavour: this.flavour,

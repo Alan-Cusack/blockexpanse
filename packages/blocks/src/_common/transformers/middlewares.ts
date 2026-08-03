@@ -8,10 +8,6 @@ import type {
 } from '@blockexpanse/affine-model';
 import type { DeltaOperation, JobMiddleware } from '@blockexpanse/store';
 
-import {
-  getImageProxyEndpoint,
-  setImageProxyEndpoint,
-} from '@blockexpanse/affine-shared/services';
 import { assertExists } from '@blockexpanse/global/utils';
 
 export const replaceIdMiddleware: JobMiddleware = ({ slots, collection }) => {
@@ -200,16 +196,6 @@ export const replaceIdMiddleware: JobMiddleware = ({ slots, collection }) => {
   });
 };
 
-export const customImageProxyMiddleware = (
-  imageProxyURL: string
-): JobMiddleware => {
-  return ({ adapterConfigs }) => {
-    if (imageProxyURL) {
-      adapterConfigs.set('imageProxy', imageProxyURL);
-    }
-  };
-};
-
 const customDocLinkBaseUrlMiddleware = (baseUrl: string): JobMiddleware => {
   return ({ adapterConfigs, collection }) => {
     const docLinkBaseUrl = baseUrl
@@ -250,24 +236,6 @@ export const docLinkBaseURLMiddleware =
 
 export const setDocLinkBaseURLMiddleware =
   defaultDocLinkBaseURLMiddlewareBuilder.set;
-
-/**
- * Reads the current endpoint from {@link getImageProxyEndpoint}
- * (set via {@link ImageProxyExtension} / {@link setImageProxyMiddlewareURL}).
- */
-export const defaultImageProxyMiddleware: JobMiddleware = ({
-  adapterConfigs,
-}) => {
-  const imageProxyURL = getImageProxyEndpoint();
-  if (imageProxyURL) {
-    adapterConfigs.set('imageProxy', imageProxyURL);
-  }
-};
-
-/** @deprecated Prefer `ImageProxyExtension(endpoint)` in host apps. */
-export const setImageProxyMiddlewareURL = (url: string) => {
-  setImageProxyEndpoint(url);
-};
 
 export const embedSyncedDocMiddleware =
   (type: 'content'): JobMiddleware =>

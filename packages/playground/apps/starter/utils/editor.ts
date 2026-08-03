@@ -2,6 +2,7 @@ import type { DocCollection } from '@blockexpanse/store';
 
 import {
   createBuiltinI18n,
+  FetchExternalAssetExtension,
   I18nExtension,
   I18nProvider,
   identityI18nFn,
@@ -127,10 +128,22 @@ export async function mountDefaultDocEditor(collection: DocCollection) {
     NotificationExtension(mockNotificationService(editor)),
     I18nExtension(createBuiltinI18n({ locale: 'zh-CN' })),
     OverrideThemeExtension(themeExtension),
-    // Opt-in proxies (SDK defaults are empty). Example:
-    // import { AFFINE_IMAGE_PROXY_ENDPOINT, AFFINE_LINK_PREVIEW_ENDPOINT } from '@blockexpanse/affine-shared/consts';
-    // import { ImageProxyExtension, LinkPreviewExtension } from '@blockexpanse/affine-shared/services';
-    // ImageProxyExtension(AFFINE_IMAGE_PROXY_ENDPOINT),
+    // Demo: fetch external images via browser (CORS-permitting URLs only).
+    // Production apps should call your backend — see blob-storage.md.
+    FetchExternalAssetExtension(async url => {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) {
+          return null;
+        }
+        return await res.blob();
+      } catch {
+        return null;
+      }
+    }),
+    // Opt-in link preview (SDK default is disabled). Example:
+    // import { AFFINE_LINK_PREVIEW_ENDPOINT } from '@blockexpanse/affine-shared/consts';
+    // import { LinkPreviewExtension } from '@blockexpanse/affine-shared/services';
     // LinkPreviewExtension(AFFINE_LINK_PREVIEW_ENDPOINT),
     {
       setup: di => {

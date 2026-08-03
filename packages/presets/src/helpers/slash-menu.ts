@@ -7,10 +7,11 @@
  */
 
 import type { AffineSlashMenuContext } from '@blockexpanse/blocks/widgets/slash-menu';
-import type {
+
+import {
   defaultSlashMenuConfig,
   type SlashMenuConfig,
-  SlashMenuItem,
+  type SlashMenuItem,
 } from '@blockexpanse/blocks/widgets/slash-menu/config';
 
 export interface SlashMenuItemOptions {

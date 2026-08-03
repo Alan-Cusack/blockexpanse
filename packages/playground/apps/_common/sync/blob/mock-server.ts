@@ -1,55 +1,43 @@
 import type { BlobSource } from '@blockexpanse/sync';
 
+import { CloudBlobSource } from '@blockexpanse/sync';
+
 /**
- * @internal just for test
+ * Playground / e2e shadow blob source.
  *
- * API: /api/collection/:id/blob/:key
- * GET: get blob
- * PUT: set blob
- * DELETE: delete blob
+ * Routes: `/api/collection/:id/blob/:key` — same as {@link CloudBlobSource}.
+ *
+ * @deprecated Prefer `CloudBlobSource` directly; kept for `?blobSource=mock` compat.
  */
 export class MockServerBlobSource implements BlobSource {
-  private readonly _cache = new Map<string, Blob>();
+  private readonly _source: CloudBlobSource;
 
-  readonly = false;
+  readonly name: string;
 
-  constructor(readonly name: string) {}
+  readonly readonly = false;
 
-  async delete(key: string) {
-    this._cache.delete(key);
-    await fetch(`/api/collection/${this.name}/blob/${key}`, {
-      method: 'DELETE',
+  constructor(collectionId: string) {
+    this.name = collectionId;
+    this._source = new CloudBlobSource({
+      baseUrl: '/api/collection',
+      collectionId,
+      name: collectionId,
     });
   }
 
-  async get(key: string) {
-    if (this._cache.has(key)) {
-      return this._cache.get(key) as Blob;
-    } else {
-      const blob = await fetch(`/api/collection/${this.name}/blob/${key}`, {
-        method: 'GET',
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error(`Failed to fetch blob ${key}`);
-        }
-        return response.blob();
-      });
-      this._cache.set(key, blob);
-      return blob;
-    }
+  delete(key: string) {
+    return this._source.delete(key);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async list() {
-    return Array.from(this._cache.keys());
+  get(key: string) {
+    return this._source.get(key);
   }
 
-  async set(key: string, value: Blob) {
-    this._cache.set(key, value);
-    await fetch(`/api/collection/${this.name}/blob/${key}`, {
-      method: 'PUT',
-      body: await value.arrayBuffer(),
-    });
-    return key;
+  list() {
+    return this._source.list();
+  }
+
+  set(key: string, value: Blob) {
+    return this._source.set(key, value);
   }
 }

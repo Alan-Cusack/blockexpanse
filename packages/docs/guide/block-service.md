@@ -50,32 +50,36 @@ The `BlockService` class provides some lifecycle hooks for you to override.
 
 Sometimes you may want to set some runtime configurations for some blocks to better fit your needs.
 
-For example, you may want to set an image proxy middleware URL for the image block. By default the image block will use AFFiNE's image proxy to bypass CORS restrictions. In the self-hosted case, you may want to set your own image proxy middleware URL concerning that the default one will not be available:
+### Images & attachments
 
-Preferred (opt-in via extension; SDK defaults have **no** public proxy):
+Image blocks store a `sourceId` (blob key), not an HTTP URL. Upload and persistence are handled by **`BlobSource`** on `DocCollection.blobSync` — see [Blob Storage guide](./blob-storage.md).
+
+For edit-time paste of external image URLs (optional):
 
 ```ts
-import {
-  ImageProxyExtension,
-  LinkPreviewExtension,
-} from '@blockexpanse/affine-shared/services';
+import { FetchExternalAssetExtension } from '@blockexpanse/affine-shared/services';
 
 // extensions: [
-//   ImageProxyExtension('https://your.cdn/api/image-proxy'),
-//   LinkPreviewExtension('https://your.api/link-preview'),
+//   FetchExternalAssetExtension(async (url) => {
+//     const res = await fetch('/api/fetch-image', {
+//       method: 'POST',
+//       body: JSON.stringify({ url }),
+//     });
+//     return res.ok ? res.blob() : null;
+//   }),
 // ]
 ```
 
-Legacy imperative API still works:
+Batch Markdown/HTML import should pre-localize external images on your server before calling SDK import APIs.
+
+### Link preview (bookmarks / embeds)
 
 ```ts
-import type { ImageService } from '@blockexpanse/blocks';
+import { LinkPreviewExtension } from '@blockexpanse/affine-shared/services';
 
-const editorRoot = document.querySelector('editor-host');
-if (!editorRoot) return;
-
-const imageService = editorRoot.spec.getService('affine:image') as ImageService;
-imageService.setImageProxyURL('https://example.com/image-proxy');
+// extensions: [
+//   LinkPreviewExtension('https://your.api/link-preview'),
+// ]
 ```
 
 For different blocks, the method to set runtime configurations may be different. You can check the [block API document](/api/@blockexpanse/blocks/index) to find out the methods you need.

@@ -49,26 +49,16 @@ export const EMBED_BLOCK_FLAVOUR_LIST = [
 ] as const;
 
 /**
- * SDK default: proxy disabled. Host apps should opt in via
- * `ImageProxyExtension(endpoint)` (or `setImageProxyEndpoint`).
- */
-export const DEFAULT_IMAGE_PROXY_ENDPOINT = '';
-
-/**
  * SDK default: link preview disabled. Host apps should opt in via
  * `LinkPreviewExtension(endpoint)` (or `setLinkPreviewEndpoint`).
  */
 export const DEFAULT_LINK_PREVIEW_ENDPOINT = '';
 
 /**
- * AFFiNE public workers — **demo / reference only**.
+ * AFFiNE public workers — **demo / reference only** for link preview.
  * Do not use as production defaults; point to your own infrastructure.
  * @see https://github.com/toeverything/affine-workers
  */
-export const AFFINE_IMAGE_PROXY_ENDPOINT =
-  'https://affine-worker.toeverything.workers.dev/api/worker/image-proxy';
-
-/** @see {@link AFFINE_IMAGE_PROXY_ENDPOINT} */
 export const AFFINE_LINK_PREVIEW_ENDPOINT =
   'https://affine-worker.toeverything.workers.dev/api/worker/link-preview';
 

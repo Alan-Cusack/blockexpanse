@@ -4,7 +4,6 @@ import type SlTabPanel from '@shoelace-style/shoelace/dist/components/tab-panel/
 import { ShadowlessElement } from '@blockexpanse/block-std';
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
 import {
-  defaultImageProxyMiddleware,
   docLinkBaseURLMiddlewareBuilder,
   embedSyncedDocMiddleware,
   type HtmlAdapter,
@@ -106,7 +105,6 @@ export class AdaptersPanel extends WithDisposable(ShadowlessElement) {
         docLinkBaseURLMiddlewareBuilder('https://example.com').get(),
         titleMiddleware,
         embedSyncedDocMiddleware('content'),
-        defaultImageProxyMiddleware,
       ],
     });
   }

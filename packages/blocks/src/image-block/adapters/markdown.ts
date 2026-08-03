@@ -2,11 +2,9 @@ import { ImageBlockSchema } from '@blockexpanse/affine-model';
 import {
   BlockMarkdownAdapterExtension,
   type BlockMarkdownAdapterMatcher,
-  FetchUtils,
+  ingestExternalImageUrl,
   type MarkdownAST,
 } from '@blockexpanse/affine-shared/adapters';
-import { getFilenameFromContentDisposition } from '@blockexpanse/affine-shared/utils';
-import { sha } from '@blockexpanse/global/utils';
 import { getAssetName, nanoid } from '@blockexpanse/store';
 
 const isImageNode = (node: MarkdownAST) => node.type === 'image';
@@ -17,49 +15,14 @@ export const imageBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatcher = {
   fromMatch: o => o.node.flavour === ImageBlockSchema.model.flavour,
   toBlockSnapshot: {
     enter: async (o, context) => {
-      const { configs, walkerContext, assets } = context;
-      let blobId = '';
+      const { walkerContext, assets } = context;
       const imageURL = 'url' in o.node ? o.node.url : '';
       if (!assets || !imageURL) {
         return;
       }
-      if (!FetchUtils.fetchable(imageURL)) {
-        const imageURLSplit = imageURL.split('/');
-        while (imageURLSplit.length > 0) {
-          const key = assets
-            .getPathBlobIdMap()
-            .get(decodeURIComponent(imageURLSplit.join('/')));
-          if (key) {
-            blobId = key;
-            break;
-          }
-          imageURLSplit.shift();
-        }
-      } else {
-        const res = await FetchUtils.fetchImage(
-          imageURL,
-          undefined,
-          configs.get('imageProxy') as string
-        );
-        if (!res) {
-          return;
-        }
-        const clonedRes = res.clone();
-        const file = new File(
-          [await res.blob()],
-          getFilenameFromContentDisposition(
-            res.headers.get('Content-Disposition') ?? ''
-          ) ??
-            (imageURL.split('/').at(-1) ?? 'image') +
-              '.' +
-              (res.headers.get('Content-Type')?.split('/').at(-1) ?? 'png'),
-          {
-            type: res.headers.get('Content-Type') ?? '',
-          }
-        );
-        blobId = await sha(await clonedRes.arrayBuffer());
-        assets?.getAssets().set(blobId, file);
-        await assets?.writeToBlob(blobId);
+      const blobId = await ingestExternalImageUrl(imageURL, assets);
+      if (!blobId) {
+        return;
       }
       walkerContext
         .openNode(

@@ -14,6 +14,7 @@ import {
   type BlobSource,
   BroadcastChannelAwarenessSource,
   BroadcastChannelDocSource,
+  CloudBlobSource,
   IndexedDBBlobSource,
   MemoryBlobSource,
 } from '@blockexpanse/sync';
@@ -26,6 +27,16 @@ const params = new URLSearchParams(location.search);
 const room = params.get('room');
 const isE2E = room?.startsWith('playwright');
 const blobSourceArgs = (params.get('blobSource') ?? '').split(',');
+
+function createPlaygroundCloudBlobSource(
+  collectionId: string
+): CloudBlobSource {
+  return new CloudBlobSource({
+    baseUrl: '/api/collection',
+    collectionId,
+    name: collectionId,
+  });
+}
 
 export function createStarterDocCollection() {
   const collectionId = room ?? 'starter';
@@ -44,7 +55,9 @@ export function createStarterDocCollection() {
   const id = room ?? `starter-${Math.random().toString(16).slice(2, 8)}`;
 
   const blobSources = {
-    main: new MemoryBlobSource(),
+    main: blobSourceArgs.includes('cloud')
+      ? createPlaygroundCloudBlobSource(collectionId)
+      : new MemoryBlobSource(),
     shadows: [] as BlobSource[],
   } satisfies DocCollectionOptions['blobSources'];
   if (blobSourceArgs.includes('mock')) {

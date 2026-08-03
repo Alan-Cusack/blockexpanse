@@ -1,3 +1,4 @@
+import { setFetchExternalAssetHandler } from '@blockexpanse/affine-shared/services';
 import {
   DocCollection,
   Job,
@@ -5,7 +6,6 @@ import {
   Schema,
 } from '@blockexpanse/store';
 
-import { defaultImageProxyMiddleware } from '../../_common/transformers/middlewares.js';
 import { AffineSchemas } from '../../schemas.js';
 
 declare global {
@@ -20,10 +20,25 @@ declare global {
   }
 }
 
+const TEST_IMAGE_STUB = new Blob(
+  ['<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>'],
+  { type: 'image/svg+xml' }
+);
+
 export function createJob(middlewares?: JobMiddleware[]) {
   window.happyDOM.settings.fetch.disableSameOriginPolicy = true;
+  setFetchExternalAssetHandler(async url => {
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        return await res.blob();
+      }
+    } catch {
+      // External URLs may be offline or 404 in unit tests.
+    }
+    return TEST_IMAGE_STUB;
+  });
   const testMiddlewares = middlewares ?? [];
-  testMiddlewares.push(defaultImageProxyMiddleware);
   const schema = new Schema().register(AffineSchemas);
   const docCollection = new DocCollection({ schema });
   docCollection.meta.initialize();
