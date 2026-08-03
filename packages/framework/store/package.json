@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/store",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "BlockExpanse data store built for general purpose state management.",
   "type": "module",
   "repository": {

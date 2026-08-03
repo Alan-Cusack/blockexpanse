@@ -1,5 +1,11 @@
 # @blockexpanse/sync
 
+## 1.0.0
+
+### Patch Changes
+
+- @blockexpanse/global@1.0.0
+
 ## 0.19.5
 
 ### Patch Changes

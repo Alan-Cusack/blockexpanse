@@ -1,5 +1,50 @@
 # @blockexpanse/blocks
 
+## 1.0.0
+
+### Major Changes
+
+- ca08217: Remove browser-side Image Proxy; use BlobSource + server-side import instead.
+
+  ### Breaking changes
+
+  - Removed `ImageProxyExtension`, `defaultImageProxyMiddleware`, and `ImageBlockService.setImageProxyURL`
+  - Removed `DEFAULT_IMAGE_PROXY_ENDPOINT` and `AFFINE_IMAGE_PROXY_ENDPOINT` from `@blockexpanse/affine-shared/consts`
+  - External `http(s)` image URLs in Markdown/HTML/Notion import are **skipped** unless `FetchExternalAssetExtension` is configured or URLs are pre-localized on your server
+
+  ### Added
+
+  - `CloudBlobSource` in `@blockexpanse/sync` — HTTP-backed blob persistence (BlockNote `uploadFile` equivalent)
+  - `FetchExternalAssetExtension` in `@blockexpanse/affine-shared/services` — host-provided fetch for paste/import
+  - `ingestExternalImageUrl` utility for adapter pipelines
+  - [Blob storage guide](./packages/docs/guide/blob-storage.md)
+
+  ### Migration
+
+  1. Wire **`BlobSource`** (e.g. `CloudBlobSource`) for upload and reload
+  2. Run **server-side import** to localize external image URLs before client import
+  3. Optionally register **`FetchExternalAssetExtension`** for edit-time paste of external HTML
+
+  See [packages/docs/guide/blob-storage.md](./packages/docs/guide/blob-storage.md).
+
+### Patch Changes
+
+- @blockexpanse/affine-block-embed@1.0.0
+- @blockexpanse/affine-block-list@1.0.0
+- @blockexpanse/affine-block-paragraph@1.0.0
+- @blockexpanse/affine-block-surface@1.0.0
+- @blockexpanse/affine-components@1.0.0
+- @blockexpanse/data-view@1.0.0
+- @blockexpanse/affine-model@1.0.0
+- @blockexpanse/affine-shared@1.0.0
+- @blockexpanse/affine-widget-scroll-anchoring@1.0.0
+- @blockexpanse/block-std@1.0.0
+- @blockexpanse/global@1.0.0
+- @blockexpanse/inline@1.0.0
+- @blockexpanse/store@1.0.0
+- @blockexpanse/icons@1.0.0
+- @blockexpanse/theme@1.0.0
+
 ## 0.19.5
 
 ### Patch Changes

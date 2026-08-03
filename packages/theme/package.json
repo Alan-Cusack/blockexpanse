@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/theme",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Design tokens and CSS variables for BlockExpanse (vendored from @toeverything/theme)",
   "type": "module",
   "repository": {

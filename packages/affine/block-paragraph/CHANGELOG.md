@@ -1,5 +1,18 @@
 # @blockexpanse/affine-block-paragraph
 
+## 1.0.0
+
+### Patch Changes
+
+- @blockexpanse/affine-components@1.0.0
+- @blockexpanse/affine-model@1.0.0
+- @blockexpanse/affine-shared@1.0.0
+- @blockexpanse/block-std@1.0.0
+- @blockexpanse/global@1.0.0
+- @blockexpanse/inline@1.0.0
+- @blockexpanse/store@1.0.0
+- @blockexpanse/theme@1.0.0
+
 ## 0.19.5
 
 ### Patch Changes

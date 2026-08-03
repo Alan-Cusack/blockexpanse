@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/affine-components",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Default BlockExpanse editable blocks.",
   "type": "module",
   "repository": {

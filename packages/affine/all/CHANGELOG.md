@@ -1,5 +1,17 @@
 # @blockexpanse/affine
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [ca08217]
+  - @blockexpanse/blocks@1.0.0
+  - @blockexpanse/presets@1.0.0
+  - @blockexpanse/block-std@1.0.0
+  - @blockexpanse/global@1.0.0
+  - @blockexpanse/inline@1.0.0
+  - @blockexpanse/store@1.0.0
+
 ## 0.19.5
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/affine-widget-scroll-anchoring",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Affine scroll anchoring widget.",
   "type": "module",
   "repository": {
