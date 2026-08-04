@@ -29,6 +29,8 @@ import {
 } from '@blockexpanse/inline';
 import { Slice } from '@blockexpanse/store';
 import { computed, effect, type Signal, signal } from '@preact/signals-core';
+import DOMPurify from 'dompurify';
+import katex from 'katex';
 import { html, nothing, type TemplateResult } from 'lit';
 import { query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
@@ -51,6 +53,10 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
 
   private _mermaidRenderTimer: ReturnType<typeof setTimeout> | null = null;
 
+  // Incremented for every render request so an older async render can never
+  // overwrite the result of a newer edit.
+  private _mermaidRenderVersion = 0;
+
   clipboardController = new CodeClipboardController(this);
 
   highlightTokens$: Signal<ThemedToken[][]> = signal([]);
@@ -66,7 +72,29 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
   });
 
   private get _isMermaid(): boolean {
-    return this.model.language$.value === 'mermaid';
+    return this._previewKind === 'mermaid';
+  }
+
+  private get _isPreviewable(): boolean {
+    return this._previewKind !== null;
+  }
+
+  private get _previewKind():
+    | 'mermaid'
+    | 'latex'
+    | 'json'
+    | 'csv'
+    | 'svg'
+    | 'html'
+    | null {
+    const language = this.model.language$.value?.toLowerCase();
+    if (language === 'mermaid') return 'mermaid';
+    if (language === 'latex' || language === 'tex') return 'latex';
+    if (language === 'json') return 'json';
+    if (language === 'csv') return 'csv';
+    if (language === 'svg') return 'svg';
+    if (language === 'html' || language === 'htm') return 'html';
+    return null;
   }
 
   get inlineEditor() {
@@ -96,12 +124,42 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
     return this.rootComponent;
   }
 
+  private _csvToTable(code: string): string {
+    const rows = code
+      .trim()
+      .split(/\r?\n/)
+      .filter(Boolean)
+      .map(row => row.split(',').map(cell => this._escapeHtml(cell.trim())));
+    if (!rows.length) return '';
+    const [header, ...body] = rows;
+    return `<table class="code-csv-table"><thead><tr>${header
+      .map(cell => `<th>${cell}</th>`)
+      .join('')}</tr></thead><tbody>${body
+      .map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`)
+      .join('')}</tbody></table>`;
+  }
+
+  private _escapeHtml(value: string): string {
+    return value.replace(
+      /[&<>"']/g,
+      char =>
+        ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+        })[char]!
+    );
+  }
+
   private _isDarkTheme(): boolean {
     const el = this.closest('[data-theme]') as HTMLElement | null;
     return el?.dataset.theme === 'dark';
   }
 
   private async _renderMermaid(): Promise<void> {
+    const renderVersion = ++this._mermaidRenderVersion;
     if (!this._isMermaid) {
       this._mermaidSvg = null;
       this._mermaidError = null;
@@ -127,24 +185,74 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
       // Create a temporary off-screen container for mermaid to render into.
       // mermaid.render needs a visible DOM element to measure SVG dimensions.
       const tempContainer = document.createElement('div');
-      tempContainer.style.position = 'absolute';
-      tempContainer.style.left = '-9999px';
+      // Keep the element measurable for Mermaid while making it invisible to
+      // the user. A display:none/off-screen clipped element can produce a
+      // zero-sized SVG in Mermaid's layout pass.
+      tempContainer.style.position = 'fixed';
+      tempContainer.style.left = '0';
       tempContainer.style.top = '0';
       tempContainer.style.width = '600px';
+      tempContainer.style.minHeight = '1px';
+      tempContainer.style.visibility = 'hidden';
+      tempContainer.style.pointerEvents = 'none';
+      tempContainer.style.zIndex = '-1';
       document.body.append(tempContainer);
       try {
         const { svg } = await mermaid.render(id, code, tempContainer);
+        if (renderVersion !== this._mermaidRenderVersion || !this.isConnected) {
+          return;
+        }
         this._mermaidSvg = svg;
         this._mermaidError = null;
       } finally {
         tempContainer.remove();
       }
     } catch (err) {
+      if (renderVersion !== this._mermaidRenderVersion || !this.isConnected) {
+        return;
+      }
       this._mermaidSvg = null;
       this._mermaidError =
         err instanceof Error ? err.message : 'Failed to render diagram';
     } finally {
-      this._mermaidLoading = false;
+      if (renderVersion === this._mermaidRenderVersion && this.isConnected) {
+        this._mermaidLoading = false;
+      }
+    }
+  }
+
+  private _renderStaticPreview(code: string): string {
+    switch (this._previewKind) {
+      case 'latex':
+        return katex.renderToString(code, {
+          displayMode: true,
+          throwOnError: false,
+          output: 'htmlAndMathml',
+        });
+      case 'json':
+        try {
+          return `<pre class="code-json-tree">${this._escapeHtml(
+            JSON.stringify(JSON.parse(code), null, 2)
+          )}</pre>`;
+        } catch {
+          return `<div class="mermaid-error">⚠ Invalid JSON</div>`;
+        }
+      case 'csv':
+        return this._csvToTable(code);
+      case 'svg':
+        return DOMPurify.sanitize(code, {
+          USE_PROFILES: { svg: true },
+          FORBID_TAGS: ['script', 'foreignObject'],
+          FORBID_ATTR: ['onload', 'onclick', 'onerror'],
+        });
+      case 'html':
+        return DOMPurify.sanitize(code, {
+          WHOLE_DOCUMENT: true,
+          FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form'],
+          FORBID_ATTR: ['srcdoc', 'onload', 'onclick', 'onerror'],
+        });
+      default:
+        return '';
     }
   }
 
@@ -232,12 +340,20 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
       })
     );
 
-    // Re-render mermaid preview when code or language changes.
+    // Re-render the active preview when code or language changes.
     this.disposables.add(
       effect(() => {
         noop(this.model.language$.value);
         noop(this.model.text.deltas$.value);
-        this._scheduleMermaidRender();
+        if (this._isMermaid) {
+          this._scheduleMermaidRender();
+        } else if (this._isPreviewable) {
+          this._staticPreview = this._renderStaticPreview(
+            this.model.text.toString().trim()
+          );
+        } else {
+          this._staticPreview = null;
+        }
       })
     );
 
@@ -465,6 +581,11 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
   }
 
   override disconnectedCallback() {
+    this._mermaidRenderVersion++;
+    if (this._mermaidRenderTimer) {
+      clearTimeout(this._mermaidRenderTimer);
+      this._mermaidRenderTimer = null;
+    }
     super.disconnectedCallback();
     this.clipboardController.hostDisconnected();
   }
@@ -485,13 +606,14 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
           'affine-code-block-container': true,
           wrap: this.model.wrap,
           'mermaid-active': this._isMermaid,
+          'code-preview-active': this._isPreviewable,
         })}
       >
         ${when(
-          this._isMermaid,
+          this._isPreviewable,
           () => html`
             <div class="mermaid-tab-bar">
-              <span class="mermaid-lang-label">mermaid</span>
+              <span class="mermaid-lang-label">${this._previewKind}</span>
               <div class="mermaid-tabs">
                 <button
                   class=${classMap({
@@ -520,24 +642,31 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
                   style=${`transform: translateX(${this._mermaidTab === 'code' ? '0%' : '100%'});`}
                 ></div>
               </div>
-              <div class="mermaid-tab-actions">
-                <button
-                  class="mermaid-action-btn"
-                  title=${this._t(I18nKeys.editor.mermaid.refresh, 'Refresh')}
-                  @click=${() => {
-                    this._renderMermaid().catch(console.error);
-                  }}
-                >
-                  ↻
-                </button>
-              </div>
+              ${when(
+                this._isMermaid,
+                () =>
+                  html`<div class="mermaid-tab-actions">
+                    <button
+                      class="mermaid-action-btn"
+                      title=${this._t(
+                        I18nKeys.editor.mermaid.refresh,
+                        'Refresh'
+                      )}
+                      @click=${() => {
+                        this._renderMermaid().catch(console.error);
+                      }}
+                    >
+                      ↻
+                    </button>
+                  </div>`
+              )}
             </div>
           `
         )}
 
         <div
           class="mermaid-code-area"
-          style=${this._isMermaid
+          style=${this._isPreviewable
             ? this._mermaidTab === 'code'
               ? ''
               : 'display:none'
@@ -571,9 +700,71 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
         </div>
 
         ${when(
-          this._isMermaid && this._mermaidTab === 'preview',
+          this._isPreviewable && this._mermaidTab === 'preview',
           () => html`
             <div class="mermaid-preview-container">
+              <div class="mermaid-preview-viewport">
+                ${when(
+                  !this._isMermaid,
+                  () =>
+                    this._previewKind === 'html'
+                      ? html`<iframe
+                          class="code-html-preview"
+                          sandbox
+                          .srcdoc=${this._staticPreview ?? ''}
+                          title="HTML preview"
+                        ></iframe>`
+                      : html`
+                          <div class="mermaid-svg-wrapper static-code-preview">
+                            <div
+                              class="mermaid-svg-scaler"
+                              .innerHTML=${this._staticPreview ?? ''}
+                            ></div>
+                          </div>
+                        `,
+                  () =>
+                    when(
+                      this._mermaidLoading,
+                      () =>
+                        html`<div class="mermaid-loading">
+                          ${this._t(
+                            I18nKeys.editor.mermaid.rendering,
+                            'Rendering…'
+                          )}
+                        </div>`,
+                      () =>
+                        when(
+                          this._mermaidError,
+                          () => html`
+                            <div class="mermaid-error">
+                              ⚠ ${this._mermaidError}
+                            </div>
+                          `,
+                          () =>
+                            when(
+                              this._mermaidSvg,
+                              () =>
+                                html`<div
+                                  class="mermaid-svg-wrapper"
+                                  style=${`--mermaid-zoom: ${this._mermaidZoom};`}
+                                >
+                                  <div
+                                    class="mermaid-svg-scaler"
+                                    .innerHTML=${this._mermaidSvg}
+                                  ></div>
+                                </div>`,
+                              () =>
+                                html`<div class="mermaid-empty">
+                                  ${this._t(
+                                    I18nKeys.editor.mermaid.empty,
+                                    'Type a diagram to see preview'
+                                  )}
+                                </div>`
+                            )
+                        )
+                    )
+                )}
+              </div>
               <div class="mermaid-zoom-control">
                 <button
                   class="mermaid-action-btn"
@@ -609,37 +800,6 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
                   ⟲
                 </button>
               </div>
-              ${when(
-                this._mermaidLoading,
-                () =>
-                  html`<div class="mermaid-loading">
-                    ${this._t(I18nKeys.editor.mermaid.rendering, 'Rendering…')}
-                  </div>`,
-                () =>
-                  when(
-                    this._mermaidError,
-                    () => html`
-                      <div class="mermaid-error">⚠ ${this._mermaidError}</div>
-                    `,
-                    () =>
-                      when(
-                        this._mermaidSvg,
-                        () =>
-                          html`<div
-                            class="mermaid-svg-wrapper"
-                            style="zoom: ${this._mermaidZoom};"
-                            .innerHTML=${this._mermaidSvg}
-                          ></div>`,
-                        () =>
-                          html`<div class="mermaid-empty">
-                            ${this._t(
-                              I18nKeys.editor.mermaid.empty,
-                              'Type a diagram to see preview'
-                            )}
-                          </div>`
-                      )
-                  )
-              )}
             </div>
           `
         )}
@@ -665,6 +825,8 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
 
   @query('rich-text')
   private accessor _richTextElement: RichText | null = null;
+
+  @state() private accessor _staticPreview: string | null = null;
 
   override accessor blockContainerStyles = {
     margin: '18px 0',

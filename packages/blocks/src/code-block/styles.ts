@@ -48,7 +48,7 @@ export const codeBlockStyles = css`
   }
 
   /* Mermaid: tab bar + fixed-height content (only for mermaid blocks) */
-  .affine-code-block-container.mermaid-active .mermaid-code-area {
+  .affine-code-block-container.code-preview-active .mermaid-code-area {
     max-height: 360px;
     overflow-y: auto;
   }
@@ -150,10 +150,17 @@ export const codeBlockStyles = css`
     position: relative;
     height: 360px;
     overflow: hidden;
-    padding: 16px;
     background: var(--affine-white);
     border: 1px solid var(--affine-border-color);
     border-radius: 8px;
+  }
+
+  .mermaid-preview-viewport {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 16px;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -161,7 +168,7 @@ export const codeBlockStyles = css`
 
   .mermaid-zoom-control {
     position: absolute;
-    top: 8px;
+    bottom: 8px;
     right: 8px;
     display: inline-flex;
     align-items: center;
@@ -177,16 +184,80 @@ export const codeBlockStyles = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 100%;
-    max-height: 100%;
-    overflow: hidden;
+    width: 100%;
+    min-height: 100%;
   }
 
-  .mermaid-svg-wrapper svg {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
+  .mermaid-svg-scaler {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(var(--mermaid-zoom) * 100%);
+    min-width: calc(var(--mermaid-zoom) * 100%);
+    min-height: calc(var(--mermaid-zoom) * 100%);
+  }
+
+  .mermaid-svg-scaler svg {
+    display: block;
+    width: 100% !important;
+    max-width: none !important;
     height: auto;
+    shape-rendering: geometricPrecision;
+    text-rendering: geometricPrecision;
+  }
+
+  .static-code-preview {
+    padding: 16px;
+    box-sizing: border-box;
+    overflow: auto;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .static-code-preview .mermaid-svg-scaler {
+    width: 100%;
+    min-width: 100%;
+    min-height: 0;
+  }
+
+  .static-code-preview .katex-display {
+    margin: 0;
+  }
+
+  .code-html-preview {
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+    border: 0;
+    background: #fff;
+  }
+
+  .code-json-tree {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: var(--affine-font-code-family);
+    font-size: var(--affine-font-sm);
+    color: var(--affine-text-primary);
+  }
+
+  .code-csv-table {
+    border-collapse: collapse;
+    font-size: var(--affine-font-sm);
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .code-csv-table th,
+  .code-csv-table td {
+    border: 1px solid var(--affine-border-color);
+    padding: 6px 10px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .code-csv-table th {
+    background: var(--affine-background-code-block);
+    font-weight: 600;
   }
 
   .mermaid-loading {

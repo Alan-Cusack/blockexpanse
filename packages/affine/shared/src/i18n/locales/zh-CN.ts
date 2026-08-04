@@ -288,9 +288,9 @@ export const zhCNMessages: I18nMessages = {
   [K.editor.latex.error]: '公式错误',
 
   [K.editor.mermaid.code]: '代码',
-  [K.editor.mermaid.diagram]: '图表',
+  [K.editor.mermaid.diagram]: '预览',
   [K.editor.mermaid.rendering]: '渲染中…',
-  [K.editor.mermaid.empty]: '输入图表语法以预览',
+  [K.editor.mermaid.empty]: '输入内容以预览',
   [K.editor.mermaid.zoomOut]: '缩小',
   [K.editor.mermaid.zoomIn]: '放大',
   [K.editor.mermaid.resetZoom]: '重置缩放',
