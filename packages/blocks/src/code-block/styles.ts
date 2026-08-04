@@ -47,40 +47,83 @@ export const codeBlockStyles = css`
     user-select: none;
   }
 
-  /* Mermaid preview */
-  .mermaid-preview-section {
-    margin-top: 12px;
-    border-top: 1px solid var(--affine-border-color);
-    padding-top: 8px;
+  /* Mermaid: tab bar + fixed-height content */
+  .affine-code-block-container.mermaid-active .mermaid-code-area {
+    max-height: 320px;
+    overflow-y: auto;
   }
 
-  .mermaid-preview-header {
+  .mermaid-tab-bar {
     display: flex;
     align-items: center;
+    gap: 0;
     margin-bottom: 8px;
+    border-bottom: 1px solid var(--affine-border-color);
+    padding-bottom: 0;
   }
 
-  .mermaid-toggle-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+  .mermaid-tab-btn {
     background: none;
     border: none;
+    border-bottom: 2px solid transparent;
     cursor: pointer;
     font-size: var(--affine-font-xs);
     font-weight: 600;
     color: var(--affine-text-secondary);
-    padding: 4px 8px;
+    padding: 6px 14px;
+    user-select: none;
+    margin-bottom: -1px;
+  }
+
+  .mermaid-tab-btn.active {
+    color: var(--affine-primary-color);
+    border-bottom-color: var(--affine-primary-color);
+  }
+
+  .mermaid-tab-btn:hover:not(.active) {
+    color: var(--affine-text-primary);
+  }
+
+  .mermaid-tab-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding-right: 4px;
+  }
+
+  .mermaid-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
     border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--affine-text-secondary);
     user-select: none;
   }
 
-  .mermaid-toggle-btn:hover {
+  .mermaid-action-btn:hover {
     background: var(--affine-hover-color);
+    color: var(--affine-text-primary);
+  }
+
+  .mermaid-zoom-label {
+    font-size: 11px;
+    color: var(--affine-text-secondary);
+    min-width: 36px;
+    text-align: center;
+    user-select: none;
   }
 
   .mermaid-preview-container {
-    min-height: 40px;
+    min-height: 200px;
+    max-height: 400px;
+    overflow: auto;
     padding: 16px;
     background: var(--affine-white);
     border: 1px solid var(--affine-border-color);
@@ -88,7 +131,6 @@ export const codeBlockStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow-x: auto;
   }
 
   .mermaid-svg-wrapper {

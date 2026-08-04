@@ -101,7 +101,7 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
   }
 
   private async _renderMermaid(): Promise<void> {
-    if (!this._isMermaid || !this._showMermaidPreview) {
+    if (!this._isMermaid) {
       this._mermaidSvg = null;
       this._mermaidError = null;
       return;
@@ -219,7 +219,6 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
       effect(() => {
         noop(this.model.language$.value);
         noop(this.model.text.deltas$.value);
-        noop(this._showMermaidPreview);
         this._scheduleMermaidRender();
       })
     );
@@ -467,79 +466,155 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
         class=${classMap({
           'affine-code-block-container': true,
           wrap: this.model.wrap,
+          'mermaid-active': this._isMermaid,
         })}
       >
-        <rich-text
-          .yText=${this.model.text.yText}
-          .inlineEventSource=${this.topContenteditableElement ?? nothing}
-          .undoManager=${this.doc.history}
-          .attributesSchema=${this.inlineManager.getSchema()}
-          .attributeRenderer=${this.inlineManager.getRenderer()}
-          .readonly=${this.doc.readonly}
-          .inlineRangeProvider=${this._inlineRangeProvider}
-          .enableClipboard=${false}
-          .enableUndoRedo=${false}
-          .wrapText=${this.model.wrap}
-          .verticalScrollContainerGetter=${() => getViewportElement(this.host)}
-          .vLineRenderer=${showLineNumbers
-            ? (vLine: VLine) => {
-                return html`
-                  <span contenteditable="false" class="line-number"
-                    >${vLine.index + 1}</span
-                  >
-                  ${vLine.renderVElements()}
-                `;
-              }
-            : undefined}
-        >
-        </rich-text>
-
         ${when(
           this._isMermaid,
           () => html`
-            <div class="mermaid-preview-section">
-              <div class="mermaid-preview-header">
+            <div class="mermaid-tab-bar">
+              <button
+                class=${classMap({
+                  'mermaid-tab-btn': true,
+                  active: this._mermaidTab === 'code',
+                })}
+                @click=${() => {
+                  this._mermaidTab = 'code';
+                }}
+              >
+                Code
+              </button>
+              <button
+                class=${classMap({
+                  'mermaid-tab-btn': true,
+                  active: this._mermaidTab === 'preview',
+                })}
+                @click=${() => {
+                  this._mermaidTab = 'preview';
+                }}
+              >
+                Diagram
+              </button>
+              <div class="mermaid-tab-actions">
+                ${when(
+                  this._mermaidTab === 'preview',
+                  () => html`
+                    <button
+                      class="mermaid-action-btn"
+                      title="Zoom out"
+                      @click=${() => {
+                        this._mermaidZoom = Math.max(
+                          0.25,
+                          this._mermaidZoom - 0.1
+                        );
+                      }}
+                    >
+                      −
+                    </button>
+                    <span class="mermaid-zoom-label"
+                      >${Math.round(this._mermaidZoom * 100)}%</span
+                    >
+                    <button
+                      class="mermaid-action-btn"
+                      title="Zoom in"
+                      @click=${() => {
+                        this._mermaidZoom = Math.min(
+                          3,
+                          this._mermaidZoom + 0.1
+                        );
+                      }}
+                    >
+                      +
+                    </button>
+                    <button
+                      class="mermaid-action-btn"
+                      title="Reset zoom"
+                      @click=${() => {
+                        this._mermaidZoom = 1;
+                      }}
+                    >
+                      ⟲
+                    </button>
+                  `
+                )}
                 <button
-                  class="mermaid-toggle-btn"
+                  class="mermaid-action-btn"
+                  title="Refresh"
                   @click=${() => {
-                    this._showMermaidPreview = !this._showMermaidPreview;
+                    this._renderMermaid().catch(console.error);
                   }}
                 >
-                  ${this._showMermaidPreview ? '▼' : '▶'} Diagram Preview
+                  ↻
                 </button>
               </div>
+            </div>
+          `
+        )}
+
+        <div
+          class="mermaid-code-area"
+          style=${this._isMermaid
+            ? this._mermaidTab === 'code'
+              ? ''
+              : 'display:none'
+            : ''}
+        >
+          <rich-text
+            .yText=${this.model.text.yText}
+            .inlineEventSource=${this.topContenteditableElement ?? nothing}
+            .undoManager=${this.doc.history}
+            .attributesSchema=${this.inlineManager.getSchema()}
+            .attributeRenderer=${this.inlineManager.getRenderer()}
+            .readonly=${this.doc.readonly}
+            .inlineRangeProvider=${this._inlineRangeProvider}
+            .enableClipboard=${false}
+            .enableUndoRedo=${false}
+            .wrapText=${this.model.wrap}
+            .verticalScrollContainerGetter=${() =>
+              getViewportElement(this.host)}
+            .vLineRenderer=${showLineNumbers
+              ? (vLine: VLine) => {
+                  return html`
+                    <span contenteditable="false" class="line-number"
+                      >${vLine.index + 1}</span
+                    >
+                    ${vLine.renderVElements()}
+                  `;
+                }
+              : undefined}
+          >
+          </rich-text>
+        </div>
+
+        ${when(
+          this._isMermaid && this._mermaidTab === 'preview',
+          () => html`
+            <div class="mermaid-preview-container">
               ${when(
-                this._showMermaidPreview,
-                () => html`
-                  <div class="mermaid-preview-container">
-                    ${when(
-                      this._mermaidLoading,
-                      () => html`<div class="mermaid-loading">Rendering…</div>`,
-                      () =>
-                        when(
-                          this._mermaidError,
-                          () => html`
-                            <div class="mermaid-error">
-                              ⚠ ${this._mermaidError}
-                            </div>
-                          `,
-                          () =>
-                            when(
-                              this._mermaidSvg,
-                              () =>
-                                html`<div
-                                  class="mermaid-svg-wrapper"
-                                  .innerHTML=${this._mermaidSvg}
-                                ></div>`,
-                              () =>
-                                html`<div class="mermaid-empty">
-                                  Type a diagram to see preview
-                                </div>`
-                            )
-                        )
-                    )}
-                  </div>
-                `
+                this._mermaidLoading,
+                () => html`<div class="mermaid-loading">Rendering…</div>`,
+                () =>
+                  when(
+                    this._mermaidError,
+                    () => html`
+                      <div class="mermaid-error">⚠ ${this._mermaidError}</div>
+                    `,
+                    () =>
+                      when(
+                        this._mermaidSvg,
+                        () =>
+                          html`<div
+                            class="mermaid-svg-wrapper"
+                            style="transform: scale(${this
+                              ._mermaidZoom}); transform-origin: center;"
+                            .innerHTML=${this._mermaidSvg}
+                          ></div>`,
+                        () =>
+                          html`<div class="mermaid-empty">
+                            Type a diagram to see preview
+                          </div>`
+                      )
+                  )
               )}
             </div>
           `
@@ -560,10 +635,12 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
   // --- Mermaid preview state ---
   @state() private accessor _mermaidSvg: string | null = null;
 
+  @state() private accessor _mermaidTab: 'code' | 'preview' = 'preview';
+
+  @state() private accessor _mermaidZoom = 1;
+
   @query('rich-text')
   private accessor _richTextElement: RichText | null = null;
-
-  @state() private accessor _showMermaidPreview = true;
 
   override accessor blockContainerStyles = {
     margin: '18px 0',
