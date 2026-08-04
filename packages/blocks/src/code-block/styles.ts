@@ -47,9 +47,9 @@ export const codeBlockStyles = css`
     user-select: none;
   }
 
-  /* Mermaid: tab bar + fixed-height content */
+  /* Mermaid: tab bar + fixed-height content (only for mermaid blocks) */
   .affine-code-block-container.mermaid-active .mermaid-code-area {
-    max-height: 320px;
+    max-height: 360px;
     overflow-y: auto;
   }
 
@@ -117,7 +117,7 @@ export const codeBlockStyles = css`
   .mermaid-preview-container {
     position: relative;
     min-height: 200px;
-    max-height: 400px;
+    max-height: 360px;
     overflow: auto;
     padding: 16px;
     background: var(--affine-white);
