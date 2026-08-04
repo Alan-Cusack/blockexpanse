@@ -14,6 +14,7 @@ import {
 } from '@blockexpanse/affine-shared/consts';
 import {
   I18nKeys,
+  I18nProvider,
   NotificationProvider,
 } from '@blockexpanse/affine-shared/services';
 import { getViewportElement } from '@blockexpanse/affine-shared/utils';
@@ -141,6 +142,11 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
     this._mermaidRenderTimer = setTimeout(() => {
       this._renderMermaid().catch(console.error);
     }, 300);
+  }
+
+  private _t(key: string, fallback: string): string {
+    const i18n = this.std.getOptional(I18nProvider);
+    return i18n ? i18n.t(key, fallback) : fallback;
   }
 
   private _updateHighlightTokens() {
@@ -482,7 +488,7 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
                   this._mermaidTab = 'code';
                 }}
               >
-                Code
+                ${this._t(I18nKeys.editor.mermaid.code, 'Code')}
               </button>
               <button
                 class=${classMap({
@@ -493,60 +499,8 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
                   this._mermaidTab = 'preview';
                 }}
               >
-                Diagram
+                ${this._t(I18nKeys.editor.mermaid.diagram, 'Diagram')}
               </button>
-              <div class="mermaid-tab-actions">
-                ${when(
-                  this._mermaidTab === 'preview',
-                  () => html`
-                    <button
-                      class="mermaid-action-btn"
-                      title="Zoom out"
-                      @click=${() => {
-                        this._mermaidZoom = Math.max(
-                          0.25,
-                          this._mermaidZoom - 0.1
-                        );
-                      }}
-                    >
-                      −
-                    </button>
-                    <span class="mermaid-zoom-label"
-                      >${Math.round(this._mermaidZoom * 100)}%</span
-                    >
-                    <button
-                      class="mermaid-action-btn"
-                      title="Zoom in"
-                      @click=${() => {
-                        this._mermaidZoom = Math.min(
-                          3,
-                          this._mermaidZoom + 0.1
-                        );
-                      }}
-                    >
-                      +
-                    </button>
-                    <button
-                      class="mermaid-action-btn"
-                      title="Reset zoom"
-                      @click=${() => {
-                        this._mermaidZoom = 1;
-                      }}
-                    >
-                      ⟲
-                    </button>
-                  `
-                )}
-                <button
-                  class="mermaid-action-btn"
-                  title="Refresh"
-                  @click=${() => {
-                    this._renderMermaid().catch(console.error);
-                  }}
-                >
-                  ↻
-                </button>
-              </div>
             </div>
           `
         )}
@@ -592,7 +546,10 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
             <div class="mermaid-preview-container">
               ${when(
                 this._mermaidLoading,
-                () => html`<div class="mermaid-loading">Rendering…</div>`,
+                () =>
+                  html`<div class="mermaid-loading">
+                    ${this._t(I18nKeys.editor.mermaid.rendering, 'Rendering…')}
+                  </div>`,
                 () =>
                   when(
                     this._mermaidError,
@@ -605,17 +562,63 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
                         () =>
                           html`<div
                             class="mermaid-svg-wrapper"
-                            style="transform: scale(${this
-                              ._mermaidZoom}); transform-origin: center;"
+                            style="zoom: ${this._mermaidZoom};"
                             .innerHTML=${this._mermaidSvg}
                           ></div>`,
                         () =>
                           html`<div class="mermaid-empty">
-                            Type a diagram to see preview
+                            ${this._t(
+                              I18nKeys.editor.mermaid.empty,
+                              'Type a diagram to see preview'
+                            )}
                           </div>`
                       )
                   )
               )}
+              <div class="mermaid-floating-actions">
+                <button
+                  class="mermaid-action-btn"
+                  title=${this._t(I18nKeys.editor.mermaid.zoomOut, 'Zoom out')}
+                  @click=${() => {
+                    this._mermaidZoom = Math.max(0.25, this._mermaidZoom - 0.1);
+                  }}
+                >
+                  −
+                </button>
+                <span class="mermaid-zoom-label"
+                  >${Math.round(this._mermaidZoom * 100)}%</span
+                >
+                <button
+                  class="mermaid-action-btn"
+                  title=${this._t(I18nKeys.editor.mermaid.zoomIn, 'Zoom in')}
+                  @click=${() => {
+                    this._mermaidZoom = Math.min(3, this._mermaidZoom + 0.1);
+                  }}
+                >
+                  +
+                </button>
+                <button
+                  class="mermaid-action-btn"
+                  title=${this._t(
+                    I18nKeys.editor.mermaid.resetZoom,
+                    'Reset zoom'
+                  )}
+                  @click=${() => {
+                    this._mermaidZoom = 1;
+                  }}
+                >
+                  ⟲
+                </button>
+                <button
+                  class="mermaid-action-btn"
+                  title=${this._t(I18nKeys.editor.mermaid.refresh, 'Refresh')}
+                  @click=${() => {
+                    this._renderMermaid().catch(console.error);
+                  }}
+                >
+                  ↻
+                </button>
+              </div>
             </div>
           `
         )}

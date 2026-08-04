@@ -287,6 +287,15 @@ export const zhCNMessages: I18nMessages = {
   [K.editor.latex.equation]: '公式',
   [K.editor.latex.error]: '公式错误',
 
+  [K.editor.mermaid.code]: '代码',
+  [K.editor.mermaid.diagram]: '图表',
+  [K.editor.mermaid.rendering]: '渲染中…',
+  [K.editor.mermaid.empty]: '输入图表语法以预览',
+  [K.editor.mermaid.zoomOut]: '缩小',
+  [K.editor.mermaid.zoomIn]: '放大',
+  [K.editor.mermaid.resetZoom]: '重置缩放',
+  [K.editor.mermaid.refresh]: '刷新',
+
   [K.editor.table.backgroundColor]: '背景颜色',
   [K.editor.table.default]: '默认',
   [K.editor.table.clearColumnStyle]: '清除列样式',

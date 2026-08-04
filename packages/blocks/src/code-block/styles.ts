@@ -84,27 +84,20 @@ export const codeBlockStyles = css`
     color: var(--affine-text-primary);
   }
 
-  .mermaid-tab-actions {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    padding-right: 4px;
-  }
-
   .mermaid-action-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    background: none;
-    border: none;
+    width: 26px;
+    height: 26px;
+    background: var(--affine-white-90, rgba(255, 255, 255, 0.9));
+    border: 1px solid var(--affine-border-color);
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     color: var(--affine-text-secondary);
     user-select: none;
+    transition: background 0.15s;
   }
 
   .mermaid-action-btn:hover {
@@ -118,9 +111,11 @@ export const codeBlockStyles = css`
     min-width: 36px;
     text-align: center;
     user-select: none;
+    line-height: 26px;
   }
 
   .mermaid-preview-container {
+    position: relative;
     min-height: 200px;
     max-height: 400px;
     overflow: auto;
@@ -131,6 +126,23 @@ export const codeBlockStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .mermaid-floating-actions {
+    position: sticky;
+    bottom: 8px;
+    right: 8px;
+    margin-left: auto;
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    background: var(--affine-white-90, rgba(255, 255, 255, 0.9));
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    z-index: 1;
+    float: right;
   }
 
   .mermaid-svg-wrapper {

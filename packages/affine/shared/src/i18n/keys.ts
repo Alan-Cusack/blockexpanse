@@ -300,6 +300,16 @@ export const I18nKeys = {
       equation: 'editor.latex.equation',
       error: 'editor.latex.error',
     },
+    mermaid: {
+      code: 'editor.mermaid.code',
+      diagram: 'editor.mermaid.diagram',
+      rendering: 'editor.mermaid.rendering',
+      empty: 'editor.mermaid.empty',
+      zoomOut: 'editor.mermaid.zoomOut',
+      zoomIn: 'editor.mermaid.zoomIn',
+      resetZoom: 'editor.mermaid.resetZoom',
+      refresh: 'editor.mermaid.refresh',
+    },
     table: {
       backgroundColor: 'editor.table.backgroundColor',
       default: 'editor.table.default',

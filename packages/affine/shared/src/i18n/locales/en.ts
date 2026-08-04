@@ -295,6 +295,15 @@ export const enMessages: I18nMessages = {
   [K.editor.latex.equation]: 'Equation',
   [K.editor.latex.error]: 'Error equation',
 
+  [K.editor.mermaid.code]: 'Code',
+  [K.editor.mermaid.diagram]: 'Diagram',
+  [K.editor.mermaid.rendering]: 'Rendering…',
+  [K.editor.mermaid.empty]: 'Type a diagram to see preview',
+  [K.editor.mermaid.zoomOut]: 'Zoom out',
+  [K.editor.mermaid.zoomIn]: 'Zoom in',
+  [K.editor.mermaid.resetZoom]: 'Reset zoom',
+  [K.editor.mermaid.refresh]: 'Refresh',
+
   [K.editor.table.backgroundColor]: 'Background color',
   [K.editor.table.default]: 'Default',
   [K.editor.table.clearColumnStyle]: 'Clear column style',
