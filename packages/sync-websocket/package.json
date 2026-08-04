@@ -1,21 +1,53 @@
 {
   "name": "@blockexpanse/sync-websocket",
   "version": "1.0.1",
-  "private": true,
   "description": "WebSocket sync provider for BlockExpanse collaboration",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alan-Cusack/blockexpanse.git",
+    "directory": "packages/sync-websocket"
+  },
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "blockexpanse",
+    "yjs",
+    "websocket",
+    "collaboration"
+  ],
+  "author": "toeverything",
+  "license": "MPL-2.0",
   "exports": {
     ".": "./src/index.ts"
   },
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "module": "./dist/index.js",
+        "import": "./dist/index.js"
+      }
+    }
+  },
   "files": [
     "src",
-    "dist"
+    "dist",
+    "!src/__tests__",
+    "!dist/__tests__"
   ],
   "dependencies": {
     "@blockexpanse/global": "workspace:*",
     "@blockexpanse/store": "workspace:*",
     "@blockexpanse/sync": "workspace:*",
-    "y-protocols": "^1.0.6",
-    "yjs": "^13.6.18"
+    "y-protocols": "^1.0.6"
+  },
+  "peerDependencies": {
+    "yjs": "^13.6.15"
   }
 }
