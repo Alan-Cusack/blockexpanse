@@ -1,6 +1,12 @@
 export * from './adapters/markdown.js';
+export { compressImage } from './compress.js';
+export type { CompressImageOptions } from './compress.js';
 export * from './image-block.js';
 export * from './image-edgeless-block.js';
 export * from './image-service.js';
+export { setImageUploadHandler } from './image-upload-config.js';
+export type { ImageUploadHandler } from './image-upload-config.js';
+export { generateImageVariants } from './image-variants.js';
+export type { ImageVariantOptions, ImageVariants } from './image-variants.js';
 export { uploadBlobForImage } from './utils.js';
 export { ImageSelection } from '@blockexpanse/affine-shared/selection';

@@ -20,7 +20,7 @@ import type { ImageEdgelessBlockComponent } from './image-edgeless-block.js';
 
 import { readImageSize } from '../root-block/edgeless/components/utils.js';
 import { transformModel } from '../root-block/utils/operations/model.js';
-import { compressImage } from './compress.js';
+import { imageUpload } from './image-upload-config.js';
 
 const MAX_RETRY_COUNT = 3;
 const DEFAULT_ATTACHMENT_NAME = 'affine-attachment';
@@ -51,11 +51,11 @@ export async function uploadBlobForImage(
   let actualSize = blob.size;
 
   try {
-    // Compress the image before upload (resize + re-encode to JPEG).
-    // Skips GIF/SVG/WebP and small files automatically.
-    const compressed = await compressImage(blob);
-    actualSize = compressed.size;
-    sourceId = await doc.blobSync.set(compressed);
+    // Process the image before upload (default: compressImage; configurable
+    // via setImageUploadHandler). Set to null to store originals.
+    const finalBlob = imageUpload ? await imageUpload(blob) : blob;
+    actualSize = finalBlob.size;
+    sourceId = await doc.blobSync.set(finalBlob);
   } catch (error) {
     console.error(error);
     if (error instanceof Error) {

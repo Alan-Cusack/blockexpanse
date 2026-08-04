@@ -23,6 +23,10 @@ import { addImages } from '../root-block/edgeless/utils/common.js';
 import { ImageEdgelessBlockComponent } from './image-edgeless-block.js';
 import { addSiblingImageBlock } from './utils.js';
 
+// Re-export for backward compatibility — users import from @blockexpanse/blocks
+export type { ImageUploadHandler } from './image-upload-config.js';
+export { setImageUploadHandler } from './image-upload-config.js';
+
 export class ImageBlockService extends BlockService {
   static override readonly flavour = ImageBlockSchema.model.flavour;
 

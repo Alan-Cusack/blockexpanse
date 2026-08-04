@@ -9,6 +9,18 @@ export type {
 } from './slash-menu.js';
 
 export { FetchExternalAssetExtension } from '@blockexpanse/affine-shared/services';
+// Re-export image utilities
+export {
+  compressImage,
+  generateImageVariants,
+  setImageUploadHandler,
+} from '@blockexpanse/blocks';
+export type {
+  CompressImageOptions,
+  ImageUploadHandler,
+  ImageVariantOptions,
+  ImageVariants,
+} from '@blockexpanse/blocks';
 // Re-export blob/asset utilities so users can import everything from @blockexpanse/presets
 export {
   CloudBlobSource,
