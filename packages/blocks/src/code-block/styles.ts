@@ -116,9 +116,8 @@ export const codeBlockStyles = css`
 
   .mermaid-preview-container {
     position: relative;
-    min-height: 200px;
-    max-height: 360px;
-    overflow: auto;
+    height: 360px;
+    overflow: hidden;
     padding: 16px;
     background: var(--affine-white);
     border: 1px solid var(--affine-border-color);
