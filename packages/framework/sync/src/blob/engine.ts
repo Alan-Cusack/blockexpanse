@@ -1,6 +1,6 @@
 import { type Logger, sha } from '@blockexpanse/global/utils';
 
-import type { BlobSource } from './source.js';
+import type { BlobSource, BlobUploadProgressCallback } from './source.js';
 
 export interface BlobStatus {
   isStorageOverCapacity: boolean;
@@ -59,25 +59,51 @@ export class BlobEngine {
 
   async set(value: Blob): Promise<string>;
 
+  async set(
+    value: Blob,
+    onProgress: BlobUploadProgressCallback
+  ): Promise<string>;
+
   async set(key: string, value: Blob): Promise<string>;
 
-  async set(valueOrKey: string | Blob, _value?: Blob) {
+  async set(
+    valueOrKey: string | Blob,
+    _value?: Blob | BlobUploadProgressCallback,
+    _onProgress?: BlobUploadProgressCallback
+  ) {
     if (this.main.readonly) {
       throw new Error('main peer is readonly');
     }
 
-    const key =
-      typeof valueOrKey === 'string'
-        ? valueOrKey
-        : await sha(await valueOrKey.arrayBuffer());
-    const value = typeof valueOrKey === 'string' ? _value : valueOrKey;
+    // Resolve the actual blob value and progress callback from the overloads:
+    //   set(blob)                      → valueOrKey=blob, _value=undefined
+    //   set(blob, onProgress)          → valueOrKey=blob, _value=callback
+    //   set(key, blob)                 → valueOrKey=key, _value=blob
+    //   set(key, blob, onProgress)     → valueOrKey=key, _value=blob, _onProgress=callback
+    let value: Blob;
+    let onProgress: BlobUploadProgressCallback | undefined;
+
+    if (typeof valueOrKey === 'string') {
+      // set(key, blob[, onProgress])
+      value = _value as Blob;
+      onProgress = _onProgress;
+    } else {
+      // set(blob[, onProgress])
+      value = valueOrKey;
+      onProgress =
+        typeof _value === 'function'
+          ? (_value as BlobUploadProgressCallback)
+          : _onProgress;
+    }
 
     if (!value) {
       throw new Error('value is empty');
     }
 
+    const key = await sha(await value.arrayBuffer());
+
     // await upload to the main peer
-    await this.main.set(key, value);
+    await this.main.set(key, value, onProgress);
 
     // uploads to other peers in the background
     Promise.allSettled(
