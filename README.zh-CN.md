@@ -5,15 +5,14 @@
 </p>
 
 <p align="center">
-  <strong>BlockExpanse</strong> - 框架无关的块编辑器,文档与白板一体<br/>
-  <strong>BlockExpanse</strong> - A framework-agnostic block editor with docs + whiteboard
+  <strong>BlockExpanse</strong> - 面向文档与无限画布的框架无关块编辑器
 </p>
 
 <p align="center">
   <a href="https://github.com/Alan-Cusack/blockexpanse/actions"><img src="https://img.shields.io/github/actions/workflow/status/Alan-Cusack/blockexpanse/test.yml?branch=main&label=CI" alt="CI" /></a>
+  <a href="https://www.npmjs.com/package/@blockexpanse/presets"><img src="https://img.shields.io/npm/v/@blockexpanse/presets?label=npm" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@blockexpanse/presets"><img src="https://img.shields.io/npm/dm/@blockexpanse/presets" alt="npm downloads" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-blue" alt="License" /></a>
-  <img src="https://img.shields.io/badge/npm%20scope-@blockexpanse-6880ff" alt="npm scope" />
-  <img src="https://img.shields.io/badge/version-1.0.1-6880ff" alt="version" />
 </p>
 
 <p align="center">
@@ -27,6 +26,8 @@
 **BlockExpanse** 是一个开源块编辑器工具包,把**类 Notion 文档编辑器**和**无限画布白板**打包成一个框架无关的组件。用 Vue、React 或原生 JS 都能集成,不绑定 React。
 
 每个编辑器都是原生 **Web Component**。几行代码挂载,自定义 Block 扩展,通过 CRDT(Yjs)接入实时协同。AI 面板与白板 Copilot 内置预留,接入你的 LLM 即可。
+
+**[文档](packages/docs) · [示例](packages/playground/apps) · [构建指南](BUILDING.md) · [变更管理](.changeset/README.md)**
 
 |           | BlockExpanse                |
 | --------- | --------------------------- |
@@ -91,22 +92,11 @@ BlockExpanse 基于 [BlockSuite](https://github.com/toeverything/blocksuite) `v0
 
 ### 快速入门
 
-**环境：** Node.js `>=18.19.0 <21.0.0`，Yarn `4.5.3`（推荐 [Corepack](https://nodejs.org/api/corepack.html)）。
+**环境：** Node.js `>=18.19.0 <21.0.0`。
 
 ```sh
-corepack enable
-git clone https://github.com/Alan-Cusack/blockexpanse.git
-cd blockexpanse
-yarn install
-yarn dev
+npm install @blockexpanse/presets yjs
 ```
-
-| 地址                                                | 说明                                                                              |
-| --------------------------------------------------- | --------------------------------------------------------------------------------- |
-| http://localhost:5173/starter/?init                 | 推荐本地调试入口                                                                  |
-| http://localhost:5173/starter/?blobSource=cloud,idb | CloudBlob 持久化示例（见 [blob-storage.md](packages/docs/guide/blob-storage.md)） |
-| http://localhost:5173/starter/                      | Starter 预设列表                                                                  |
-| http://localhost:5173                               | 完整示例（含持久化与协作）                                                        |
 
 **最小集成示例：**
 
@@ -130,13 +120,20 @@ const paragraph = doc.getBlockByFlavour('affine:paragraph')[0];
 doc.updateBlock(paragraph, { text: new Text('Hello BlockExpanse!') });
 ```
 
-**安装：**
+> `presets` 是推荐入口，会带入编辑器块、存储层和默认集成。
 
-```sh
-npm install @blockexpanse/presets yjs
-```
+### 包选择
 
-> `presets` 会通过传递依赖自动带入 `blocks`、`store`、`theme` 及所有内部包 —— 装一个就够了。
+| 包                        | 用途                        |
+| ------------------------- | --------------------------- |
+| `@blockexpanse/presets`   | 推荐的完整编辑器入口        |
+| `@blockexpanse/blocks`    | 默认块、组件和代码块预览    |
+| `@blockexpanse/store`     | CRDT 文档模型与快照         |
+| `@blockexpanse/theme`     | 默认主题和设计变量          |
+| `@blockexpanse/affine`    | 面向高级用户的聚合入口      |
+| `@blockexpanse/block-std` | 底层 Block 运行时和扩展 API |
+
+同一次稳定版发布中的公开包使用统一版本号。
 
 ### 架构
 
@@ -159,11 +156,11 @@ npm install @blockexpanse/presets yjs
 
 每个编辑器都是自定义元素（`<page-editor>`、`<edgeless-editor>`），从任何框架挂载：
 
-| 框架        | 用法                                                       | Playground 示例                             |
-| ----------- | ---------------------------------------------------------- | ------------------------------------------- |
-| **原生 JS** | `new PageEditor(); document.body.appendChild(editor)`      | [/minimal/](http://localhost:5173/minimal/) |
-| **React**   | `<page-editor ref={ref} />` + 在 `useEffect` 中设置 `.doc` | [/react/](http://localhost:5173/react/)     |
-| **Vue**     | `<page-editor :doc="doc" />`（Vue 原生传递对象属性）       | [/vue/](http://localhost:5173/vue/)         |
+| 框架        | 用法                                                       | 示例源码                                                      |
+| ----------- | ---------------------------------------------------------- | ------------------------------------------------------------- |
+| **原生 JS** | `new PageEditor(); document.body.appendChild(editor)`      | [`minimal/main.ts`](packages/playground/apps/minimal/main.ts) |
+| **React**   | `<page-editor ref={ref} />` + 在 `useEffect` 中设置 `.doc` | [`react/main.tsx`](packages/playground/apps/react/main.tsx)   |
+| **Vue**     | `<page-editor :doc="doc" />`（Vue 原生传递对象属性）       | [`vue/main.ts`](packages/playground/apps/vue/main.ts)         |
 
 > **React 注意：** React 不会向自定义元素传递非字符串属性，因此需通过 ref + `useEffect` 设置 `editor.doc = doc`，不能用 JSX 属性。Vue 用 `:doc="doc"` 可自动处理。
 
@@ -219,6 +216,18 @@ import { LinkPreviewExtension } from '@blockexpanse/affine-shared/services';
 //   LinkPreviewExtension('https://your.api/link-preview'),
 // ]
 ```
+
+### 本地开发
+
+```sh
+corepack enable
+git clone https://github.com/Alan-Cusack/blockexpanse.git
+cd blockexpanse
+yarn install
+yarn dev
+```
+
+Playground 默认运行在 `http://localhost:5173`。构建和测试说明见 [BUILDING.md](./BUILDING.md)。
 
 ### 其他命令
 

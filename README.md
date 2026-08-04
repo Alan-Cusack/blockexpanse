@@ -5,15 +5,14 @@
 </p>
 
 <p align="center">
-  <strong>BlockExpanse</strong> - A framework-agnostic block editor with docs + whiteboard<br/>
-  <strong>BlockExpanse</strong> - 框架无关的块编辑器,文档与白板一体
+  <strong>BlockExpanse</strong> - A framework-agnostic block editor for documents and infinite canvases
 </p>
 
 <p align="center">
   <a href="https://github.com/Alan-Cusack/blockexpanse/actions"><img src="https://img.shields.io/github/actions/workflow/status/Alan-Cusack/blockexpanse/test.yml?branch=main&label=CI" alt="CI" /></a>
+  <a href="https://www.npmjs.com/package/@blockexpanse/presets"><img src="https://img.shields.io/npm/v/@blockexpanse/presets?label=npm" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@blockexpanse/presets"><img src="https://img.shields.io/npm/dm/@blockexpanse/presets" alt="npm downloads" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-blue" alt="License" /></a>
-  <img src="https://img.shields.io/badge/npm%20scope-@blockexpanse-6880ff" alt="npm scope" />
-  <img src="https://img.shields.io/badge/version-1.0.1-6880ff" alt="version" />
 </p>
 
 <p align="center">
@@ -26,7 +25,9 @@
 
 **BlockExpanse** is an open-source block editor toolkit that bundles a **Notion-style document editor** and an **infinite-canvas whiteboard** into a single framework-agnostic package. Build rich editing experiences in Vue, React, or vanilla JS - no React lock-in.
 
-Every editor is a native **Web Component**. Mount it with a few lines of code, extend it with custom blocks, and wire up real-time collaboration through CRDT (Yjs). An AI panel and edgeless copilot surface are built in - just plug in your LLM.
+Every editor is a native **Web Component**. Mount it with a few lines of code, extend it with custom blocks, and wire up real-time collaboration through CRDT (Yjs). Use the built-in AI surfaces with your own LLM backend.
+
+**[Documentation](packages/docs) · [Examples](packages/playground/apps) · [Build guide](BUILDING.md) · [Changesets](.changeset/README.md)**
 
 |           | BlockExpanse                       |
 | --------- | ---------------------------------- |
@@ -91,22 +92,11 @@ Code-block previews are designed for documentation and visual inspection, not ar
 
 ### Quick Start
 
-**Requirements:** Node.js `>=18.19.0 <21.0.0`, Yarn `4.5.3` (via [Corepack](https://nodejs.org/api/corepack.html)).
+**Requirements:** Node.js `>=18.19.0 <21.0.0`.
 
 ```sh
-corepack enable
-git clone https://github.com/Alan-Cusack/blockexpanse.git
-cd blockexpanse
-yarn install
-yarn dev
+npm install @blockexpanse/presets yjs
 ```
-
-| URL                                                 | Description                                                                              |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| http://localhost:5173/starter/?init                 | Recommended local entry                                                                  |
-| http://localhost:5173/starter/?blobSource=cloud,idb | Cloud blob persistence demo (see [blob-storage.md](packages/docs/guide/blob-storage.md)) |
-| http://localhost:5173/starter/                      | Starter preset list                                                                      |
-| http://localhost:5173                               | Full demo (persistence & collaboration)                                                  |
 
 **Minimal embed:**
 
@@ -130,13 +120,20 @@ const paragraph = doc.getBlockByFlavour('affine:paragraph')[0];
 doc.updateBlock(paragraph, { text: new Text('Hello BlockExpanse!') });
 ```
 
-**Install:**
+> `presets` is the recommended entry and pulls in the editor blocks, store, and default integrations.
 
-```sh
-npm install @blockexpanse/presets yjs
-```
+### Packages
 
-> `presets` pulls in `blocks`, `store`, `theme`, and all internal packages as transitive dependencies - one install is all you need.
+| Package                   | Purpose                                    |
+| ------------------------- | ------------------------------------------ |
+| `@blockexpanse/presets`   | Recommended complete editor entry          |
+| `@blockexpanse/blocks`    | Default blocks, widgets, and code previews |
+| `@blockexpanse/store`     | CRDT document model and snapshots          |
+| `@blockexpanse/theme`     | Default themes and design tokens           |
+| `@blockexpanse/affine`    | Aggregated advanced entry                  |
+| `@blockexpanse/block-std` | Low-level block runtime and extension APIs |
+
+Public packages in a stable release use the same version number.
 
 ### Architecture
 
@@ -159,11 +156,11 @@ All editors and widgets are **native Web Components** - use them from Vue, React
 
 Every editor is a custom element (`<page-editor>`, `<edgeless-editor>`). Mount it from any framework:
 
-| Framework      | How                                                             | Playground example                          |
-| -------------- | --------------------------------------------------------------- | ------------------------------------------- |
-| **Vanilla JS** | `new PageEditor(); document.body.appendChild(editor)`           | [/minimal/](http://localhost:5173/minimal/) |
-| **React**      | `<page-editor ref={ref} />` + set `.doc` in `useEffect`         | [/react/](http://localhost:5173/react/)     |
-| **Vue**        | `<page-editor :doc="doc" />` (Vue passes object props natively) | [/vue/](http://localhost:5173/vue/)         |
+| Framework      | How                                                             | Source example                                                |
+| -------------- | --------------------------------------------------------------- | ------------------------------------------------------------- |
+| **Vanilla JS** | `new PageEditor(); document.body.appendChild(editor)`           | [`minimal/main.ts`](packages/playground/apps/minimal/main.ts) |
+| **React**      | `<page-editor ref={ref} />` + set `.doc` in `useEffect`         | [`react/main.tsx`](packages/playground/apps/react/main.tsx)   |
+| **Vue**        | `<page-editor :doc="doc" />` (Vue passes object props natively) | [`vue/main.ts`](packages/playground/apps/vue/main.ts)         |
 
 > **React note:** React doesn't pass non-string attributes to custom elements, so set `editor.doc = doc` via a ref in `useEffect`, not as a JSX prop. Vue handles this automatically with `:doc="doc"`.
 
@@ -219,6 +216,18 @@ import { LinkPreviewExtension } from '@blockexpanse/affine-shared/services';
 //   LinkPreviewExtension('https://your.api/link-preview'),
 // ]
 ```
+
+### Development
+
+```sh
+corepack enable
+git clone https://github.com/Alan-Cusack/blockexpanse.git
+cd blockexpanse
+yarn install
+yarn dev
+```
+
+The Playground runs at `http://localhost:5173`. See [BUILDING.md](./BUILDING.md) for build and test details.
 
 ### Other Commands
 
