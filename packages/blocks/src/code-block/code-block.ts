@@ -123,10 +123,22 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
         theme: this._isDarkTheme() ? 'dark' : 'default',
         securityLevel: 'loose',
       });
-      const id = `mermaid-${Date.now()}`;
-      const { svg } = await mermaid.render(id, code);
-      this._mermaidSvg = svg;
-      this._mermaidError = null;
+      const id = `mermaid-${this.model.id}-${Date.now()}`;
+      // Create a temporary off-screen container for mermaid to render into.
+      // mermaid.render needs a visible DOM element to measure SVG dimensions.
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.top = '0';
+      tempContainer.style.width = '600px';
+      document.body.append(tempContainer);
+      try {
+        const { svg } = await mermaid.render(id, code, tempContainer);
+        this._mermaidSvg = svg;
+        this._mermaidError = null;
+      } finally {
+        tempContainer.remove();
+      }
     } catch (err) {
       this._mermaidSvg = null;
       this._mermaidError =
