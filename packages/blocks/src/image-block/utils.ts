@@ -48,11 +48,13 @@ export async function uploadBlobForImage(
   setImageUploading(blockId);
   const doc = editorHost.doc;
   let sourceId: string | undefined;
+  let actualSize = blob.size;
 
   try {
     // Compress the image before upload (resize + re-encode to JPEG).
     // Skips GIF/SVG/WebP and small files automatically.
     const compressed = await compressImage(blob);
+    actualSize = compressed.size;
     sourceId = await doc.blobSync.set(compressed);
   } catch (error) {
     console.error(error);
@@ -75,6 +77,7 @@ export async function uploadBlobForImage(
       }
       doc.updateBlock(imageModel, {
         sourceId,
+        size: actualSize,
       } satisfies Partial<ImageBlockProps>);
     });
   }

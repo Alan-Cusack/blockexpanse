@@ -20,7 +20,12 @@ export class MemoryBlobSource implements BlobSource {
     return Promise.resolve(Array.from(this.map.keys()));
   }
 
-  set(key: string, value: Blob) {
+  // onProgress is accepted for interface compatibility but ignored — memory writes are instant.
+  set(
+    key: string,
+    value: Blob,
+    _onProgress?: (loaded: number, total: number) => void
+  ) {
     this.map.set(key, value);
     return Promise.resolve(key);
   }

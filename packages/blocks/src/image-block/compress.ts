@@ -15,6 +15,12 @@ export interface CompressImageOptions {
   quality?: number;
   /** Files smaller than this (bytes) are not compressed. Default: 500 * 1024 (500KB). */
   minSize?: number;
+  /**
+   * Output MIME type. Default: `'image/jpeg'` (best compression).
+   * Set to `'image/png'` to preserve alpha transparency for PNGs with
+   * transparency (note: PNG output is lossless and may be larger).
+   */
+  mimeType?: string;
 }
 
 const DEFAULT_MAX_DIMENSION = 1920;
@@ -47,6 +53,7 @@ export async function compressImage(
     maxDimension = DEFAULT_MAX_DIMENSION,
     quality = DEFAULT_QUALITY,
     minSize = DEFAULT_MIN_SIZE,
+    mimeType = 'image/jpeg',
   } = options;
 
   // Skip formats that shouldn't be re-encoded.
@@ -67,8 +74,8 @@ export async function compressImage(
     const needsResize =
       bitmap.width > maxDimension || bitmap.height > maxDimension;
 
-    // If the image is already small enough AND it's already JPEG, skip entirely.
-    if (!needsResize && blob.type === 'image/jpeg') {
+    // If the image is already small enough AND matches the output format, skip.
+    if (!needsResize && blob.type === mimeType) {
       bitmap.close();
       return blob;
     }
@@ -90,13 +97,18 @@ export async function compressImage(
       return blob;
     }
 
+    // For JPEG output, fill white background first (JPEG has no alpha channel).
+    // PNG output preserves transparency.
+    if (mimeType === 'image/jpeg') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, targetWidth, targetHeight);
+    }
+
     ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
     bitmap.close();
 
-    // Re-encode as JPEG (widely supported, small). PNGs with transparency will
-    // lose alpha — this is intentional for web uploads.
     const compressedBlob = await new Promise<Blob | null>(resolve => {
-      canvas.toBlob(resolve, 'image/jpeg', quality);
+      canvas.toBlob(resolve, mimeType, quality);
     });
 
     // Safety: if compression made it bigger, return the original.

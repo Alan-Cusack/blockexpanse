@@ -100,7 +100,11 @@ export class BlobEngine {
       throw new Error('value is empty');
     }
 
-    const key = await sha(await value.arrayBuffer());
+    // Use the provided key (from set(key, blob) overload), or compute via sha.
+    const key =
+      typeof valueOrKey === 'string'
+        ? valueOrKey
+        : await sha(await value.arrayBuffer());
 
     // await upload to the main peer
     await this.main.set(key, value, onProgress);
