@@ -60,6 +60,7 @@ BlockExpanse 基于 [BlockSuite](https://github.com/toeverything/blocksuite) `v0
 - 嵌入（YouTube、GitHub、Figma、HTML…）、链接文档、书签
 - 数据库视图（表格 / 看板 / 日历）、附件、评论
 - Markdown / HTML 导入导出、快照、多文档状态管理
+- 代码块 Mermaid 图表实时预览（可切换显示/隐藏）
 
 #### 白板（`EdgelessEditor`）
 

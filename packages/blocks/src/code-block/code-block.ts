@@ -29,8 +29,9 @@ import {
 import { Slice } from '@blockexpanse/store';
 import { computed, effect, type Signal, signal } from '@preact/signals-core';
 import { html, nothing, type TemplateResult } from 'lit';
-import { query } from 'lit/decorators.js';
+import { query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { when } from 'lit/directives/when.js';
 
 import type { CodeBlockService } from './code-block-service.js';
 
@@ -47,6 +48,8 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
 
   private _inlineRangeProvider: InlineRangeProvider | null = null;
 
+  private _mermaidRenderTimer: ReturnType<typeof setTimeout> | null = null;
+
   clipboardController = new CodeClipboardController(this);
 
   highlightTokens$: Signal<ThemedToken[][]> = signal([]);
@@ -60,6 +63,10 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
     const matchedInfo = this.service.langs.find(info => info.id === lang);
     return matchedInfo ? matchedInfo.name : 'Plain Text';
   });
+
+  private get _isMermaid(): boolean {
+    return this.model.language$.value === 'mermaid';
+  }
 
   get inlineEditor() {
     const inlineRoot = this.querySelector<InlineRootElement>(
@@ -86,6 +93,54 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
       return el;
     }
     return this.rootComponent;
+  }
+
+  private _isDarkTheme(): boolean {
+    const el = this.closest('[data-theme]') as HTMLElement | null;
+    return el?.dataset.theme === 'dark';
+  }
+
+  private async _renderMermaid(): Promise<void> {
+    if (!this._isMermaid || !this._showMermaidPreview) {
+      this._mermaidSvg = null;
+      this._mermaidError = null;
+      return;
+    }
+
+    const code = this.model.text.toString().trim();
+    if (!code) {
+      this._mermaidSvg = null;
+      this._mermaidError = null;
+      return;
+    }
+
+    this._mermaidLoading = true;
+    try {
+      const mermaid = (await import('mermaid')).default;
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: this._isDarkTheme() ? 'dark' : 'default',
+        securityLevel: 'loose',
+      });
+      const id = `mermaid-${Date.now()}`;
+      const { svg } = await mermaid.render(id, code);
+      this._mermaidSvg = svg;
+      this._mermaidError = null;
+    } catch (err) {
+      this._mermaidSvg = null;
+      this._mermaidError =
+        err instanceof Error ? err.message : 'Failed to render diagram';
+    } finally {
+      this._mermaidLoading = false;
+    }
+  }
+
+  private _scheduleMermaidRender(): void {
+    if (!this._isMermaid) return;
+    if (this._mermaidRenderTimer) clearTimeout(this._mermaidRenderTimer);
+    this._mermaidRenderTimer = setTimeout(() => {
+      this._renderMermaid().catch(console.error);
+    }, 300);
   }
 
   private _updateHighlightTokens() {
@@ -156,6 +211,16 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
       effect(() => {
         noop(this.highlightTokens$.value);
         this._richTextElement?.inlineEditor?.render();
+      })
+    );
+
+    // Re-render mermaid preview when code or language changes.
+    this.disposables.add(
+      effect(() => {
+        noop(this.model.language$.value);
+        noop(this.model.text.deltas$.value);
+        noop(this._showMermaidPreview);
+        this._scheduleMermaidRender();
       })
     );
 
@@ -429,6 +494,56 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
         >
         </rich-text>
 
+        ${when(
+          this._isMermaid,
+          () => html`
+            <div class="mermaid-preview-section">
+              <div class="mermaid-preview-header">
+                <button
+                  class="mermaid-toggle-btn"
+                  @click=${() => {
+                    this._showMermaidPreview = !this._showMermaidPreview;
+                  }}
+                >
+                  ${this._showMermaidPreview ? '▼' : '▶'} Diagram Preview
+                </button>
+              </div>
+              ${when(
+                this._showMermaidPreview,
+                () => html`
+                  <div class="mermaid-preview-container">
+                    ${when(
+                      this._mermaidLoading,
+                      () => html`<div class="mermaid-loading">Rendering…</div>`,
+                      () =>
+                        when(
+                          this._mermaidError,
+                          () => html`
+                            <div class="mermaid-error">
+                              ⚠ ${this._mermaidError}
+                            </div>
+                          `,
+                          () =>
+                            when(
+                              this._mermaidSvg,
+                              () =>
+                                html`<div
+                                  class="mermaid-svg-wrapper"
+                                  .innerHTML=${this._mermaidSvg}
+                                ></div>`,
+                              () =>
+                                html`<div class="mermaid-empty">
+                                  Type a diagram to see preview
+                                </div>`
+                            )
+                        )
+                    )}
+                  </div>
+                `
+              )}
+            </div>
+          `
+        )}
         ${this.renderChildren(this.model)} ${Object.values(this.widgets)}
       </div>
     `;
@@ -438,8 +553,17 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
     this.doc.updateBlock(this.model, { wrap });
   }
 
+  @state() private accessor _mermaidError: string | null = null;
+
+  @state() private accessor _mermaidLoading = false;
+
+  // --- Mermaid preview state ---
+  @state() private accessor _mermaidSvg: string | null = null;
+
   @query('rich-text')
   private accessor _richTextElement: RichText | null = null;
+
+  @state() private accessor _showMermaidPreview = true;
 
   override accessor blockContainerStyles = {
     margin: '18px 0',

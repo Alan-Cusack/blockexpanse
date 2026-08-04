@@ -99,4 +99,13 @@ For the `doc.getBlockByFlavour` and `doc.updateBlock` APIs used here, see [Block
 - Set up [collaboration](./collaboration) - local persistence, cross-tab, or real-time WebSocket in one line.
 - Browse the [component types](./component-types) and [BlockExpanse components](../components/overview).
 
-Note that BlockExpanse is under active development. For questions or feedback, [open an issue](https://github.com/Alan-Cusack/blockexpanse/issues)!
+### Mermaid diagrams
+
+Code blocks with `mermaid` as the language render a live diagram preview:
+
+````
+Type ```mermaid in a code block, then write diagram syntax:
+graph TD; A-->B; B-->C;
+````
+
+The preview updates as you type (300ms debounce). Toggle it with the "Diagram Preview" button. Mermaid is loaded on demand (dynamic import) - no bundle cost until first use.

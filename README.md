@@ -60,6 +60,7 @@ A Notion-like **block-based rich text editor**:
 - Embeds (YouTube, GitHub, Figma, HTML…), linked documents, bookmarks
 - Database views (table / kanban / calendar), attachments, comments
 - Markdown / HTML import & export, snapshots, multi-doc state
+- Mermaid diagram preview in code blocks (live render, toggle on/off)
 
 #### Whiteboard (`EdgelessEditor`)
 
