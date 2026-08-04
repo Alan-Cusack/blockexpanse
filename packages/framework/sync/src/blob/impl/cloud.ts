@@ -66,6 +66,11 @@ export class CloudBlobSource implements BlobSource {
     return blob;
   }
 
+  /**
+   * Returns keys cached in this session only.
+   * Does NOT list the full server-side blob inventory.
+   * The editor does not rely on this for rendering (it fetches by known sourceId).
+   */
   list(): Promise<string[]> {
     return Promise.resolve(Array.from(this._cache.keys()));
   }
@@ -77,14 +82,26 @@ export class CloudBlobSource implements BlobSource {
     if (value.type) {
       headers['Content-Type'] = value.type;
     }
-    const response = await fetch(this._blobUrl(key), {
-      method: 'PUT',
-      body: await value.arrayBuffer(),
-      headers,
-    });
-    if (!response.ok) {
+    const body = await value.arrayBuffer();
+
+    // Retry once on transient failure to improve reliability on flaky networks.
+    let response: Response | null = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        response = await fetch(this._blobUrl(key), {
+          method: 'PUT',
+          body,
+          headers,
+        });
+        if (response.ok) break;
+      } catch {
+        // network error, will retry
+      }
+    }
+
+    if (!response || !response.ok) {
       throw new Error(
-        `CloudBlobSource.set failed for "${key}": ${response.status} ${response.statusText}`
+        `CloudBlobSource.set failed for "${key}": ${response?.status ?? 'network error'} ${response?.statusText ?? ''}`
       );
     }
     this._cache.set(key, value);

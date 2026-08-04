@@ -8,6 +8,14 @@ export type {
   SlashMenuItemOptions,
 } from './slash-menu.js';
 
+export { FetchExternalAssetExtension } from '@blockexpanse/affine-shared/services';
+// Re-export blob/asset utilities so users can import everything from @blockexpanse/presets
+export {
+  CloudBlobSource,
+  IndexedDBBlobSource,
+  MemoryBlobSource,
+} from '@blockexpanse/sync';
+
 import type {
   AwarenessSource,
   BlobSource,
@@ -19,6 +27,7 @@ import { DocCollection, Schema } from '@blockexpanse/store';
 import {
   BroadcastChannelAwarenessSource,
   BroadcastChannelDocSource,
+  CloudBlobSource,
   IndexedDBBlobSource,
   IndexedDBDocSource,
   MemoryBlobSource,
@@ -104,23 +113,57 @@ export function createBroadcastDoc(roomId: string) {
  * (local-first) and the WebSocket as a shadow source, so data persists
  * offline and syncs when connected.
  *
+ * **Blob storage**: by default uses IndexedDB (images are local-only and
+ * NOT shared between collaborators). Pass `blobUrl` to use `CloudBlobSource`
+ * so images upload to your server and all collaborators can see them:
+ *
+ * ```ts
+ * createCollaborativeDoc('wss://server/room/my-room', {
+ *   blobUrl: '/api/collection',        // your blob REST API
+ *   getHeaders: () => ({ Authorization: `Bearer ${token}` }),
+ * })
+ * ```
+ *
  * @param url - WebSocket server URL, e.g. `wss://server/room/my-room`
  * @param options.user - Display name for presence (cursor labels)
  * @param options.room - Room ID (appended to URL if URL has no path)
+ * @param options.blobUrl - Blob API base URL for shared image storage (CloudBlobSource)
+ * @param options.getHeaders - Auth headers for blob API requests
  */
 export function createCollaborativeDoc(
   url: string | URL,
-  options: { user?: { name: string }; room?: string } = {}
+  options: {
+    user?: { name: string };
+    room?: string;
+    /** Blob API base URL. When set, images are shared via CloudBlobSource. */
+    blobUrl?: string;
+    /** Auth headers for blob API. */
+    getHeaders?: () => Record<string, string> | Promise<Record<string, string>>;
+  } = {}
 ) {
   const provider = createWebsocketProvider(url, options);
+  const roomId = options.room ?? 'collab';
+
+  // Blob storage: CloudBlobSource (shared) when blobUrl is provided,
+  // otherwise IndexedDB (local-only, images NOT shared between collaborators).
+  const blobSources = options.blobUrl
+    ? {
+        main: new CloudBlobSource({
+          baseUrl: options.blobUrl,
+          collectionId: roomId,
+          getHeaders: options.getHeaders,
+        }),
+        shadows: [new IndexedDBBlobSource(roomId)],
+      }
+    : { main: new IndexedDBBlobSource(roomId) };
 
   const result = createEmptyDoc({
-    id: options.room ?? 'collab',
+    id: roomId,
     docSources: {
       main: new IndexedDBDocSource(),
       shadows: [provider.docSource],
     },
-    blobSources: { main: new IndexedDBBlobSource(options.room ?? 'collab') },
+    blobSources,
     awarenessSources: [provider.awarenessSource],
   });
 

@@ -77,7 +77,7 @@ BlockExpanse 基于 [BlockSuite](https://github.com/toeverything/blocksuite) `v0
 | **国际化**          | 内置 **`zh-CN`**（默认）与 **`en`**，通过 DI `I18nProvider` 注入。已覆盖 Slash 菜单、placeholder、格式栏、Data View、通知、键盘工具栏等；宿主可覆盖词条或对接 i18next。                            |
 | **AI 能力**         | 预留 **AI 面板**（`AffineAIPanelWidget`）、格式栏 **Ask AI**、白板 **Edgeless Copilot** 框选面板。Playground 内置演示动作（润色、摘要、翻译、语气调整等）；**生产环境由宿主接入自己的 LLM 服务**。 |
 | **表格 Block**      | 定制表格块，含只读 guard 与单元格编辑体验优化。                                                                                                                                                    |
-| **图片 / 链接预览** | 图片/附件用 `CloudBlobSource` 持久化；书签预览可选 `LinkPreviewExtension`。见 [blob 存储指南](./packages/docs/guide/blob-storage.md)。                                                             |
+| **图片 / 链接预览** | 图片/附件用 `CloudBlobSource` 持久化；书签预览可选 `LinkPreviewExtension`。见 [blob 存储指南](packages/docs/guide/blob-storage.md)。                                                               |
 
 ### 快速入门
 
@@ -91,12 +91,12 @@ yarn install
 yarn dev
 ```
 
-| 地址                                                | 说明                                                                                |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| http://localhost:5173/starter/?init                 | 推荐本地调试入口                                                                    |
-| http://localhost:5173/starter/?blobSource=cloud,idb | CloudBlob 持久化示例（见 [blob-storage.md](./packages/docs/guide/blob-storage.md)） |
-| http://localhost:5173/starter/                      | Starter 预设列表                                                                    |
-| http://localhost:5173                               | 完整示例（含持久化与协作）                                                          |
+| 地址                                                | 说明                                                                              |
+| --------------------------------------------------- | --------------------------------------------------------------------------------- |
+| http://localhost:5173/starter/?init                 | 推荐本地调试入口                                                                  |
+| http://localhost:5173/starter/?blobSource=cloud,idb | CloudBlob 持久化示例（见 [blob-storage.md](packages/docs/guide/blob-storage.md)） |
+| http://localhost:5173/starter/                      | Starter 预设列表                                                                  |
+| http://localhost:5173                               | 完整示例（含持久化与协作）                                                        |
 
 **最小集成示例：**
 
@@ -200,7 +200,7 @@ Playground 演示：润色、缩短/扩写、摘要、解释、语气、翻译�
 
 ### 可选：Blob 存储与链接预览
 
-图片块存的是 blob 引用（`sourceId`），不是 URL。通过 **`CloudBlobSource`** 对接后端，详见 [blob 存储指南](./packages/docs/guide/blob-storage.md)。书签/嵌入预览仍可选 **`LinkPreviewExtension`**：
+图片块存的是 blob 引用（`sourceId`），不是 URL。通过 **`CloudBlobSource`** 对接后端，详见 [blob 存储指南](packages/docs/guide/blob-storage.md)。书签/嵌入预览仍可选 **`LinkPreviewExtension`**：
 
 ```ts
 import { LinkPreviewExtension } from '@blockexpanse/affine-shared/services';

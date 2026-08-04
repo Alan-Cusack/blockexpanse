@@ -77,7 +77,7 @@ A **canvas editor** that shares the same document model as the page editor:
 | **i18n**                 | Built-in **`zh-CN`** (default) and **`en`** via DI `I18nProvider`. Slash menu, placeholders, format bar, Data View, toasts, keyboard toolbar, and more. Host apps can override messages or plug in i18next.                                          |
 | **AI hooks**             | Ready-to-wire **AI Panel** (`AffineAIPanelWidget`), **Ask AI** on format bar, and **Edgeless Copilot** selection panel. Playground ships demo actions (improve writing, summarize, translate, tone…); **you provide the LLM backend** in production. |
 | **Table block**          | Custom table block with read-only guards and cell editing UX improvements.                                                                                                                                                                           |
-| **Image / link preview** | `CloudBlobSource` for images/attachments; optional `LinkPreviewExtension` for bookmarks. See [blob storage guide](./packages/docs/guide/blob-storage.md).                                                                                            |
+| **Image / link preview** | `CloudBlobSource` for images/attachments; optional `LinkPreviewExtension` for bookmarks. See [blob storage guide](packages/docs/guide/blob-storage.md).                                                                                              |
 
 ### Quick Start
 
@@ -91,12 +91,12 @@ yarn install
 yarn dev
 ```
 
-| URL                                                 | Description                                                                                |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| http://localhost:5173/starter/?init                 | Recommended local entry                                                                    |
-| http://localhost:5173/starter/?blobSource=cloud,idb | Cloud blob persistence demo (see [blob-storage.md](./packages/docs/guide/blob-storage.md)) |
-| http://localhost:5173/starter/                      | Starter preset list                                                                        |
-| http://localhost:5173                               | Full demo (persistence & collaboration)                                                    |
+| URL                                                 | Description                                                                              |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| http://localhost:5173/starter/?init                 | Recommended local entry                                                                  |
+| http://localhost:5173/starter/?blobSource=cloud,idb | Cloud blob persistence demo (see [blob-storage.md](packages/docs/guide/blob-storage.md)) |
+| http://localhost:5173/starter/                      | Starter preset list                                                                      |
+| http://localhost:5173                               | Full demo (persistence & collaboration)                                                  |
 
 **Minimal embed:**
 
@@ -200,7 +200,7 @@ Demo actions in Playground: improve writing, make shorter/longer, summarize, exp
 
 ### Optional: Blob Storage & Link Preview
 
-Images are stored as blob references (`sourceId`), not URLs. Persist blobs via **`CloudBlobSource`** (see [blob-storage guide](/guide/blob-storage)). Bookmark/embed previews still use opt-in **`LinkPreviewExtension`**:
+Images are stored as blob references (`sourceId`), not URLs. Persist blobs via **`CloudBlobSource`** (see [blob-storage guide](packages/docs/guide/blob-storage.md)). Bookmark/embed previews still use opt-in **`LinkPreviewExtension`**:
 
 ```ts
 import { LinkPreviewExtension } from '@blockexpanse/affine-shared/services';
