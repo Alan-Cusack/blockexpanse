@@ -479,28 +479,46 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
           this._isMermaid,
           () => html`
             <div class="mermaid-tab-bar">
-              <button
-                class=${classMap({
-                  'mermaid-tab-btn': true,
-                  active: this._mermaidTab === 'code',
-                })}
-                @click=${() => {
-                  this._mermaidTab = 'code';
-                }}
-              >
-                ${this._t(I18nKeys.editor.mermaid.code, 'Code')}
-              </button>
-              <button
-                class=${classMap({
-                  'mermaid-tab-btn': true,
-                  active: this._mermaidTab === 'preview',
-                })}
-                @click=${() => {
-                  this._mermaidTab = 'preview';
-                }}
-              >
-                ${this._t(I18nKeys.editor.mermaid.diagram, 'Diagram')}
-              </button>
+              <span class="mermaid-lang-label">mermaid</span>
+              <div class="mermaid-tabs">
+                <button
+                  class=${classMap({
+                    'mermaid-tab-btn': true,
+                    active: this._mermaidTab === 'code',
+                  })}
+                  @click=${() => {
+                    this._mermaidTab = 'code';
+                  }}
+                >
+                  ${this._t(I18nKeys.editor.mermaid.code, 'Code')}
+                </button>
+                <button
+                  class=${classMap({
+                    'mermaid-tab-btn': true,
+                    active: this._mermaidTab === 'preview',
+                  })}
+                  @click=${() => {
+                    this._mermaidTab = 'preview';
+                  }}
+                >
+                  ${this._t(I18nKeys.editor.mermaid.diagram, 'Diagram')}
+                </button>
+                <div
+                  class="mermaid-tab-indicator"
+                  style=${`transform: translateX(${this._mermaidTab === 'code' ? '0%' : '100%'});`}
+                ></div>
+              </div>
+              <div class="mermaid-tab-actions">
+                <button
+                  class="mermaid-action-btn"
+                  title=${this._t(I18nKeys.editor.mermaid.refresh, 'Refresh')}
+                  @click=${() => {
+                    this._renderMermaid().catch(console.error);
+                  }}
+                >
+                  ↻
+                </button>
+              </div>
             </div>
           `
         )}
@@ -544,38 +562,7 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
           this._isMermaid && this._mermaidTab === 'preview',
           () => html`
             <div class="mermaid-preview-container">
-              ${when(
-                this._mermaidLoading,
-                () =>
-                  html`<div class="mermaid-loading">
-                    ${this._t(I18nKeys.editor.mermaid.rendering, 'Rendering…')}
-                  </div>`,
-                () =>
-                  when(
-                    this._mermaidError,
-                    () => html`
-                      <div class="mermaid-error">⚠ ${this._mermaidError}</div>
-                    `,
-                    () =>
-                      when(
-                        this._mermaidSvg,
-                        () =>
-                          html`<div
-                            class="mermaid-svg-wrapper"
-                            style="zoom: ${this._mermaidZoom};"
-                            .innerHTML=${this._mermaidSvg}
-                          ></div>`,
-                        () =>
-                          html`<div class="mermaid-empty">
-                            ${this._t(
-                              I18nKeys.editor.mermaid.empty,
-                              'Type a diagram to see preview'
-                            )}
-                          </div>`
-                      )
-                  )
-              )}
-              <div class="mermaid-floating-actions">
+              <div class="mermaid-zoom-control">
                 <button
                   class="mermaid-action-btn"
                   title=${this._t(I18nKeys.editor.mermaid.zoomOut, 'Zoom out')}
@@ -609,16 +596,38 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
                 >
                   ⟲
                 </button>
-                <button
-                  class="mermaid-action-btn"
-                  title=${this._t(I18nKeys.editor.mermaid.refresh, 'Refresh')}
-                  @click=${() => {
-                    this._renderMermaid().catch(console.error);
-                  }}
-                >
-                  ↻
-                </button>
               </div>
+              ${when(
+                this._mermaidLoading,
+                () =>
+                  html`<div class="mermaid-loading">
+                    ${this._t(I18nKeys.editor.mermaid.rendering, 'Rendering…')}
+                  </div>`,
+                () =>
+                  when(
+                    this._mermaidError,
+                    () => html`
+                      <div class="mermaid-error">⚠ ${this._mermaidError}</div>
+                    `,
+                    () =>
+                      when(
+                        this._mermaidSvg,
+                        () =>
+                          html`<div
+                            class="mermaid-svg-wrapper"
+                            style="zoom: ${this._mermaidZoom};"
+                            .innerHTML=${this._mermaidSvg}
+                          ></div>`,
+                        () =>
+                          html`<div class="mermaid-empty">
+                            ${this._t(
+                              I18nKeys.editor.mermaid.empty,
+                              'Type a diagram to see preview'
+                            )}
+                          </div>`
+                      )
+                  )
+              )}
             </div>
           `
         )}

@@ -56,32 +56,64 @@ export const codeBlockStyles = css`
   .mermaid-tab-bar {
     display: flex;
     align-items: center;
-    gap: 0;
+    gap: 8px;
     margin-bottom: 8px;
     border-bottom: 1px solid var(--affine-border-color);
     padding-bottom: 0;
   }
 
+  .mermaid-lang-label {
+    font-size: var(--affine-font-xs);
+    font-weight: 600;
+    color: var(--affine-text-secondary);
+    padding: 6px 0;
+    user-select: none;
+  }
+
+  .mermaid-tabs {
+    position: relative;
+    display: flex;
+    gap: 0;
+  }
+
   .mermaid-tab-btn {
     background: none;
     border: none;
-    border-bottom: 2px solid transparent;
+    border-bottom: none;
     cursor: pointer;
     font-size: var(--affine-font-xs);
     font-weight: 600;
     color: var(--affine-text-secondary);
     padding: 6px 14px;
     user-select: none;
-    margin-bottom: -1px;
+    z-index: 1;
+    transition: color 0.15s;
   }
 
   .mermaid-tab-btn.active {
     color: var(--affine-primary-color);
-    border-bottom-color: var(--affine-primary-color);
   }
 
   .mermaid-tab-btn:hover:not(.active) {
     color: var(--affine-text-primary);
+  }
+
+  .mermaid-tab-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    height: 2px;
+    background: var(--affine-primary-color);
+    transition: transform 0.2s ease;
+  }
+
+  .mermaid-tab-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding-right: 4px;
   }
 
   .mermaid-action-btn {
@@ -90,8 +122,8 @@ export const codeBlockStyles = css`
     justify-content: center;
     width: 26px;
     height: 26px;
-    background: var(--affine-white-90, rgba(255, 255, 255, 0.9));
-    border: 1px solid var(--affine-border-color);
+    background: none;
+    border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
@@ -127,12 +159,10 @@ export const codeBlockStyles = css`
     justify-content: center;
   }
 
-  .mermaid-floating-actions {
-    position: sticky;
-    bottom: 8px;
+  .mermaid-zoom-control {
+    position: absolute;
+    top: 8px;
     right: 8px;
-    margin-left: auto;
-    margin-top: 8px;
     display: inline-flex;
     align-items: center;
     gap: 2px;
@@ -141,17 +171,21 @@ export const codeBlockStyles = css`
     background: var(--affine-white-90, rgba(255, 255, 255, 0.9));
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
     z-index: 1;
-    float: right;
   }
 
   .mermaid-svg-wrapper {
     display: flex;
     justify-content: center;
+    align-items: center;
     max-width: 100%;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   .mermaid-svg-wrapper svg {
     max-width: 100%;
+    max-height: 100%;
+    width: auto;
     height: auto;
   }
 
