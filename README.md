@@ -13,7 +13,7 @@
   <a href="https://github.com/Alan-Cusack/blockexpanse/actions"><img src="https://img.shields.io/github/actions/workflow/status/Alan-Cusack/blockexpanse/test.yml?branch=main&label=CI" alt="CI" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-blue" alt="License" /></a>
   <img src="https://img.shields.io/badge/npm%20scope-@blockexpanse-6880ff" alt="npm scope" />
-  <img src="https://img.shields.io/badge/version-0.0.1-6880ff" alt="version" />
+  <img src="https://img.shields.io/badge/version-1.0.1-6880ff" alt="version" />
 </p>
 
 <p align="center">
@@ -31,7 +31,7 @@ Every editor is a native **Web Component**. Mount it with a few lines of code, e
 |           | BlockExpanse                       |
 | --------- | ---------------------------------- |
 | npm scope | `@blockexpanse` (published to npm) |
-| Version   | `0.0.1`                            |
+| Version   | `1.0.1`                            |
 | License   | [MPL 2.0](./LICENSE)               |
 
 ### Why BlockExpanse?
@@ -60,7 +60,11 @@ A Notion-like **block-based rich text editor**:
 - Embeds (YouTube, GitHub, Figma, HTML…), linked documents, bookmarks
 - Database views (table / kanban / calendar), attachments, comments
 - Markdown / HTML import & export, snapshots, multi-doc state
-- Mermaid diagram preview in code blocks (live render, toggle on/off)
+- Rich code-block previews with a unified **Code / Preview** workflow:
+  - Mermaid diagrams with live rendering, refresh, zoom, and pan
+  - LaTeX / TeX formulas rendered with KaTeX
+  - JSON formatted structure and CSV table previews
+  - Sanitized SVG rendering and sandboxed HTML preview
 
 #### Whiteboard (`EdgelessEditor`)
 
@@ -78,7 +82,12 @@ A **canvas editor** that shares the same document model as the page editor:
 | **i18n**                 | Built-in **`zh-CN`** (default) and **`en`** via DI `I18nProvider`. Slash menu, placeholders, format bar, Data View, toasts, keyboard toolbar, and more. Host apps can override messages or plug in i18next.                                          |
 | **AI hooks**             | Ready-to-wire **AI Panel** (`AffineAIPanelWidget`), **Ask AI** on format bar, and **Edgeless Copilot** selection panel. Playground ships demo actions (improve writing, summarize, translate, tone…); **you provide the LLM backend** in production. |
 | **Table block**          | Custom table block with read-only guards and cell editing UX improvements.                                                                                                                                                                           |
+| **Code previews**        | Extensible previews for Mermaid, LaTeX / TeX, JSON, CSV, SVG, and HTML. SVG is sanitized with DOMPurify; HTML is rendered in a restricted sandbox without script, form, popup, or top-level navigation permissions.                                  |
 | **Image / link preview** | `CloudBlobSource` for images/attachments; optional `LinkPreviewExtension` for bookmarks. See [blob storage guide](packages/docs/guide/blob-storage.md).                                                                                              |
+
+#### Code Block Preview Safety
+
+Code-block previews are designed for documentation and visual inspection, not arbitrary code execution. JavaScript and other executable languages remain syntax-highlighted only. SVG content is sanitized before insertion, while HTML is rendered in a sandboxed iframe with scripts, forms, popups, embedded frames, and top-level navigation disabled.
 
 ### Quick Start
 

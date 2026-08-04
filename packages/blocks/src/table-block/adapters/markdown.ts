@@ -29,25 +29,22 @@ export const tableBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatcher = {
         const astToDelta = context.deltaConverter.astToDelta.bind(
           context.deltaConverter
         );
-        walkerContext.openNode(
-          {
-            type: 'block',
-            id: nanoid(),
-            flavour: TableModelFlavour,
-            props: parseTableFromMarkdown(o.node, astToDelta),
-            children: [],
-          },
-          'children'
-        );
+        walkerContext
+          .openNode(
+            {
+              type: 'block',
+              id: nanoid(),
+              flavour: TableModelFlavour,
+              props: parseTableFromMarkdown(o.node, astToDelta),
+              children: [],
+            },
+            'children'
+          )
+          .closeNode();
         walkerContext.skipAllChildren();
       }
     },
-    leave: (o, context) => {
-      const { walkerContext } = context;
-      if (o.node.type === 'table') {
-        walkerContext.closeNode();
-      }
-    },
+    leave: () => undefined,
   },
   fromBlockSnapshot: {
     enter: (o, context) => {

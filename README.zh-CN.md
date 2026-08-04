@@ -13,7 +13,7 @@
   <a href="https://github.com/Alan-Cusack/blockexpanse/actions"><img src="https://img.shields.io/github/actions/workflow/status/Alan-Cusack/blockexpanse/test.yml?branch=main&label=CI" alt="CI" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-blue" alt="License" /></a>
   <img src="https://img.shields.io/badge/npm%20scope-@blockexpanse-6880ff" alt="npm scope" />
-  <img src="https://img.shields.io/badge/version-0.0.1-6880ff" alt="version" />
+  <img src="https://img.shields.io/badge/version-1.0.1-6880ff" alt="version" />
 </p>
 
 <p align="center">
@@ -31,7 +31,7 @@
 |           | BlockExpanse                |
 | --------- | --------------------------- |
 | npm scope | `@blockexpanse`(发布到 npm) |
-| 当前版本  | `0.0.1`                     |
+| 当前版本  | `1.0.1`                     |
 | 协议      | [MPL 2.0](./LICENSE)        |
 
 ### 为什么选 BlockExpanse?
@@ -60,7 +60,11 @@ BlockExpanse 基于 [BlockSuite](https://github.com/toeverything/blocksuite) `v0
 - 嵌入（YouTube、GitHub、Figma、HTML…）、链接文档、书签
 - 数据库视图（表格 / 看板 / 日历）、附件、评论
 - Markdown / HTML 导入导出、快照、多文档状态管理
-- 代码块 Mermaid 图表实时预览（可切换显示/隐藏）
+- 统一的代码块 **代码 / 预览** 工作流：
+  - Mermaid 图表实时渲染，支持刷新、缩放与平移查看
+  - 使用 KaTeX 渲染 LaTeX / TeX 公式
+  - JSON 格式化结构与 CSV 表格预览
+  - SVG 安全清理渲染与 HTML 沙箱预览
 
 #### 白板（`EdgelessEditor`）
 
@@ -78,7 +82,12 @@ BlockExpanse 基于 [BlockSuite](https://github.com/toeverything/blocksuite) `v0
 | **国际化**          | 内置 **`zh-CN`**（默认）与 **`en`**，通过 DI `I18nProvider` 注入。已覆盖 Slash 菜单、placeholder、格式栏、Data View、通知、键盘工具栏等；宿主可覆盖词条或对接 i18next。                            |
 | **AI 能力**         | 预留 **AI 面板**（`AffineAIPanelWidget`）、格式栏 **Ask AI**、白板 **Edgeless Copilot** 框选面板。Playground 内置演示动作（润色、摘要、翻译、语气调整等）；**生产环境由宿主接入自己的 LLM 服务**。 |
 | **表格 Block**      | 定制表格块，含只读 guard 与单元格编辑体验优化。                                                                                                                                                    |
+| **代码块预览**      | 可扩展的 Mermaid、LaTeX / TeX、JSON、CSV、SVG 与 HTML 预览。SVG 使用 DOMPurify 安全清理；HTML 在受限沙箱中渲染，不开放脚本、表单、弹窗或顶层跳转权限。                                             |
 | **图片 / 链接预览** | 图片/附件用 `CloudBlobSource` 持久化；书签预览可选 `LinkPreviewExtension`。见 [blob 存储指南](packages/docs/guide/blob-storage.md)。                                                               |
+
+#### 代码块预览安全性
+
+代码块预览用于文档展示和视觉检查，不用于执行任意代码。JavaScript 等可执行语言仍然只提供语法高亮。SVG 内容在插入前会经过安全清理；HTML 使用沙箱 iframe 渲染，并禁用脚本、表单、弹窗、嵌套页面和顶层页面跳转。
 
 ### 快速入门
 

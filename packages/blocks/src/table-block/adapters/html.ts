@@ -35,28 +35,22 @@ export const tableBlockHtmlAdapterMatcher: BlockHtmlAdapterMatcher = {
           context.deltaConverter
         );
         const tableProps = parseTableFromHtml(o.node, astToDelta);
-        walkerContext.openNode(
-          {
-            type: 'block',
-            id: nanoid(),
-            flavour: TableModelFlavour,
-            props: tableProps as unknown as Record<string, unknown>,
-            children: [],
-          },
-          'children'
-        );
+        walkerContext
+          .openNode(
+            {
+              type: 'block',
+              id: nanoid(),
+              flavour: TableModelFlavour,
+              props: tableProps as unknown as Record<string, unknown>,
+              children: [],
+            },
+            'children'
+          )
+          .closeNode();
         walkerContext.skipAllChildren();
       }
     },
-    leave: (o, context) => {
-      if (!HastUtils.isElement(o.node)) {
-        return;
-      }
-      const { walkerContext } = context;
-      if (o.node.tagName === 'table') {
-        walkerContext.closeNode();
-      }
-    },
+    leave: () => undefined,
   },
   fromBlockSnapshot: {
     enter: (o, context) => {
