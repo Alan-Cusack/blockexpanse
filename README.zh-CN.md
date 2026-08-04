@@ -145,6 +145,18 @@ npm install @blockexpanse/presets yjs
 
 所有编辑器与组件均为 **原生 Web Components**，可在 Vue、React 或纯 HTML 中使用。
 
+### 框架集成
+
+每个编辑器都是自定义元素（`<page-editor>`、`<edgeless-editor>`），从任何框架挂载：
+
+| 框架        | 用法                                                       | Playground 示例                             |
+| ----------- | ---------------------------------------------------------- | ------------------------------------------- |
+| **原生 JS** | `new PageEditor(); document.body.appendChild(editor)`      | [/minimal/](http://localhost:5173/minimal/) |
+| **React**   | `<page-editor ref={ref} />` + 在 `useEffect` 中设置 `.doc` | [/react/](http://localhost:5173/react/)     |
+| **Vue**     | `<page-editor :doc="doc" />`（Vue 原生传递对象属性）       | [/vue/](http://localhost:5173/vue/)         |
+
+> **React 注意：** React 不会向自定义元素传递非字符串属性，因此需通过 ref + `useEffect` 设置 `editor.doc = doc`，不能用 JSX 属性。Vue 用 `:doc="doc"` 可自动处理。
+
 ### 国际化
 
 ```ts

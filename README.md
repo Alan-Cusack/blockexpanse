@@ -145,6 +145,18 @@ npm install @blockexpanse/presets yjs
 
 All editors and widgets are **native Web Components** - use them from Vue, React, or plain HTML.
 
+### Framework Integration
+
+Every editor is a custom element (`<page-editor>`, `<edgeless-editor>`). Mount it from any framework:
+
+| Framework      | How                                                             | Playground example                          |
+| -------------- | --------------------------------------------------------------- | ------------------------------------------- |
+| **Vanilla JS** | `new PageEditor(); document.body.appendChild(editor)`           | [/minimal/](http://localhost:5173/minimal/) |
+| **React**      | `<page-editor ref={ref} />` + set `.doc` in `useEffect`         | [/react/](http://localhost:5173/react/)     |
+| **Vue**        | `<page-editor :doc="doc" />` (Vue passes object props natively) | [/vue/](http://localhost:5173/vue/)         |
+
+> **React note:** React doesn't pass non-string attributes to custom elements, so set `editor.doc = doc` via a ref in `useEffect`, not as a JSX prop. Vue handles this automatically with `:doc="doc"`.
+
 ### i18n
 
 ```ts
