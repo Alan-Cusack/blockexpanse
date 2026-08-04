@@ -1,5 +1,18 @@
 # @blockexpanse/data-view
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [16c2623]
+  - @blockexpanse/affine-shared@1.0.1
+  - @blockexpanse/affine-components@1.0.1
+  - @blockexpanse/block-std@1.0.1
+  - @blockexpanse/global@1.0.1
+  - @blockexpanse/store@1.0.1
+  - @blockexpanse/icons@1.0.1
+  - @blockexpanse/theme@1.0.1
+
 ## 1.0.0
 
 ### Patch Changes

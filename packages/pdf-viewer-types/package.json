@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/pdf-viewer-types",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "PDF Viewer types for BlockExpanse (vendored from @toeverything/pdf-viewer-types)",
   "private": true,
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/inline",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A micro editor.",
   "type": "module",
   "repository": {

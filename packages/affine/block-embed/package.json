@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/affine-block-embed",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Embed blocks for BlockExpanse.",
   "type": "module",
   "repository": {

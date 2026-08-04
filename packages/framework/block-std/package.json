@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/block-std",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Std for BlockExpanse blocks",
   "type": "module",
   "repository": {

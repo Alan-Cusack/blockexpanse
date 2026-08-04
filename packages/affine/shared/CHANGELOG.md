@@ -1,5 +1,18 @@
 # @blockexpanse/affine-shared
 
+## 1.0.1
+
+### Patch Changes
+
+- 16c2623: Add safe code-block previews for Mermaid, LaTeX, JSON, CSV, SVG, and HTML, and fix table clipboard conversion for Markdown and HTML adapters.
+  - @blockexpanse/affine-model@1.0.1
+  - @blockexpanse/block-std@1.0.1
+  - @blockexpanse/global@1.0.1
+  - @blockexpanse/inline@1.0.1
+  - @blockexpanse/store@1.0.1
+  - @blockexpanse/icons@1.0.1
+  - @blockexpanse/theme@1.0.1
+
 ## 1.0.0
 
 ### Patch Changes

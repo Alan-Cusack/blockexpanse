@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/icons",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Icon set for BlockExpanse (vendored from upstream @toeverything/icons).",
   "type": "module",
   "license": "MIT",

@@ -1,5 +1,14 @@
 # @blockexpanse/affine-model
 
+## 1.0.1
+
+### Patch Changes
+
+- @blockexpanse/block-std@1.0.1
+- @blockexpanse/global@1.0.1
+- @blockexpanse/inline@1.0.1
+- @blockexpanse/store@1.0.1
+
 ## 1.0.0
 
 ### Patch Changes

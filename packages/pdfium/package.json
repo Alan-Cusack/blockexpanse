@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/pdfium",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "PDFium WASM vendored for BlockExpanse (vendored from @toeverything/pdfium)",
   "private": true,
   "type": "module",

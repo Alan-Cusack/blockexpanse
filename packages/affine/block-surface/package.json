@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/affine-block-surface",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Surface block for BlockExpanse.",
   "type": "module",
   "repository": {

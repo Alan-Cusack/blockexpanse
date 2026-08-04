@@ -1,5 +1,11 @@
 # @blockexpanse/inline
 
+## 1.0.1
+
+### Patch Changes
+
+- @blockexpanse/global@1.0.1
+
 ## 1.0.0
 
 ### Patch Changes
