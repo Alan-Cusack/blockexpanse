@@ -92,7 +92,7 @@ BlockExpanse 基于 [BlockSuite](https://github.com/toeverything/blocksuite) `v0
 
 ### 快速入门
 
-**环境：** Node.js `>=18.19.0 <21.0.0`。
+**环境：** Node.js 18.19+、20 或 22。
 
 ```sh
 npm install @blockexpanse/presets yjs

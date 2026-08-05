@@ -290,13 +290,73 @@ export class TableCell extends SignalWatcher(
                   name: this.t(I18nKeys.editor.table.paste, 'Paste'),
                   prefix: PasteIcon(),
                   select: () => {
-                    void navigator.clipboard.readText().then(text => {
-                      this.selectionController.doPaste(text, selected);
-                    });
+                    void this.selectionController
+                      .pasteFromNavigator(selected)
+                      .catch(console.error);
                   },
                 }),
               ],
             }),
+            menu.group({
+              items: [
+                this.createColorPickerMenu(
+                  this.dataManager.getSelectionBackgroundColor(selected),
+                  color => {
+                    this.dataManager.setSelectionBackgroundColor(
+                      selected,
+                      color
+                    );
+                  }
+                ),
+              ],
+            }),
+            ...(this.dataManager.canMergeCells(selected)
+              ? [
+                  menu.group({
+                    items: [
+                      menu.action({
+                        name: this.t(
+                          I18nKeys.editor.table.mergeCells,
+                          'Merge cells'
+                        ),
+                        select: () => {
+                          this.dataManager.mergeCells(selected);
+                        },
+                      }),
+                    ],
+                  }),
+                ]
+              : []),
+            ...(this.dataManager.getMergedRangeForSelection(selected)
+              ? [
+                  menu.group({
+                    items: [
+                      menu.action({
+                        name: this.t(
+                          I18nKeys.editor.table.splitCells,
+                          'Split cells'
+                        ),
+                        select: () => {
+                          const row =
+                            this.dataManager.rows$.value[
+                              selected.rowStartIndex
+                            ];
+                          const column =
+                            this.dataManager.columns$.value[
+                              selected.columnStartIndex
+                            ];
+                          if (row && column) {
+                            this.dataManager.splitCell(
+                              row.rowId,
+                              column.columnId
+                            );
+                          }
+                        },
+                      }),
+                    ],
+                  }),
+                ]
+              : []),
             menu.group({
               items: [
                 menu.action({
@@ -556,7 +616,12 @@ export class TableCell extends SignalWatcher(
 
   override render() {
     if (!this.text) {
-      return html`<td class=${cellContainerStyle} style=${this.tdStyle()}>
+      return html`<td
+        class=${cellContainerStyle}
+        colspan=${this.colSpan}
+        rowspan=${this.rowSpan}
+        style=${this.tdStyle()}
+      >
         <div
           style=${styleMap({
             padding: '8px 12px',
@@ -570,6 +635,8 @@ export class TableCell extends SignalWatcher(
       <td
         data-row-id=${this.row?.rowId}
         data-column-id=${this.column?.columnId}
+        colspan=${this.colSpan}
+        rowspan=${this.rowSpan}
         @mouseenter=${() => {
           this.tdMouseEnter(this.rowIndex, this.columnIndex);
         }}
@@ -771,15 +838,36 @@ export class TableCell extends SignalWatcher(
   }
 
   tdStyle() {
-    const columnWidth = this.virtualWidth$.value ?? this.column?.width;
+    const columnWidth =
+      this.colSpan > 1
+        ? this.dataManager.uiColumns$.value
+            .slice(this.columnIndex, this.columnIndex + this.colSpan)
+            .reduce(
+              (width, column) => width + (column.width ?? DefaultColumnWidth),
+              0
+            )
+        : (this.virtualWidth$.value ?? this.column?.width);
+    const cellBackgroundColor =
+      this.row && this.column
+        ? this.dataManager.getCell(this.row.rowId, this.column.columnId)
+            ?.backgroundColor
+        : undefined;
     const backgroundColor =
-      this.column?.backgroundColor ?? this.row?.backgroundColor ?? undefined;
+      cellBackgroundColor ??
+      this.column?.backgroundColor ??
+      this.row?.backgroundColor ??
+      undefined;
     return styleMap({
       backgroundColor,
       minWidth: columnWidth ? `${columnWidth}px` : `${DefaultColumnWidth}px`,
-      maxWidth: columnWidth ? `${columnWidth}px` : `${ColumnMaxWidth}px`,
+      maxWidth: columnWidth
+        ? `${columnWidth}px`
+        : `${ColumnMaxWidth * this.colSpan}px`,
     });
   }
+
+  @property({ type: Number })
+  accessor colSpan = 1;
 
   @property({ attribute: false })
   accessor column: TableColumn | undefined = undefined;
@@ -798,6 +886,9 @@ export class TableCell extends SignalWatcher(
 
   @property({ type: Number })
   accessor rowIndex = 0;
+
+  @property({ type: Number })
+  accessor rowSpan = 1;
 
   @property({ attribute: false })
   accessor selectionController!: SelectionController;

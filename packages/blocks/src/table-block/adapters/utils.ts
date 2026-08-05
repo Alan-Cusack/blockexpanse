@@ -1,6 +1,7 @@
 import type {
   TableCellSerialized,
   TableColumn,
+  TableMergedRange,
   TablePropsSerialized,
   TableRow,
 } from '@blockexpanse/affine-model';
@@ -67,14 +68,61 @@ type Row = {
 };
 type Cell = {
   value: { delta: DeltaInsert[] };
+  colSpan: number;
+  rowSpan: number;
 };
 export const processTable = (
   columns: Record<string, TableColumn>,
   rows: Record<string, TableRow>,
-  cells: Record<string, TableCellSerialized>
+  cells: Record<string, TableCellSerialized>,
+  mergedRanges?: Record<string, TableMergedRange>,
+  skipCoveredCells = false
 ): Table => {
   const sortedColumns = Object.values(columns).sort(compareByOrder);
   const sortedRows = Object.values(rows).sort(compareByOrder);
+  const mergedByAnchor = new Map<
+    string,
+    { colSpan: number; rowSpan: number }
+  >();
+  const coveredCells = new Set<string>();
+  Object.values(mergedRanges ?? {}).forEach(range => {
+    const rowStart = sortedRows.findIndex(
+      row => row.rowId === range.startRowId
+    );
+    const rowEnd = sortedRows.findIndex(row => row.rowId === range.endRowId);
+    const columnStart = sortedColumns.findIndex(
+      column => column.columnId === range.startColumnId
+    );
+    const columnEnd = sortedColumns.findIndex(
+      column => column.columnId === range.endColumnId
+    );
+    if (
+      rowStart < 0 ||
+      rowEnd < rowStart ||
+      columnStart < 0 ||
+      columnEnd < columnStart ||
+      range.anchor.rowId !== range.startRowId ||
+      range.anchor.columnId !== range.startColumnId
+    ) {
+      return;
+    }
+    mergedByAnchor.set(`${range.startRowId}:${range.startColumnId}`, {
+      rowSpan: rowEnd - rowStart + 1,
+      colSpan: columnEnd - columnStart + 1,
+    });
+    for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex++) {
+      for (
+        let columnIndex = columnStart;
+        columnIndex <= columnEnd;
+        columnIndex++
+      ) {
+        if (rowIndex === rowStart && columnIndex === columnStart) continue;
+        const row = sortedRows[rowIndex];
+        const column = sortedColumns[columnIndex];
+        if (row && column) coveredCells.add(`${row.rowId}:${column.columnId}`);
+      }
+    }
+  });
   const table: Table = {
     rows: [],
   };
@@ -83,9 +131,22 @@ export const processTable = (
       cells: [],
     };
     sortedColumns.forEach(col => {
-      const cell = cells[`${r.rowId}:${col.columnId}`];
+      const cellId = `${r.rowId}:${col.columnId}`;
+      if (coveredCells.has(cellId)) {
+        if (!skipCoveredCells) {
+          row.cells.push({
+            colSpan: 1,
+            rowSpan: 1,
+            value: { delta: [] },
+          });
+        }
+        return;
+      }
+      const span = mergedByAnchor.get(cellId) ?? { colSpan: 1, rowSpan: 1 };
+      const cell = cells[cellId];
       if (!cell) {
         row.cells.push({
+          ...span,
           value: {
             delta: [],
           },
@@ -93,6 +154,7 @@ export const processTable = (
         return;
       }
       row.cells.push({
+        ...span,
         value: cell.text,
       });
     });
@@ -119,7 +181,22 @@ const getAllTag = (node: Element | undefined, tagName: string): Element[] => {
   return [];
 };
 
-export const createTableProps = (deltasLists: RichTextType[][]) => {
+type IndexedMergedRange = {
+  rowStartIndex: number;
+  rowEndIndex: number;
+  columnStartIndex: number;
+  columnEndIndex: number;
+};
+
+const parseCellSpan = (value: unknown) => {
+  const span = Number(value ?? 1);
+  return Number.isInteger(span) && span > 0 ? span : 1;
+};
+
+export const createTableProps = (
+  deltasLists: RichTextType[][],
+  indexedMergedRanges: IndexedMergedRange[] = []
+) => {
   const createIdAndOrder = (count: number) => {
     const result: { id: string; order: string }[] = Array.from({
       length: count,
@@ -158,12 +235,30 @@ export const createTableProps = (deltasLists: RichTextType[][]) => {
       };
     }
   }
+  const mergedRanges: Record<string, TableMergedRange> = {};
+  indexedMergedRanges.forEach(indexedRange => {
+    const startRow = rows[indexedRange.rowStartIndex];
+    const endRow = rows[indexedRange.rowEndIndex];
+    const startColumn = columns[indexedRange.columnStartIndex];
+    const endColumn = columns[indexedRange.columnEndIndex];
+    if (!startRow || !endRow || !startColumn || !endColumn) return;
+    const id = nanoid();
+    mergedRanges[id] = {
+      id,
+      anchor: { rowId: startRow.rowId, columnId: startColumn.columnId },
+      startRowId: startRow.rowId,
+      endRowId: endRow.rowId,
+      startColumnId: startColumn.columnId,
+      endColumnId: endColumn.columnId,
+    };
+  });
   return {
     columns: Object.fromEntries(
       columns.map(column => [column.columnId, column])
     ),
     rows: Object.fromEntries(rows.map(row => [row.rowId, row])),
     cells,
+    mergedRanges,
   };
 };
 
@@ -171,25 +266,43 @@ export const parseTableFromHtml = (
   element: Element,
   astToDelta: (ast: HtmlAST) => RichTextType
 ): TablePropsSerialized => {
-  const headerRows = getAllTag(element, 'thead').flatMap(node =>
-    getAllTag(node, 'tr').map(tr => getAllTag(tr, 'th'))
+  const allRows = getAllTag(element, 'tr').map(row =>
+    row.children.filter(
+      (child): child is Element =>
+        HastUtils.isElement(child) &&
+        (child.tagName === 'td' || child.tagName === 'th')
+    )
   );
-  const bodyRows = getAllTag(element, 'tbody').flatMap(node =>
-    getAllTag(node, 'tr').map(tr => getAllTag(tr, 'td'))
-  );
-  const footerRows = getAllTag(element, 'tfoot').flatMap(node =>
-    getAllTag(node, 'tr').map(tr => getAllTag(tr, 'td'))
-  );
-  const allRows = [...headerRows, ...bodyRows, ...footerRows];
   const rowTextLists: RichTextType[][] = [];
-  allRows.forEach(cells => {
-    const row: RichTextType[] = [];
+  const indexedMergedRanges: IndexedMergedRange[] = [];
+  const occupied = new Set<string>();
+  allRows.forEach((cells, rowIndex) => {
+    const row = (rowTextLists[rowIndex] ??= []);
+    let columnIndex = 0;
     cells.forEach(cell => {
-      row.push(astToDelta(cell));
+      while (occupied.has(`${rowIndex}:${columnIndex}`)) columnIndex++;
+      const rowSpan = parseCellSpan(cell.properties?.rowSpan);
+      const colSpan = parseCellSpan(cell.properties?.colSpan);
+      row[columnIndex] = astToDelta(cell);
+      if (rowSpan > 1 || colSpan > 1) {
+        indexedMergedRanges.push({
+          rowStartIndex: rowIndex,
+          rowEndIndex: rowIndex + rowSpan - 1,
+          columnStartIndex: columnIndex,
+          columnEndIndex: columnIndex + colSpan - 1,
+        });
+      }
+      for (let r = rowIndex; r < rowIndex + rowSpan; r++) {
+        const targetRow = (rowTextLists[r] ??= []);
+        for (let c = columnIndex; c < columnIndex + colSpan; c++) {
+          occupied.add(`${r}:${c}`);
+          targetRow[c] ??= [];
+        }
+      }
+      columnIndex += colSpan;
     });
-    rowTextLists.push(row);
   });
-  return createTableProps(rowTextLists);
+  return createTableProps(rowTextLists, indexedMergedRanges);
 };
 
 export const parseTableFromMarkdown = (

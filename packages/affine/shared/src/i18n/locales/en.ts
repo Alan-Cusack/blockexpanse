@@ -323,6 +323,8 @@ export const enMessages: I18nMessages = {
   [K.editor.table.delete]: 'Delete',
   [K.editor.table.copy]: 'Copy',
   [K.editor.table.paste]: 'Paste',
+  [K.editor.table.mergeCells]: 'Merge cells',
+  [K.editor.table.splitCells]: 'Split cells',
 
   [K.editor.reference.addCustomTitle]: 'Add a custom title',
 

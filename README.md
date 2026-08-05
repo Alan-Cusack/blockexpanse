@@ -92,7 +92,7 @@ Code-block previews are designed for documentation and visual inspection, not ar
 
 ### Quick Start
 
-**Requirements:** Node.js `>=18.19.0 <21.0.0`.
+**Requirements:** Node.js 18.19+, 20, or 22.
 
 ```sh
 npm install @blockexpanse/presets yjs

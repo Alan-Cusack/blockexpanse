@@ -1,4 +1,8 @@
-import type { TableBlockModel, TableCell } from '@blockexpanse/affine-model';
+import type {
+  TableBlockModel,
+  TableCell,
+  TableMergedRange,
+} from '@blockexpanse/affine-model';
 
 import { generateKeyBetweenV2 } from '@blockexpanse/block-std/gfx';
 import { nanoid, Text } from '@blockexpanse/store';
@@ -6,6 +10,15 @@ import { computed, type ReadonlySignal, signal } from '@preact/signals-core';
 
 import type { TableAreaSelection } from './selection-schema.js';
 
+import {
+  expandSelectionToMergedRanges,
+  findMergedRangeAt,
+  normalizeTableSelection,
+  rangesOverlap,
+  removeColumnFromMergedRange,
+  removeRowFromMergedRange,
+  resolveMergedRanges,
+} from './table-merge.js';
 import { compareByOrder } from './utils.js';
 
 export class TableDataManager {
@@ -39,6 +52,15 @@ export class TableDataManager {
   readonly hoverDragHandleColumnId$ = signal<string>();
 
   readonly hoverRowIndex$ = signal<number>();
+
+  readonly mergedRanges$ = computed(() => {
+    this._version$.value;
+    return resolveMergedRanges(
+      this.model.mergedRanges,
+      this.rows$.value,
+      this.columns$.value
+    );
+  });
 
   readonly readonly$: ReadonlySignal<boolean> = computed(() => {
     this._readonlyTick$.value;
@@ -184,6 +206,24 @@ export class TableDataManager {
     return rowId;
   }
 
+  canMergeCells(selection: TableAreaSelection) {
+    if (this.readonly$.value) return false;
+    const range = normalizeTableSelection(selection);
+    if (
+      range.rowStartIndex < 0 ||
+      range.columnStartIndex < 0 ||
+      range.rowEndIndex >= this.rows$.value.length ||
+      range.columnEndIndex >= this.columns$.value.length ||
+      (range.rowStartIndex === range.rowEndIndex &&
+        range.columnStartIndex === range.columnEndIndex)
+    ) {
+      return false;
+    }
+    return !this.mergedRanges$.value.some(merged =>
+      rangesOverlap(range, merged)
+    );
+  }
+
   clearCells(cells: { rowId: string; columnId: string }[]) {
     if (this.readonly$.value) {
       return;
@@ -251,6 +291,14 @@ export class TableDataManager {
   }
 
   deleteColumn(columnId: string) {
+    const mergedRanges = this.mergedRanges$.value.map(range =>
+      removeColumnFromMergedRange(
+        range,
+        columnId,
+        this.rows$.value,
+        this.columns$.value
+      )
+    );
     this.model.doc.transact(() => {
       Object.keys(this.model.columns).forEach(id => {
         if (id === columnId) {
@@ -262,10 +310,28 @@ export class TableDataManager {
           delete this.model.cells[id];
         }
       });
+      if (this.model.mergedRanges) {
+        Object.keys(this.model.mergedRanges).forEach(id => {
+          delete this.model.mergedRanges?.[id];
+        });
+        mergedRanges.forEach(range => {
+          if (range && this.model.mergedRanges) {
+            this.model.mergedRanges[range.id] = range;
+          }
+        });
+      }
     });
   }
 
   deleteRow(rowId: string) {
+    const mergedRanges = this.mergedRanges$.value.map(range =>
+      removeRowFromMergedRange(
+        range,
+        rowId,
+        this.rows$.value,
+        this.columns$.value
+      )
+    );
     this.model.doc.transact(() => {
       Object.keys(this.model.rows).forEach(id => {
         if (id === rowId) {
@@ -277,6 +343,16 @@ export class TableDataManager {
           delete this.model.cells[id];
         }
       });
+      if (this.model.mergedRanges) {
+        Object.keys(this.model.mergedRanges).forEach(id => {
+          delete this.model.mergedRanges?.[id];
+        });
+        mergedRanges.forEach(range => {
+          if (range && this.model.mergedRanges) {
+            this.model.mergedRanges[range.id] = range;
+          }
+        });
+      }
     });
   }
 
@@ -326,9 +402,91 @@ export class TableDataManager {
     return newRowId;
   }
 
+  expandSelectionToMergedRanges(selection: TableAreaSelection) {
+    return expandSelectionToMergedRanges(selection, this.mergedRanges$.value);
+  }
+
+  getAnchorCell(rowId: string, columnId: string) {
+    return (
+      this.getMergedRangeAt(rowId, columnId)?.range.anchor ?? {
+        rowId,
+        columnId,
+      }
+    );
+  }
+
   getCell(rowId: string, columnId: string): TableCell | undefined {
     this._version$.value;
     return this.model.cells[`${rowId}:${columnId}`];
+  }
+
+  getCellSpan(rowId: string, columnId: string) {
+    const merged = this.getMergedRangeAt(rowId, columnId);
+    if (
+      !merged ||
+      merged.range.anchor.rowId !== rowId ||
+      merged.range.anchor.columnId !== columnId
+    ) {
+      return { rowSpan: 1, colSpan: 1 };
+    }
+    return {
+      rowSpan: merged.rowEndIndex - merged.rowStartIndex + 1,
+      colSpan: merged.columnEndIndex - merged.columnStartIndex + 1,
+    };
+  }
+
+  getMergedRangeAt(rowId: string, columnId: string) {
+    return findMergedRangeAt(
+      rowId,
+      columnId,
+      this.mergedRanges$.value,
+      this.rows$.value,
+      this.columns$.value
+    );
+  }
+
+  getMergedRangeForSelection(selection: TableAreaSelection) {
+    const normalized = normalizeTableSelection(selection);
+    return this.mergedRanges$.value.find(
+      range =>
+        range.rowStartIndex === normalized.rowStartIndex &&
+        range.rowEndIndex === normalized.rowEndIndex &&
+        range.columnStartIndex === normalized.columnStartIndex &&
+        range.columnEndIndex === normalized.columnEndIndex
+    );
+  }
+
+  getSelectionBackgroundColor(selection: TableAreaSelection) {
+    const normalized = normalizeTableSelection(selection);
+    let color: string | undefined;
+    let initialized = false;
+    for (
+      let rowIndex = normalized.rowStartIndex;
+      rowIndex <= normalized.rowEndIndex;
+      rowIndex++
+    ) {
+      const row = this.rows$.value[rowIndex];
+      if (!row) continue;
+      for (
+        let columnIndex = normalized.columnStartIndex;
+        columnIndex <= normalized.columnEndIndex;
+        columnIndex++
+      ) {
+        const column = this.columns$.value[columnIndex];
+        if (!column) continue;
+        const current = this.getCell(
+          row.rowId,
+          column.columnId
+        )?.backgroundColor;
+        if (!initialized) {
+          color = current;
+          initialized = true;
+        } else if (color !== current) {
+          return;
+        }
+      }
+    }
+    return color;
   }
 
   insertColumn(after?: number) {
@@ -337,6 +495,45 @@ export class TableDataManager {
 
   insertRow(after?: number) {
     this.addRow(after);
+  }
+
+  isCoveredCell(rowId: string, columnId: string) {
+    const merged = this.getMergedRangeAt(rowId, columnId);
+    return (
+      !!merged &&
+      (merged.range.anchor.rowId !== rowId ||
+        merged.range.anchor.columnId !== columnId)
+    );
+  }
+
+  mergeCells(selection: TableAreaSelection) {
+    if (!this.canMergeCells(selection)) return;
+    const range = normalizeTableSelection(selection);
+    const rows = this.rows$.value;
+    const columns = this.columns$.value;
+    const startRow = rows[range.rowStartIndex];
+    const endRow = rows[range.rowEndIndex];
+    const startColumn = columns[range.columnStartIndex];
+    const endColumn = columns[range.columnEndIndex];
+    if (!startRow || !endRow || !startColumn || !endColumn) return;
+
+    const id = nanoid();
+    const mergedRange: TableMergedRange = {
+      id,
+      anchor: {
+        rowId: startRow.rowId,
+        columnId: startColumn.columnId,
+      },
+      startRowId: startRow.rowId,
+      endRowId: endRow.rowId,
+      startColumnId: startColumn.columnId,
+      endColumnId: endColumn.columnId,
+    };
+    this.model.doc.transact(() => {
+      this.model.mergedRanges ??= {};
+      this.model.mergedRanges[id] = mergedRange;
+    });
+    return id;
   }
 
   moveColumn(from: number, after?: number) {
@@ -390,6 +587,60 @@ export class TableDataManager {
       if (this.model.rows[rowId]) {
         this.model.rows[rowId].backgroundColor = color;
       }
+    });
+  }
+
+  setSelectionBackgroundColor(
+    selection: TableAreaSelection,
+    backgroundColor?: string
+  ) {
+    if (this.readonly$.value) return;
+    const normalized = normalizeTableSelection(selection);
+    this.model.doc.transact(() => {
+      for (
+        let rowIndex = normalized.rowStartIndex;
+        rowIndex <= normalized.rowEndIndex;
+        rowIndex++
+      ) {
+        const row = this.rows$.value[rowIndex];
+        if (!row) continue;
+        for (
+          let columnIndex = normalized.columnStartIndex;
+          columnIndex <= normalized.columnEndIndex;
+          columnIndex++
+        ) {
+          const column = this.columns$.value[columnIndex];
+          if (!column) continue;
+          const cell = this.model.cells[`${row.rowId}:${column.columnId}`];
+          if (cell) cell.backgroundColor = backgroundColor;
+        }
+      }
+    });
+  }
+
+  splitCell(rowId: string, columnId: string) {
+    if (this.readonly$.value) return false;
+    const merged = this.getMergedRangeAt(rowId, columnId);
+    if (!merged) return false;
+    this.model.doc.transact(() => {
+      if (this.model.mergedRanges) {
+        delete this.model.mergedRanges[merged.range.id];
+      }
+    });
+    return true;
+  }
+
+  splitMergedRangesIntersecting(selection: TableAreaSelection) {
+    if (this.readonly$.value) return;
+    const normalized = normalizeTableSelection(selection);
+    const ids = this.mergedRanges$.value
+      .filter(range => rangesOverlap(range, normalized))
+      .map(range => range.range.id);
+    if (!ids.length) return;
+    this.model.doc.transact(() => {
+      ids.forEach(id => {
+        if (this.model.mergedRanges) delete this.model.mergedRanges[id];
+      });
     });
   }
 

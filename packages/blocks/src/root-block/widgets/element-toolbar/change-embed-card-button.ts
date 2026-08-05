@@ -655,6 +655,9 @@ export class EdgelessChangeEmbedCardButton extends WithDisposable(LitElement) {
           disabled: this.model.doc.readonly || this._embedViewButtonDisabled,
         },
       ];
+      const currentViewLabel =
+        buttons.find(button => button.type === this._viewType)?.label ??
+        this._viewType;
 
       return html`
         <editor-menu-button
@@ -666,12 +669,7 @@ export class EdgelessChangeEmbedCardButton extends WithDisposable(LitElement) {
               .labelHeight=${'20px'}
               .iconContainerWidth=${'110px'}
             >
-              <div class="label">
-                <span style="text-transform: capitalize"
-                  >${this._viewType}</span
-                >
-                view
-              </div>
+              <div class="label">${currentViewLabel}</div>
               ${SmallArrowDownIcon}
             </editor-icon-button>
           `}

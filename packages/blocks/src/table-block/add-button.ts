@@ -24,11 +24,14 @@ import {
   cellCountTipsStyle,
 } from './add-button-css.js';
 import { DefaultColumnWidth, DefaultRowHeight } from './consts.js';
+import { type DragSession, startDragSession } from './drag-session.js';
 
 export const AddButtonComponentName = 'affine-table-add-button';
 export class AddButton extends SignalWatcher(
   WithDisposable(ShadowlessElement)
 ) {
+  private _activeDragSession: DragSession | null = null;
+
   addColumnButtonRef$ = signal<HTMLDivElement>();
 
   addRowButtonRef$ = signal<HTMLDivElement>();
@@ -91,6 +94,12 @@ export class AddButton extends SignalWatcher(
     this.disposables.addFromEvent(this, 'mousedown', (e: MouseEvent) => {
       this.onDragStart(e);
     });
+  }
+
+  override disconnectedCallback() {
+    this._activeDragSession?.stop();
+    this._activeDragSession = null;
+    super.disconnectedCallback();
   }
 
   getEmptyColumns() {
@@ -233,11 +242,29 @@ export class AddButton extends SignalWatcher(
       this.dataManager.addNColumn(columnCount);
 
       tipsHandler.dispose();
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
     };
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
+    // A second press must not orphan the previous window listeners.
+    this._activeDragSession?.stop();
+    const session = startDragSession({
+      onMove: onMouseMove,
+      onUp: onMouseUp,
+      onCancel: () => {
+        this.dataManager.virtualColumnCount$.value = 0;
+        this.dataManager.virtualRowCount$.value = 0;
+      },
+      onCleanup: () => {
+        if (this._activeDragSession === session) {
+          this._activeDragSession = null;
+        }
+        // If the component unmounts mid-drag we still have to release the
+        // tooltip and reset drag state.
+        tipsHandler.dispose();
+        this.columnDragging$.value = false;
+        this.rowDragging$.value = false;
+        this.rowColumnDragging$.value = false;
+      },
+    });
+    this._activeDragSession = session;
   }
 
   override render() {

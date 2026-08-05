@@ -8,10 +8,11 @@ import type { TableBlockComponent } from './table-block.js';
 
 import { ColumnMinWidth, DefaultColumnWidth } from './consts.js';
 import {
-  domToOffsets,
   getAreaByOffsets,
   getTargetIndexByDraggingOffset,
+  tableToOffsets,
 } from './drag-helper.js';
+import { type DragSession, startDragSession } from './drag-session.js';
 import {
   type TableAreaSelection,
   TableSelection,
@@ -23,10 +24,20 @@ import {
   type TableCell,
   TableCellComponentName,
 } from './table-cell.js';
+import {
+  htmlTableToClipboardPayload,
+  parseTableClipboardPayload,
+  TABLE_CLIPBOARD_MIME,
+  type TableClipboardPayload,
+  tableClipboardToHtml,
+  tableClipboardToPlainText,
+} from './table-clipboard.js';
 import { cleanSelection } from './utils.js';
 type Cells = string[][];
 const TEXT = 'text/plain';
 export class SelectionController implements ReactiveController {
+  private _activeDragSessions = new Set<DragSession>();
+
   readonly doCopyOrCut = (selection: TableAreaSelection, isCut: boolean) => {
     if (isCut && this.isReadonly) {
       return;
@@ -61,33 +72,40 @@ export class SelectionController implements ReactiveController {
     if (isCut) {
       this.dataManager.clearCells(deleteCells);
     }
-    const text = cells.map(row => row.join('\t')).join('\n');
-
-    const htmlTable = `<table style="border-collapse: collapse;">
-      <tbody>
-        ${cells
-          .map(
-            row => `
-          <tr>
-            ${row
-              .map(
-                cell => `
-              <td style="border: 1px solid var(--affine-border-color); padding: 8px 12px; min-width: ${DefaultColumnWidth}px; min-height: 22px;">${cell}</td>
-            `
-              )
-              .join('')}
-          </tr>
-        `
-          )
-          .join('')}
-      </tbody>
-    </table>`;
+    const payload: TableClipboardPayload = {
+      version: 1,
+      rows: cells.length,
+      columns: cells[0]?.length ?? 0,
+      cells,
+      mergedRanges: this.dataManager.mergedRanges$.value.flatMap(range => {
+        if (
+          range.rowStartIndex < selection.rowStartIndex ||
+          range.rowEndIndex > selection.rowEndIndex ||
+          range.columnStartIndex < selection.columnStartIndex ||
+          range.columnEndIndex > selection.columnEndIndex
+        ) {
+          return [];
+        }
+        return [
+          {
+            rowStartIndex: range.rowStartIndex - selection.rowStartIndex,
+            rowEndIndex: range.rowEndIndex - selection.rowStartIndex,
+            columnStartIndex:
+              range.columnStartIndex - selection.columnStartIndex,
+            columnEndIndex: range.columnEndIndex - selection.columnStartIndex,
+          },
+        ];
+      }),
+    };
+    const text = tableClipboardToPlainText(payload);
+    const htmlTable = tableClipboardToHtml(payload);
 
     this.clipboard
       .writeToClipboard(items => ({
         ...items,
         [TEXT]: text,
         'text/html': htmlTable,
+        [TABLE_CLIPBOARD_MIME]: JSON.stringify(payload),
       }))
       .catch(console.error);
   };
@@ -141,6 +159,71 @@ export class SelectionController implements ReactiveController {
     }
   };
 
+  doPasteTablePayload = (
+    payload: TableClipboardPayload,
+    selection: TableAreaSelection
+  ) => {
+    if (this.isReadonly) return;
+    const rows = this.dataManager.uiRows$.value;
+    const columns = this.dataManager.uiColumns$.value;
+    const rowEndIndex = Math.min(
+      rows.length - 1,
+      selection.rowStartIndex + payload.rows - 1
+    );
+    const columnEndIndex = Math.min(
+      columns.length - 1,
+      selection.columnStartIndex + payload.columns - 1
+    );
+    if (
+      rowEndIndex < selection.rowStartIndex ||
+      columnEndIndex < selection.columnStartIndex
+    ) {
+      return;
+    }
+    this.dataManager.splitMergedRangesIntersecting({
+      type: 'area',
+      rowStartIndex: selection.rowStartIndex,
+      rowEndIndex,
+      columnStartIndex: selection.columnStartIndex,
+      columnEndIndex,
+    });
+    for (let rowOffset = 0; rowOffset < payload.rows; rowOffset++) {
+      const row = rows[selection.rowStartIndex + rowOffset];
+      if (!row) break;
+      for (
+        let columnOffset = 0;
+        columnOffset < payload.columns;
+        columnOffset++
+      ) {
+        const column = columns[selection.columnStartIndex + columnOffset];
+        if (!column) break;
+        const text = this.dataManager.getCell(row.rowId, column.columnId)?.text;
+        if (text) {
+          text.replace(
+            0,
+            text.length,
+            payload.cells[rowOffset]?.[columnOffset] ?? ''
+          );
+        }
+      }
+    }
+    payload.mergedRanges.forEach(range => {
+      const target = {
+        type: 'area' as const,
+        rowStartIndex: selection.rowStartIndex + range.rowStartIndex,
+        rowEndIndex: selection.rowStartIndex + range.rowEndIndex,
+        columnStartIndex: selection.columnStartIndex + range.columnStartIndex,
+        columnEndIndex: selection.columnStartIndex + range.columnEndIndex,
+      };
+      if (
+        target.rowEndIndex <= rowEndIndex &&
+        target.columnEndIndex <= columnEndIndex
+      ) {
+        this.dataManager.mergeCells(target);
+      }
+    });
+  };
+
   onCopy = () => {
     const selection = this.getSelected();
     if (!selection || selection.type !== 'area') {
@@ -176,25 +259,40 @@ export class SelectionController implements ReactiveController {
       return false;
     }
 
+    return this.pasteData(clipboardData, selection);
+  };
+
+  pasteData = (
+    clipboardData: Pick<DataTransfer, 'getData'>,
+    selection: TableAreaSelection
+  ) => {
     try {
+      let internalData = clipboardData.getData(TABLE_CLIPBOARD_MIME);
+      if (!internalData) {
+        try {
+          const snapshot = this.clipboard.readFromClipboard(
+            clipboardData as DataTransfer
+          );
+          const snapshotData = snapshot[TABLE_CLIPBOARD_MIME];
+          if (typeof snapshotData === 'string') internalData = snapshotData;
+        } catch {
+          // External clipboard HTML has no BlockExpanse snapshot wrapper.
+        }
+      }
+      const internalPayload = parseTableClipboardPayload(internalData);
+      if (internalPayload) {
+        this.doPasteTablePayload(internalPayload, selection);
+        return true;
+      }
       const html = clipboardData.getData('text/html');
       if (html) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         const table = doc.querySelector('table');
         if (table) {
-          const rows: string[][] = [];
-          table.querySelectorAll('tr').forEach(tr => {
-            const rowData: string[] = [];
-            tr.querySelectorAll('td,th').forEach(cell => {
-              rowData.push(cell.textContent?.trim() ?? '');
-            });
-            if (rowData.length > 0) {
-              rows.push(rowData);
-            }
-          });
-          if (rows.length > 0) {
-            this.doPaste(rows.map(row => row.join('\t')).join('\n'), selection);
+          const tablePayload = htmlTableToClipboardPayload(html);
+          if (tablePayload) {
+            this.doPasteTablePayload(tablePayload, selection);
             return true;
           }
         }
@@ -211,6 +309,25 @@ export class SelectionController implements ReactiveController {
     }
 
     return false;
+  };
+
+  pasteFromNavigator = async (selection: TableAreaSelection) => {
+    if (this.isReadonly) return false;
+    if (!navigator.clipboard.read) {
+      const text = await navigator.clipboard.readText();
+      this.doPaste(text, selection);
+      return true;
+    }
+    const data = new Map<string, string>();
+    const items = await navigator.clipboard.read();
+    for (const item of items) {
+      for (const type of item.types) {
+        if (type === 'text/html' || type === 'text/plain') {
+          data.set(type, await (await item.getType(type)).text());
+        }
+      }
+    }
+    return this.pasteData({ getData: type => data.get(type) ?? '' }, selection);
   };
 
   selected$ = computed(() => this.getSelected());
@@ -235,6 +352,28 @@ export class SelectionController implements ReactiveController {
     this.host.addController(this);
   }
 
+  /**
+   * Wraps `startDragSession` and registers the session with the controller
+   * so `hostDisconnected` reliably cleans up window listeners even if the
+   * user never releases the mouse.
+   */
+  private _beginDrag(options: Parameters<typeof startDragSession>[0]) {
+    // Two-phase so the onCleanup closure can refer to the session itself.
+    const holder: { session?: DragSession } = {};
+    const session = startDragSession({
+      ...options,
+      onCleanup: () => {
+        if (holder.session) {
+          this._activeDragSessions.delete(holder.session);
+        }
+        options.onCleanup?.();
+      },
+    });
+    holder.session = session;
+    this._activeDragSessions.add(session);
+    return session;
+  }
+
   private hasExternalNativeSelection() {
     const selection = getSelection();
     if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
@@ -256,27 +395,29 @@ export class SelectionController implements ReactiveController {
   }
 
   columnDrag(columnDragHandle: HTMLElement, event: MouseEvent) {
-    let drag: { onMove: (x: number) => void; onEnd: () => void } | undefined =
-      undefined;
+    let drag:
+      | { onMove: (x: number) => void; onEnd: (commit?: boolean) => void }
+      | undefined = undefined;
     const initialX = event.clientX;
-    const onMove = (event: MouseEvent) => {
-      const diffX = event.clientX - initialX;
-      if (!drag && Math.abs(diffX) > 10) {
-        event.preventDefault();
-        event.stopPropagation();
-        cleanSelection();
-        this.setSelected(undefined);
-        drag = this.startColumnDrag(initialX, columnDragHandle);
-      }
-      drag?.onMove(event.clientX);
-    };
-    const onUp = () => {
-      drag?.onEnd();
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    this._beginDrag({
+      onMove: event => {
+        const diffX = event.clientX - initialX;
+        if (!drag && Math.abs(diffX) > 10) {
+          event.preventDefault();
+          event.stopPropagation();
+          cleanSelection();
+          this.setSelected(undefined);
+          drag = this.startColumnDrag(initialX, columnDragHandle);
+        }
+        drag?.onMove(event.clientX);
+      },
+      onUp: () => {
+        drag?.onEnd();
+      },
+      onCancel: () => {
+        drag?.onEnd(false);
+      },
+    });
   }
 
   dragListener() {
@@ -351,6 +492,13 @@ export class SelectionController implements ReactiveController {
     });
   }
 
+  hostDisconnected() {
+    for (const session of this._activeDragSessions) {
+      session.stop();
+    }
+    this._activeDragSessions.clear();
+  }
+
   onDragStart(event: MouseEvent) {
     if (this.isReadonly) {
       return;
@@ -359,7 +507,7 @@ export class SelectionController implements ReactiveController {
     if (!(target instanceof HTMLElement)) {
       return;
     }
-    const offsets = domToOffsets(this.host, 'tr', 'td');
+    const offsets = tableToOffsets(this.host);
     if (!offsets) return;
     const startX = event.clientX;
     const startY = event.clientY;
@@ -390,37 +538,33 @@ export class SelectionController implements ReactiveController {
         });
       }
     };
-    const onUp = () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    this._beginDrag({ onMove });
   }
 
   rowDrag(rowDragHandle: HTMLElement, event: MouseEvent) {
-    let drag: { onMove: (x: number) => void; onEnd: () => void } | undefined =
-      undefined;
+    let drag:
+      | { onMove: (x: number) => void; onEnd: (commit?: boolean) => void }
+      | undefined = undefined;
     const initialY = event.clientY;
-    const onMove = (event: MouseEvent) => {
-      const diffY = event.clientY - initialY;
-      if (!drag && Math.abs(diffY) > 10) {
-        event.preventDefault();
-        event.stopPropagation();
-        cleanSelection();
-        this.setSelected(undefined);
-        drag = this.startRowDrag(initialY, rowDragHandle);
-      }
-      drag?.onMove(event.clientY);
-    };
-    // oxlint-disable-next-line sonarjs/no-identical-functions
-    const onUp = () => {
-      drag?.onEnd();
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    this._beginDrag({
+      onMove: event => {
+        const diffY = event.clientY - initialY;
+        if (!drag && Math.abs(diffY) > 10) {
+          event.preventDefault();
+          event.stopPropagation();
+          cleanSelection();
+          this.setSelected(undefined);
+          drag = this.startRowDrag(initialY, rowDragHandle);
+        }
+        drag?.onMove(event.clientY);
+      },
+      onUp: () => {
+        drag?.onEnd();
+      },
+      onCancel: () => {
+        drag?.onEnd(false);
+      },
+    });
   }
 
   setSelected(
@@ -433,6 +577,9 @@ export class SelectionController implements ReactiveController {
       }
       if (this.hasExternalNativeSelection()) {
         return;
+      }
+      if (selection.type === 'area') {
+        selection = this.dataManager.expandSelectionToMergedRanges(selection);
       }
       const previous = this.getSelected();
       if (TableSelectionData.equals(previous, selection)) {
@@ -498,12 +645,12 @@ export class SelectionController implements ReactiveController {
       }
       columnDragPreview.style.left = `${x - initialDiffX - containerRect.left}px`;
     };
-    const onEnd = () => {
+    const onEnd = (commit = true) => {
       const targetIndex = this.dataManager.ui.columnIndicatorIndex$.value;
       this.dataManager.ui.columnIndicatorIndex$.value = undefined;
       document.body.style.pointerEvents = 'auto';
       columnDragPreview.remove();
-      if (targetIndex != null) {
+      if (commit && targetIndex != null) {
         this.dataManager.moveColumn(
           draggingIndex,
           targetIndex === 0 ? undefined : targetIndex - 1
@@ -564,12 +711,12 @@ export class SelectionController implements ReactiveController {
       }
       rowDragPreview.style.top = `${y - initialDiffY - containerRect.top}px`;
     };
-    const onEnd = () => {
+    const onEnd = (commit = true) => {
       const targetIndex = this.dataManager.ui.rowIndicatorIndex$.value;
       this.dataManager.ui.rowIndicatorIndex$.value = undefined;
       document.body.style.pointerEvents = 'auto';
       rowDragPreview.remove();
-      if (targetIndex != null) {
+      if (commit && targetIndex != null) {
         this.dataManager.moveRow(
           draggingIndex,
           targetIndex === 0 ? undefined : targetIndex - 1
@@ -594,28 +741,29 @@ export class SelectionController implements ReactiveController {
     if (!columnId) {
       return;
     }
-    const onMove = (event: MouseEvent) => {
-      this.dataManager.widthAdjustColumnId$.value = columnId;
-      this.dataManager.virtualWidth$.value = {
-        columnId,
-        width: Math.max(
-          ColumnMinWidth,
-          (event.clientX - initialX) / this.scale + adjustedWidth
-        ),
-      };
-    };
-    const onUp = () => {
-      const width = this.dataManager.virtualWidth$.value?.width;
-      this.dataManager.widthAdjustColumnId$.value = undefined;
-      this.dataManager.virtualWidth$.value = undefined;
-      if (width) {
-        this.dataManager.setColumnWidth(columnId, width);
-      }
-
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    this._beginDrag({
+      onMove: event => {
+        this.dataManager.widthAdjustColumnId$.value = columnId;
+        this.dataManager.virtualWidth$.value = {
+          columnId,
+          width: Math.max(
+            ColumnMinWidth,
+            (event.clientX - initialX) / this.scale + adjustedWidth
+          ),
+        };
+      },
+      onUp: () => {
+        const width = this.dataManager.virtualWidth$.value?.width;
+        this.dataManager.widthAdjustColumnId$.value = undefined;
+        this.dataManager.virtualWidth$.value = undefined;
+        if (width) {
+          this.dataManager.setColumnWidth(columnId, width);
+        }
+      },
+      onCancel: () => {
+        this.dataManager.widthAdjustColumnId$.value = undefined;
+        this.dataManager.virtualWidth$.value = undefined;
+      },
+    });
   }
 }

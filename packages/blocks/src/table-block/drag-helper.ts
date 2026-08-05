@@ -37,6 +37,23 @@ export const domToOffsets = (
   };
 };
 
+export const tableToOffsets = (
+  element: HTMLElement
+): CellOffsets | undefined => {
+  const rowDoms = Array.from(element.querySelectorAll('tbody tr'));
+  const columnDoms = Array.from(element.querySelectorAll('colgroup col'));
+  if (!rowDoms.length || !columnDoms.length) return;
+  const rows = rowDoms.flatMap((row, index) => {
+    const rect = row.getBoundingClientRect();
+    return index === 0 ? [rect.top, rect.bottom] : [rect.bottom];
+  });
+  const columns = columnDoms.flatMap((column, index) => {
+    const rect = column.getBoundingClientRect();
+    return index === 0 ? [rect.left, rect.right] : [rect.right];
+  });
+  return { rows, columns };
+};
+
 export const getIndexByPosition = (
   positions: OffsetList,
   offset: number,

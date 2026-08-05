@@ -330,6 +330,8 @@ export const I18nKeys = {
       delete: 'editor.table.delete',
       copy: 'editor.table.copy',
       paste: 'editor.table.paste',
+      mergeCells: 'editor.table.mergeCells',
+      splitCells: 'editor.table.splitCells',
     },
     reference: {
       addCustomTitle: 'editor.reference.addCustomTitle',

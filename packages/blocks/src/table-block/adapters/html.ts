@@ -55,15 +55,20 @@ export const tableBlockHtmlAdapterMatcher: BlockHtmlAdapterMatcher = {
   fromBlockSnapshot: {
     enter: (o, context) => {
       const { walkerContext } = context;
-      const { columns, rows, cells } = o.node
+      const { columns, rows, cells, mergedRanges } = o.node
         .props as unknown as TablePropsSerialized;
-      const table = processTable(columns, rows, cells);
+      const table = processTable(columns, rows, cells, mergedRanges, true);
       const createAstTableCell = (
-        children: InlineHtmlAST[]
+        children: InlineHtmlAST[],
+        rowSpan: number,
+        colSpan: number
       ): InlineHtmlAST => ({
         type: 'element',
         tagName: 'td',
-        properties: Object.create(null),
+        properties: {
+          ...(rowSpan > 1 ? { rowSpan } : {}),
+          ...(colSpan > 1 ? { colSpan } : {}),
+        },
         children: [
           {
             type: 'element',
@@ -95,7 +100,9 @@ export const tableBlockHtmlAdapterMatcher: BlockHtmlAdapterMatcher = {
               return createAstTableCell(
                 typeof cell.value === 'string'
                   ? [{ type: 'text', value: cell.value }]
-                  : deltaConverter.deltaToAST(cell.value.delta)
+                  : deltaConverter.deltaToAST(cell.value.delta),
+                cell.rowSpan,
+                cell.colSpan
               );
             })
           );

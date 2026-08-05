@@ -47,11 +47,20 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
   CodeBlockModel,
   CodeBlockService
 > {
+  private static readonly _DEBOUNCE_MS = 300;
+
   static override styles = codeBlockStyles;
 
-  private _inlineRangeProvider: InlineRangeProvider | null = null;
+  // Debounce timers for expensive recomputations. We keep them separate so
+  // that canceling a mermaid render does not also cancel a scheduled
+  // highlight pass and vice versa.
+  private _debounceTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
-  private _mermaidRenderTimer: ReturnType<typeof setTimeout> | null = null;
+  private _hasInitialHighlightRun = false;
+
+  private _highlightVersion = 0;
+
+  private _inlineRangeProvider: InlineRangeProvider | null = null;
 
   // Incremented for every render request so an older async render can never
   // overwrite the result of a newer edit.
@@ -122,6 +131,14 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
       return el;
     }
     return this.rootComponent;
+  }
+
+  private _cancelDebounced(key: string): void {
+    const existing = this._debounceTimers.get(key);
+    if (existing) {
+      clearTimeout(existing);
+      this._debounceTimers.delete(key);
+    }
   }
 
   private _csvToTable(code: string): string {
@@ -256,12 +273,46 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
     }
   }
 
+  /**
+   * Schedule `fn` after `_DEBOUNCE_MS` of quiet. Re-scheduling with the same
+   * `key` cancels any pending call — used to collapse cascading signal
+   * notifications (text change → delta$ → tokens / preview / mermaid) into a
+   * single run.
+   */
+  private _scheduleDebounced(key: string, fn: () => void): void {
+    const existing = this._debounceTimers.get(key);
+    if (existing) clearTimeout(existing);
+    const timer = setTimeout(() => {
+      this._debounceTimers.delete(key);
+      fn();
+    }, CodeBlockComponent._DEBOUNCE_MS);
+    this._debounceTimers.set(key, timer);
+  }
+
   private _scheduleMermaidRender(): void {
     if (!this._isMermaid) return;
-    if (this._mermaidRenderTimer) clearTimeout(this._mermaidRenderTimer);
-    this._mermaidRenderTimer = setTimeout(() => {
+    this._scheduleDebounced('mermaid-render', () => {
       this._renderMermaid().catch(console.error);
-    }, 300);
+    });
+  }
+
+  /**
+   * Recompute static preview (latex / json / csv / svg / html) off the
+   * critical keystroke path. Debounced via the same scheduler used for
+   * mermaid.
+   */
+  private _scheduleStaticPreview(): void {
+    this._scheduleDebounced('static-preview', () => {
+      if (!this.isConnected) return;
+      if (!this._isPreviewable) {
+        this._staticPreview = null;
+        return;
+      }
+      if (this._isMermaid) return; // handled by mermaid scheduler
+      this._staticPreview = this._renderStaticPreview(
+        this.model.text.toString().trim()
+      );
+    });
   }
 
   private _t(key: string, fallback: string): string {
@@ -270,6 +321,7 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
   }
 
   private _updateHighlightTokens() {
+    const highlightVersion = ++this._highlightVersion;
     const modelLang = this.model.language$.value;
     if (modelLang === null) {
       this.highlightTokens$.value = [];
@@ -303,6 +355,12 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
         highlighter
           .loadLanguage(langImport)
           .then(() => {
+            if (
+              highlightVersion !== this._highlightVersion ||
+              !this.isConnected
+            ) {
+              return;
+            }
             this.highlightTokens$.value = highlighter.codeToTokensBase(code, {
               lang,
               theme,
@@ -330,7 +388,22 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
 
     this.disposables.add(
       effect(() => {
-        this._updateHighlightTokens();
+        // Effects recollect their dependencies on every run. Read both
+        // signals synchronously even when the expensive work is deferred,
+        // otherwise the effect unsubscribes after its first debounced run.
+        noop(this.model.language$.value);
+        noop(this.model.text.deltas$.value);
+        // First run must be synchronous so tokens are ready before the very
+        // first paint; subsequent runs are debounced to keep keystrokes cheap
+        // on large code blocks.
+        if (!this._hasInitialHighlightRun) {
+          this._hasInitialHighlightRun = true;
+          this._updateHighlightTokens();
+          return;
+        }
+        this._scheduleDebounced('highlight-tokens', () => {
+          this._updateHighlightTokens();
+        });
       })
     );
     this.disposables.add(
@@ -348,9 +421,9 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
         if (this._isMermaid) {
           this._scheduleMermaidRender();
         } else if (this._isPreviewable) {
-          this._staticPreview = this._renderStaticPreview(
-            this.model.text.toString().trim()
-          );
+          // Debounced: latex / json / csv / svg / html previews are sync but
+          // can be expensive (katex / JSON.stringify on large payloads).
+          this._scheduleStaticPreview();
         } else {
           this._staticPreview = null;
         }
@@ -581,10 +654,10 @@ export class CodeBlockComponent extends CaptionedBlockComponent<
   }
 
   override disconnectedCallback() {
+    this._highlightVersion++;
     this._mermaidRenderVersion++;
-    if (this._mermaidRenderTimer) {
-      clearTimeout(this._mermaidRenderTimer);
-      this._mermaidRenderTimer = null;
+    for (const key of this._debounceTimers.keys()) {
+      this._cancelDebounced(key);
     }
     super.disconnectedCallback();
     this.clipboardController.hostDisconnected();

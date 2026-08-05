@@ -26,12 +26,6 @@ import { TableDataManager } from './table-data-manager.js';
 const EDGELESS_TOP_CONTENTEDITABLE_SELECTOR =
   'affine-edgeless-note .edgeless-note-page-content, affine-edgeless-text';
 
-class VirtualPaddingController {
-  readonly virtualPadding$ = signal(0);
-
-  constructor(_block: unknown) {}
-}
-
 export const TableBlockComponentName = 'affine-table';
 export class TableBlockComponent extends CaptionedBlockComponent<TableBlockModel> {
   private _dataManager: TableDataManager | null = null;
@@ -43,42 +37,44 @@ export class TableBlockComponent extends CaptionedBlockComponent<TableBlockModel
     columnEndIndex: number
   ) => {
     const rootRect = this.getRootRect();
-    const rows = this.querySelectorAll('tr');
+    const rows = this.querySelectorAll('tbody tr');
+    const columns = this.querySelectorAll('colgroup col');
     const startRow = rows.item(rowStartIndex);
     const endRow = rows.item(rowEndIndex);
     if (!startRow || !endRow || !rootRect) return;
+    const startColumn = columns.item(columnStartIndex);
+    const endColumn = columns.item(columnEndIndex);
+    if (!startColumn || !endColumn) return;
 
-    const startCells = startRow.querySelectorAll('td');
-    const endCells = endRow.querySelectorAll('td');
-    const startCell = startCells.item(columnStartIndex);
-    const endCell = endCells.item(columnEndIndex);
-    if (!startCell || !endCell) return;
-
-    const startRect = startCell.getBoundingClientRect();
-    const endRect = endCell.getBoundingClientRect();
+    const startRowRect = startRow.getBoundingClientRect();
+    const endRowRect = endRow.getBoundingClientRect();
+    const startColumnRect = startColumn.getBoundingClientRect();
+    const endColumnRect = endColumn.getBoundingClientRect();
     const scale = this.getScale();
 
     return {
-      top: (startRect.top - rootRect.top) / scale,
-      left: (startRect.left - rootRect.left) / scale,
-      width: (endRect.right - startRect.left) / scale,
-      height: (endRect.bottom - startRect.top) / scale,
+      top: (startRowRect.top - rootRect.top) / scale,
+      left: (startColumnRect.left - rootRect.left) / scale,
+      width: (endColumnRect.right - startColumnRect.left) / scale,
+      height: (endRowRect.bottom - startRowRect.top) / scale,
     };
   };
 
   private readonly getColumnRect = (columnId: string) => {
-    const columns = this.querySelectorAll(`td[data-column-id="${columnId}"]`);
+    const column = this.querySelector(`col[data-column-id="${columnId}"]`);
+    const rows = this.querySelectorAll('tbody tr');
     const rootRect = this.getRootRect();
     if (!rootRect) return;
-    const firstRect = columns.item(0)?.getBoundingClientRect();
-    const lastRect = columns.item(columns.length - 1)?.getBoundingClientRect();
-    if (!firstRect || !lastRect) return;
+    const columnRect = column?.getBoundingClientRect();
+    const firstRowRect = rows.item(0)?.getBoundingClientRect();
+    const lastRowRect = rows.item(rows.length - 1)?.getBoundingClientRect();
+    if (!columnRect || !firstRowRect || !lastRowRect) return;
     const scale = this.getScale();
     return {
-      top: (firstRect.top - rootRect.top) / scale,
-      left: (firstRect.left - rootRect.left) / scale,
-      width: firstRect.width / scale,
-      height: (lastRect.bottom - firstRect.top) / scale,
+      top: (firstRowRect.top - rootRect.top) / scale,
+      left: (columnRect.left - rootRect.left) / scale,
+      width: columnRect.width / scale,
+      height: (lastRowRect.bottom - firstRowRect.top) / scale,
     };
   };
 
@@ -101,9 +97,6 @@ export class TableBlockComponent extends CaptionedBlockComponent<TableBlockModel
       height: rect.height / scale,
     };
   };
-
-  private readonly virtualPaddingController: VirtualPaddingController =
-    new VirtualPaddingController(this);
 
   selectionController = new SelectionController(this);
 
@@ -227,21 +220,17 @@ export class TableBlockComponent extends CaptionedBlockComponent<TableBlockModel
   override renderBlock() {
     const rows = this.dataManager.uiRows$.value;
     const columns = this.dataManager.uiColumns$.value;
-    const virtualPadding = this.virtualPaddingController.virtualPadding$.value;
     return html`
       <div
         contenteditable="false"
         class=${tableContainer}
         style=${styleMap({
-          marginLeft: `-${virtualPadding + 10}px`,
-          marginRight: `-${virtualPadding}px`,
+          marginLeft: `-10px`,
           position: 'relative',
         })}
       >
         <div
           style=${styleMap({
-            paddingLeft: `${virtualPadding}px`,
-            paddingRight: `${virtualPadding}px`,
             marginLeft:
               !this.model.textAlign$.value ||
               this.model.textAlign$?.value === 'left'
@@ -256,6 +245,20 @@ export class TableBlockComponent extends CaptionedBlockComponent<TableBlockModel
           })}
         >
           <table class=${tableWrapper} ${ref(this.table$)}>
+            <colgroup>
+              ${repeat(
+                columns,
+                column => column.columnId,
+                column => html`
+                  <col
+                    data-column-id=${column.columnId}
+                    style=${styleMap({
+                      width: `${column.width ?? 120}px`,
+                    })}
+                  />
+                `
+              )}
+            </colgroup>
             <tbody class=${table}>
               ${repeat(
                 rows,
@@ -267,10 +270,23 @@ export class TableBlockComponent extends CaptionedBlockComponent<TableBlockModel
                         columns,
                         column => column.columnId,
                         (column, columnIndex) => {
+                          if (
+                            this.dataManager.isCoveredCell(
+                              row.rowId,
+                              column.columnId
+                            )
+                          ) {
+                            return nothing;
+                          }
                           const cell = this.dataManager.getCell(
                             row.rowId,
                             column.columnId
                           );
+                          const { rowSpan, colSpan } =
+                            this.dataManager.getCellSpan(
+                              row.rowId,
+                              column.columnId
+                            );
                           return html`
                             <affine-table-cell
                               style="display: contents;"
@@ -278,6 +294,8 @@ export class TableBlockComponent extends CaptionedBlockComponent<TableBlockModel
                               .columnIndex=${columnIndex}
                               .row=${row}
                               .column=${column}
+                              .colSpan=${colSpan}
+                              .rowSpan=${rowSpan}
                               .text=${cell?.text}
                               .dataManager=${this.dataManager}
                               .selectionController=${this.selectionController}

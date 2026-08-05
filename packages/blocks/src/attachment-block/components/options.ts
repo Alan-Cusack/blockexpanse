@@ -80,6 +80,8 @@ export function attachmentViewToggleMenu({
       },
     },
   ];
+  const currentViewLabel =
+    viewActions.find(action => action.type === viewType)?.label ?? viewType;
 
   return html`
     <editor-menu-button
@@ -91,10 +93,7 @@ export function attachmentViewToggleMenu({
           .labelHeight=${'20px'}
           .iconContainerWidth=${'110px'}
         >
-          <div class="label">
-            <span style="text-transform: capitalize">${viewType}</span>
-            view
-          </div>
+          <div class="label">${currentViewLabel}</div>
           ${SmallArrowDownIcon}
         </editor-icon-button>
       `}

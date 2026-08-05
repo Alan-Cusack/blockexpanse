@@ -58,9 +58,9 @@ export const tableBlockPlainTextAdapterMatcher: BlockPlainTextAdapterMatcher = {
     enter: (o, context) => {
       const { walkerContext, deltaConverter } = context;
       const result: string[][] = [];
-      const { columns, rows, cells } = o.node
+      const { columns, rows, cells, mergedRanges } = o.node
         .props as unknown as TablePropsSerialized;
-      const table = processTable(columns, rows, cells);
+      const table = processTable(columns, rows, cells, mergedRanges);
       table.rows.forEach(v => {
         result.push(
           v.cells.map(v => deltaConverter.deltaToAST(v.value.delta).join(''))

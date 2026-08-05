@@ -49,9 +49,9 @@ export const tableBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatcher = {
   fromBlockSnapshot: {
     enter: (o, context) => {
       const { walkerContext, deltaConverter } = context;
-      const { columns, rows, cells } = o.node
+      const { columns, rows, cells, mergedRanges } = o.node
         .props as unknown as TablePropsSerialized;
-      const table = processTable(columns, rows, cells);
+      const table = processTable(columns, rows, cells, mergedRanges);
       const result: TableRow[] = [];
       table.rows.forEach(v => {
         result.push({

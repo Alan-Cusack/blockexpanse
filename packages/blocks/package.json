@@ -83,8 +83,8 @@
   },
   "publishConfig": {
     "access": "public",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
@@ -94,6 +94,10 @@
         "types": "./dist/schemas.d.ts",
         "import": "./dist/schemas.js"
       },
+      "./effects": {
+        "types": "./dist/effects.d.ts",
+        "import": "./dist/effects.js"
+      },
       "./widgets/slash-menu": {
         "types": "./dist/root-block/widgets/slash-menu/index.d.ts",
         "import": "./dist/root-block/widgets/slash-menu/index.js"
@@ -101,20 +105,12 @@
       "./widgets/slash-menu/config": {
         "types": "./dist/root-block/widgets/slash-menu/config.d.ts",
         "import": "./dist/root-block/widgets/slash-menu/config.js"
-      },
-      "./effects": {
-        "types": "./dist/effects.d.ts",
-        "import": "./dist/effects.js"
       }
     }
   },
   "files": [
-    "src",
     "dist",
-    "!src/__tests__",
-    "!dist/__tests__",
-    "schemas.d.ts",
-    "schemas.js"
+    "!dist/__tests__"
   ],
   "devDependencies": {
     "@types/dompurify": "^3.0.5",

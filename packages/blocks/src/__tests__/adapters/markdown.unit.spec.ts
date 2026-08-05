@@ -3407,119 +3407,40 @@ bbb
 | ddd | eee | fff |
 `;
 
-    const blockSnapshot: BlockSnapshot = {
-      type: 'block',
-      id: 'matchesReplaceMap[0]',
-      flavour: 'affine:note',
-      props: {
-        xywh: '[0,0,800,95]',
-        background: DEFAULT_NOTE_BACKGROUND_COLOR,
-        index: 'a0',
-        hidden: false,
-        displayMode: NoteDisplayMode.DocAndEdgeless,
-      },
-      children: [
-        {
-          type: 'block',
-          id: 'matchesReplaceMap[1]',
-          flavour: 'affine:database',
-          props: {
-            views: [
-              {
-                id: 'matchesReplaceMap[2]',
-                name: 'Table View',
-                mode: 'table',
-                columns: [],
-                filter: {
-                  type: 'group',
-                  op: 'and',
-                  conditions: [],
-                },
-                header: {
-                  titleColumn: 'matchesReplaceMap[9]',
-                  iconColumn: 'type',
-                },
-              },
-            ],
-            title: {
-              '$blockexpanse:internal:text$': true,
-              delta: [],
-            },
-            cells: {
-              'matchesReplaceMap[12]': {
-                'matchesReplaceMap[10]': {
-                  columnId: 'matchesReplaceMap[10]',
-                  value: {
-                    '$blockexpanse:internal:text$': true,
-                    delta: [
-                      {
-                        insert: 'eee',
-                      },
-                    ],
-                  },
-                },
-                'matchesReplaceMap[11]': {
-                  columnId: 'matchesReplaceMap[11]',
-                  value: {
-                    '$blockexpanse:internal:text$': true,
-                    delta: [
-                      {
-                        insert: 'fff',
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-            columns: [
-              {
-                type: 'title',
-                name: 'aaa',
-                data: {},
-                id: 'matchesReplaceMap[9]',
-              },
-              {
-                type: 'rich-text',
-                name: 'bbb',
-                data: {},
-                id: 'matchesReplaceMap[10]',
-              },
-              {
-                type: 'rich-text',
-                name: 'ccc',
-                data: {},
-                id: 'matchesReplaceMap[11]',
-              },
-            ],
-          },
-          children: [
-            {
-              type: 'block',
-              id: 'matchesReplaceMap[12]',
-              flavour: 'affine:paragraph',
-              props: {
-                text: {
-                  '$blockexpanse:internal:text$': true,
-                  delta: [
-                    {
-                      insert: 'ddd',
-                    },
-                  ],
-                },
-                type: 'text',
-              },
-              children: [],
-            },
-          ],
-        },
-      ],
-    };
-
     const mdAdapter = new MarkdownAdapter(createJob());
     const rawBlockSnapshot = await mdAdapter.toBlockSnapshot({
       file: markdown,
     });
-    expect(nanoidReplacement(rawBlockSnapshot)).toEqual(blockSnapshot);
+    expect(rawBlockSnapshot.flavour).toBe('affine:note');
+    const tableBlock = rawBlockSnapshot.children[0];
+    expect(tableBlock?.flavour).toBe('affine:table');
+
+    const { columns, rows, cells } = tableBlock!.props as unknown as {
+      columns: Record<string, { columnId: string; order: string }>;
+      rows: Record<string, { rowId: string; order: string }>;
+      cells: Record<string, { text: { delta: { insert: string }[] } }>;
+    };
+    // The header row (the first tableRow in GFM) turns into column order + 1 body row.
+    const sortedColumns = Object.values(columns).sort((a, b) =>
+      a.order.localeCompare(b.order)
+    );
+    const sortedRows = Object.values(rows).sort((a, b) =>
+      a.order.localeCompare(b.order)
+    );
+    expect(sortedColumns).toHaveLength(3);
+    expect(sortedRows).toHaveLength(2);
+
+    const cellText = (r: { rowId: string }, c: { columnId: string }): string =>
+      (cells[`${r.rowId}:${c.columnId}`]?.text?.delta ?? [])
+        .map(d => d.insert)
+        .join('');
+
+    expect(sortedRows.map(r => sortedColumns.map(c => cellText(r, c)))).toEqual(
+      [
+        ['aaa', 'bbb', 'ccc'],
+        ['ddd', 'eee', 'fff'],
+      ]
+    );
   });
 
   test('html tag', async () => {

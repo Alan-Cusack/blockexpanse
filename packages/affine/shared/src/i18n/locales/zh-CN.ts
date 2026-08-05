@@ -315,6 +315,8 @@ export const zhCNMessages: I18nMessages = {
   [K.editor.table.delete]: '删除',
   [K.editor.table.copy]: '复制',
   [K.editor.table.paste]: '粘贴',
+  [K.editor.table.mergeCells]: '合并单元格',
+  [K.editor.table.splitCells]: '拆分单元格',
 
   [K.editor.reference.addCustomTitle]: '添加自定义标题',
 
