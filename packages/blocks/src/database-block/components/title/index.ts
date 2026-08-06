@@ -134,9 +134,12 @@ export class DatabaseTitle extends WithDisposable(ShadowlessElement) {
     requestAnimationFrame(() => {
       this.updateText();
     });
-    this.titleText.yText.observe(this.updateText);
+    const yText = this.titleText?.yText;
+    if (!yText) return;
+
+    yText.observe(this.updateText);
     this.disposables.add(() => {
-      this.titleText.yText.unobserve(this.updateText);
+      yText.unobserve(this.updateText);
     });
   }
 

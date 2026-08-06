@@ -23,6 +23,19 @@ And this would build the BlockExpanse packages:
 yarn build
 ```
 
+Internal workspace build scripts use `yarn run -T tsc` so Yarn 4 resolves the
+root TypeScript tool explicitly. Workspace packages must not rely on undeclared
+tooling being available through hoisting.
+
+To inspect tracked maintenance debt in production source files:
+
+```sh
+yarn debt:report
+```
+
+The report counts TODO, FIXME, deprecated annotations, and legacy-named source
+files while excluding tests, snapshots, dependencies, and generated output.
+
 Publishable packages use the **`@blockexpanse`** npm scope. See [README](./README.md) for installation in external projects.
 
 ## Testing

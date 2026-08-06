@@ -78,13 +78,13 @@ A **canvas editor** that shares the same document model as the page editor:
 
 #### BlockExpanse Enhancements
 
-| Area                     | Description                                                                                                                                                                                                                                          |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **i18n**                 | Built-in **`zh-CN`** (default) and **`en`** via DI `I18nProvider`. Slash menu, placeholders, format bar, Data View, toasts, keyboard toolbar, and more. Host apps can override messages or plug in i18next.                                          |
-| **AI hooks**             | Ready-to-wire **AI Panel** (`AffineAIPanelWidget`), **Ask AI** on format bar, and **Edgeless Copilot** selection panel. Playground ships demo actions (improve writing, summarize, translate, tone…); **you provide the LLM backend** in production. |
-| **Table block**          | Custom table block with read-only guards and cell editing UX improvements.                                                                                                                                                                           |
-| **Code previews**        | Extensible previews for Mermaid, LaTeX / TeX, JSON, CSV, SVG, and HTML. SVG is sanitized with DOMPurify; HTML is rendered in a restricted sandbox without script, form, popup, or top-level navigation permissions.                                  |
-| **Image / link preview** | `CloudBlobSource` for images/attachments; optional `LinkPreviewExtension` for bookmarks. See [blob storage guide](packages/docs/guide/blob-storage.md).                                                                                              |
+| Area                     | Description                                                                                                                                                                                                                                                |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **i18n**                 | Built-in **`zh-CN`** (default) and **`en`** via DI `I18nProvider`. Slash menu, placeholders, format bar, Data View, toasts, keyboard toolbar, and more. Host apps can override messages or plug in i18next.                                                |
+| **AI hooks**             | Ready-to-wire **AI Panel** (`BlockExpanseAIPanelWidget`), **Ask AI** on format bar, and **Edgeless Copilot** selection panel. Playground ships demo actions (improve writing, summarize, translate, tone…); **you provide the LLM backend** in production. |
+| **Table block**          | Custom table block with read-only guards and cell editing UX improvements.                                                                                                                                                                                 |
+| **Code previews**        | Extensible previews for Mermaid, LaTeX / TeX, JSON, CSV, SVG, and HTML. SVG is sanitized with DOMPurify; HTML is rendered in a restricted sandbox without script, form, popup, or top-level navigation permissions.                                        |
+| **Image / link preview** | `CloudBlobSource` for images/attachments; optional `LinkPreviewExtension` for bookmarks. See [blob storage guide](packages/docs/guide/blob-storage.md).                                                                                                    |
 
 #### Code Block Preview Safety
 
@@ -193,9 +193,9 @@ Without a provider, English fallback strings are used (same as upstream behavior
 BlockExpanse preserves BlockSuite's AI UI surface. In your host app, configure the AI panel widget:
 
 ```ts
-import type { AffineAIPanelWidget } from '@blockexpanse/blocks';
+import type { BlockExpanseAIPanelWidget } from '@blockexpanse/blocks';
 
-function configureAIPanel(panel: AffineAIPanelWidget) {
+function configureAIPanel(panel: BlockExpanseAIPanelWidget) {
   panel.config = {
     // Implement streaming, model calls, error handling…
     // See packages/playground/apps/_common/ai/demo-config.ts for demo actions
@@ -240,6 +240,7 @@ yarn preview        # Preview the production build
 ### Resources
 
 - Repository: [github.com/Alan-Cusack/blockexpanse](https://github.com/Alan-Cusack/blockexpanse)
+- Upstream and compatibility policy: [UPSTREAM.md](./UPSTREAM.md)
 - Build & test: [BUILDING.md](./BUILDING.md)
 - Local docs: `yarn dev:docs`
 - Upstream reference: [BlockSuite docs](https://blocksuite.io/guide/overview.html)

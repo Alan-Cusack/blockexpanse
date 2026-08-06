@@ -30,7 +30,7 @@ import {
 
 import { DataViewBlockSchema } from './data-view-block/data-view-model.js';
 
-/** Built-in first party block models built for affine */
+/** Built-in first-party block schemas for BlockExpanse editors. */
 export const AffineSchemas: z.infer<typeof BlockSchema>[] = [
   CodeBlockSchema,
   ParagraphBlockSchema,
@@ -57,3 +57,6 @@ export const AffineSchemas: z.infer<typeof BlockSchema>[] = [
   LatexBlockSchema,
   TableBlockSchema,
 ];
+
+/** Preferred public name for the built-in BlockExpanse block schemas. */
+export const BlockExpanseSchemas = AffineSchemas;

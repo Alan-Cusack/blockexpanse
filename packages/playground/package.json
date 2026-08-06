@@ -5,10 +5,10 @@
   "type": "module",
   "repository": "Alan-Cusack/blockexpanse",
   "scripts": {
-    "dev": "vite --host",
-    "dev:hmr": "WC_HMR=1 vite",
-    "build": "tsc && nx vite:build",
-    "preview": "vite preview"
+    "dev": "yarn run -T vite --host",
+    "dev:hmr": "WC_HMR=1 yarn run -T vite",
+    "build": "yarn run -T tsc && yarn run -T nx vite:build",
+    "preview": "yarn run -T vite preview"
   },
   "dependencies": {
     "@blockexpanse/affine-components": "workspace:*",

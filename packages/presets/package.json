@@ -9,13 +9,13 @@
     "directory": "packages/presets"
   },
   "scripts": {
-    "build": "tsc",
-    "test:unit": "nx vite:test --browser.headless --run",
-    "test:debug": "PWDEBUG=1 npx vitest"
+    "build": "yarn run -T tsc",
+    "test:unit": "yarn run -T nx vite:test --browser.headless --run",
+    "test:debug": "PWDEBUG=1 yarn run -T vitest"
   },
   "sideEffects": false,
   "keywords": [],
-  "author": "toeverything",
+  "author": "BlockExpanse Contributors",
   "license": "MPL-2.0",
   "dependencies": {
     "@blockexpanse/affine-block-surface": "workspace:*",

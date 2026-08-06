@@ -245,10 +245,9 @@ export class TableBlockComponent extends CaptionedBlockComponent<TableBlockModel
           })}
         >
           <table class=${tableWrapper} ${ref(this.table$)}>
+            <!-- @ts-ignore: lit-analyzer misparses dynamic colgroup children. -->
             <colgroup>
-              ${repeat(
-                columns,
-                column => column.columnId,
+              ${columns.map(
                 column => html`
                   <col
                     data-column-id=${column.columnId}

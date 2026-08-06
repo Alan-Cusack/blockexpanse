@@ -10,7 +10,7 @@
     "directory": "packages/y-indexeddb"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "yarn run -T tsc"
   },
   "sideEffects": false,
   "keywords": [

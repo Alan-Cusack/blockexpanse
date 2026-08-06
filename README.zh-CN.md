@@ -78,13 +78,13 @@ BlockExpanse 基于 [BlockSuite](https://github.com/toeverything/blocksuite) `v0
 
 #### BlockExpanse 增强
 
-| 能力                | 说明                                                                                                                                                                                               |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **国际化**          | 内置 **`zh-CN`**（默认）与 **`en`**，通过 DI `I18nProvider` 注入。已覆盖 Slash 菜单、placeholder、格式栏、Data View、通知、键盘工具栏等；宿主可覆盖词条或对接 i18next。                            |
-| **AI 能力**         | 预留 **AI 面板**（`AffineAIPanelWidget`）、格式栏 **Ask AI**、白板 **Edgeless Copilot** 框选面板。Playground 内置演示动作（润色、摘要、翻译、语气调整等）；**生产环境由宿主接入自己的 LLM 服务**。 |
-| **表格 Block**      | 定制表格块，含只读 guard 与单元格编辑体验优化。                                                                                                                                                    |
-| **代码块预览**      | 可扩展的 Mermaid、LaTeX / TeX、JSON、CSV、SVG 与 HTML 预览。SVG 使用 DOMPurify 安全清理；HTML 在受限沙箱中渲染，不开放脚本、表单、弹窗或顶层跳转权限。                                             |
-| **图片 / 链接预览** | 图片/附件用 `CloudBlobSource` 持久化；书签预览可选 `LinkPreviewExtension`。见 [blob 存储指南](packages/docs/guide/blob-storage.md)。                                                               |
+| 能力                | 说明                                                                                                                                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **国际化**          | 内置 **`zh-CN`**（默认）与 **`en`**，通过 DI `I18nProvider` 注入。已覆盖 Slash 菜单、placeholder、格式栏、Data View、通知、键盘工具栏等；宿主可覆盖词条或对接 i18next。                                  |
+| **AI 能力**         | 预留 **AI 面板**（`BlockExpanseAIPanelWidget`）、格式栏 **Ask AI**、白板 **Edgeless Copilot** 框选面板。Playground 内置演示动作（润色、摘要、翻译、语气调整等）；**生产环境由宿主接入自己的 LLM 服务**。 |
+| **表格 Block**      | 定制表格块，含只读 guard 与单元格编辑体验优化。                                                                                                                                                          |
+| **代码块预览**      | 可扩展的 Mermaid、LaTeX / TeX、JSON、CSV、SVG 与 HTML 预览。SVG 使用 DOMPurify 安全清理；HTML 在受限沙箱中渲染，不开放脚本、表单、弹窗或顶层跳转权限。                                                   |
+| **图片 / 链接预览** | 图片/附件用 `CloudBlobSource` 持久化；书签预览可选 `LinkPreviewExtension`。见 [blob 存储指南](packages/docs/guide/blob-storage.md)。                                                                     |
 
 #### 代码块预览安全性
 
@@ -193,9 +193,9 @@ const i18n = createBuiltinI18n({
 BlockExpanse 保留 BlockSuite 的 AI UI 能力。在宿主应用中配置 AI 面板：
 
 ```ts
-import type { AffineAIPanelWidget } from '@blockexpanse/blocks';
+import type { BlockExpanseAIPanelWidget } from '@blockexpanse/blocks';
 
-function configureAIPanel(panel: AffineAIPanelWidget) {
+function configureAIPanel(panel: BlockExpanseAIPanelWidget) {
   panel.config = {
     // 实现流式输出、模型调用、错误处理…
     // 参考 packages/playground/apps/_common/ai/demo-config.ts 中的演示动作
@@ -240,6 +240,7 @@ yarn preview        # 预览构建结果
 ### 相关链接
 
 - 仓库：[github.com/Alan-Cusack/blockexpanse](https://github.com/Alan-Cusack/blockexpanse)
+- 上游来源与兼容策略：[UPSTREAM.md](./UPSTREAM.md)
 - 构建与测试：[BUILDING.md](./BUILDING.md)
 - 本地文档：`yarn dev:docs`
 - 上游参考：[BlockSuite 文档](https://blocksuite.io/guide/overview.html)

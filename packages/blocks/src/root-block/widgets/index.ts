@@ -1,12 +1,15 @@
 export {
   AFFINE_AI_PANEL_WIDGET,
   AffineAIPanelWidget,
+  AffineAIPanelWidget as BlockExpanseAIPanelWidget,
 } from './ai-panel/ai-panel.js';
 export { getAIPanelWidget, getSelectedText } from './ai-panel/helpers.js';
 export {
   type AffineAIPanelState,
   type AffineAIPanelWidgetConfig,
   type AIPanelInputConfig,
+  type BlockExpanseAIPanelState,
+  type BlockExpanseAIPanelWidgetConfig,
 } from './ai-panel/type.js';
 export { AffineCodeToolbarWidget } from './code-toolbar/index.js';
 export { AffineDocRemoteSelectionWidget } from './doc-remote-selection/doc-remote-selection.js';
@@ -42,7 +45,7 @@ export {
   LinkedWidgetUtils,
 } from './linked-doc/config.js';
 export {
-  // It's used in the AFFiNE!
+  // Public import helper used by linked-document integrations.
   showImportModal,
 } from './linked-doc/import-doc/index.js';
 export { AffineLinkedDocWidget } from './linked-doc/index.js';

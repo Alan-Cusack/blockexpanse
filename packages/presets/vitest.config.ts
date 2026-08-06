@@ -34,26 +34,74 @@ export default defineConfig(_configEnv =>
       testTransformMode: {
         web: ['src/__tests__/**/*.spec.ts'],
       },
-      alias: {
-        '@blockexpanse/blocks': path.resolve(
-          fileURLToPath(new URL('../blocks/src', import.meta.url))
-        ),
-        '@blockexpanse/blocks/*': path.resolve(
-          fileURLToPath(new URL('../blocks/src/*', import.meta.url))
-        ),
-        '@blockexpanse/global/*': path.resolve(
-          fileURLToPath(new URL('../framework/global/src/*', import.meta.url))
-        ),
-        '@blockexpanse/store': path.resolve(
-          fileURLToPath(new URL('../framework/store/src', import.meta.url))
-        ),
-        '@blockexpanse/inline': path.resolve(
-          fileURLToPath(new URL('../framework/inline/src', import.meta.url))
-        ),
-        '@blockexpanse/inline/*': path.resolve(
-          fileURLToPath(new URL('../framework/inline/src/*', import.meta.url))
-        ),
-      },
+      alias: [
+        {
+          find: /^@blockexpanse\/blocks\/widgets\/slash-menu\/config$/,
+          replacement: path.resolve(
+            fileURLToPath(
+              new URL(
+                '../blocks/src/root-block/widgets/slash-menu/config.ts',
+                import.meta.url
+              )
+            )
+          ),
+        },
+        {
+          find: /^@blockexpanse\/blocks\/widgets\/slash-menu$/,
+          replacement: path.resolve(
+            fileURLToPath(
+              new URL(
+                '../blocks/src/root-block/widgets/slash-menu/index.ts',
+                import.meta.url
+              )
+            )
+          ),
+        },
+        {
+          find: /^@blockexpanse\/blocks\/(.+)$/,
+          replacement: path
+            .resolve(fileURLToPath(new URL('../blocks/src', import.meta.url)))
+            .concat('/$1.ts'),
+        },
+        {
+          find: /^@blockexpanse\/blocks$/,
+          replacement: path.resolve(
+            fileURLToPath(new URL('../blocks/src/index.ts', import.meta.url))
+          ),
+        },
+        {
+          find: /^@blockexpanse\/global\/(.+)$/,
+          replacement: path
+            .resolve(
+              fileURLToPath(new URL('../framework/global/src', import.meta.url))
+            )
+            .concat('/$1/index.ts'),
+        },
+        {
+          find: /^@blockexpanse\/store$/,
+          replacement: path.resolve(
+            fileURLToPath(
+              new URL('../framework/store/src/index.ts', import.meta.url)
+            )
+          ),
+        },
+        {
+          find: /^@blockexpanse\/inline\/(.+)$/,
+          replacement: path
+            .resolve(
+              fileURLToPath(new URL('../framework/inline/src', import.meta.url))
+            )
+            .concat('/$1.ts'),
+        },
+        {
+          find: /^@blockexpanse\/inline$/,
+          replacement: path.resolve(
+            fileURLToPath(
+              new URL('../framework/inline/src/index.ts', import.meta.url)
+            )
+          ),
+        },
+      ],
     },
   })
 );

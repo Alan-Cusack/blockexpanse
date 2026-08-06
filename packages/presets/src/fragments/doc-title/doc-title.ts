@@ -160,14 +160,18 @@ export class DocTitle extends WithDisposable(ShadowlessElement) {
       this._updateTitleInMeta();
       this.requestUpdate();
     };
-    this._rootModel.title.yText.observe(updateMetaTitle);
+    const yText = this._rootModel.title?.yText;
+    if (!yText) return;
+
+    yText.observe(updateMetaTitle);
     this._disposables.add(() => {
-      this._rootModel.title.yText.unobserve(updateMetaTitle);
+      yText.unobserve(updateMetaTitle);
     });
   }
 
   override render() {
     const isEmpty = !this._rootModel.title.length && !this._isComposing;
+    const yText = this._rootModel.title?.yText;
     const t = this._resolveI18n();
     const placeholder = t(I18nKeys.editor.common.docTitle, 'Title');
 
@@ -179,13 +183,15 @@ export class DocTitle extends WithDisposable(ShadowlessElement) {
         data-block-is-title="true"
         data-placeholder="${placeholder}"
       >
-        <rich-text
-          .yText=${this._rootModel.title.yText}
-          .undoManager=${this.doc.history}
-          .verticalScrollContainerGetter=${() => this._viewport}
-          .readonly=${this.doc.readonly}
-          .enableFormat=${false}
-        ></rich-text>
+        ${yText
+          ? html`<rich-text
+              .yText=${yText}
+              .undoManager=${this.doc.history}
+              .verticalScrollContainerGetter=${() => this._viewport}
+              .readonly=${this.doc.readonly}
+              .enableFormat=${false}
+            ></rich-text>`
+          : null}
       </div>
     `;
   }

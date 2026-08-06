@@ -65,3 +65,9 @@ export type AffineAIPanelState =
   | 'generating'
   | 'finished'
   | 'error';
+
+/** Preferred public name for the AI panel configuration. */
+export type BlockExpanseAIPanelWidgetConfig = AffineAIPanelWidgetConfig;
+
+/** Preferred public name for the AI panel state. */
+export type BlockExpanseAIPanelState = AffineAIPanelState;

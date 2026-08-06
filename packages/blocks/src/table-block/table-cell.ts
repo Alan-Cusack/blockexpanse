@@ -42,6 +42,7 @@ import { computed, effect, signal } from '@preact/signals-core';
 import { html, nothing } from 'lit';
 import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { ref } from 'lit/directives/ref.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
@@ -633,8 +634,8 @@ export class TableCell extends SignalWatcher(
     }
     return html`
       <td
-        data-row-id=${this.row?.rowId}
-        data-column-id=${this.column?.columnId}
+        data-row-id=${ifDefined(this.row?.rowId)}
+        data-column-id=${ifDefined(this.column?.columnId)}
         colspan=${this.colSpan}
         rowspan=${this.rowSpan}
         @mouseenter=${() => {
@@ -718,7 +719,7 @@ export class TableCell extends SignalWatcher(
         @mouseenter=${mouseEnter}
         @mouseleave=${mouseLeave}
         style=${style(showWidthAdjustIndicator || showIndicator === 'right')}
-        data-width-adjust-column-id=${this.column?.columnId}
+        data-width-adjust-column-id=${ifDefined(this.column?.columnId)}
         class=${columnRightIndicatorStyle}
       ></div>`;
   }

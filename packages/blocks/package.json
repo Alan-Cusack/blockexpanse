@@ -9,15 +9,15 @@
     "directory": "packages/blocks"
   },
   "scripts": {
-    "build": "tsc",
-    "test:unit": "nx vite:test --run",
-    "test:unit:coverage": "nx vite:test --run --coverage",
-    "test:e2e": "playwright test",
+    "build": "yarn run -T tsc",
+    "test:unit": "yarn run -T nx vite:test --run",
+    "test:unit:coverage": "yarn run -T nx vite:test --run --coverage",
+    "test:e2e": "yarn run -T playwright test",
     "test": "yarn test:unit && yarn test:e2e"
   },
   "sideEffects": false,
   "keywords": [],
-  "author": "toeverything",
+  "author": "BlockExpanse Contributors",
   "license": "MPL-2.0",
   "dependencies": {
     "@blockexpanse/affine-block-embed": "workspace:*",

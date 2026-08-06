@@ -9,7 +9,7 @@
     "directory": "packages/theme"
   },
   "scripts": {
-    "build": "tsc && node ../../scripts/copy-theme-css.mjs"
+    "build": "yarn run -T tsc && node ../../scripts/copy-theme-css.mjs"
   },
   "sideEffects": [
     "**/*.css"

@@ -118,9 +118,7 @@ export class AffineEditorContainer
     return this._std.value.render();
   });
 
-  /**
-   * @deprecated need to refactor
-   */
+  /** Compatibility slot exposed through the AbstractEditor contract. */
   slots: AbstractEditor['slots'] = {
     docUpdated: new Slot(),
   };
@@ -173,9 +171,6 @@ export class AffineEditorContainer
     return this._std.value;
   }
 
-  /**
-   * @deprecated need to refactor
-   */
   override connectedCallback() {
     super.connectedCallback();
 
@@ -233,9 +228,6 @@ export class AffineEditorContainer
     this._mode.value = mode;
   }
 
-  /**
-   * @deprecated need to refactor
-   */
   override updated(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('doc')) {
       this.slots.docUpdated.emit({ newDocId: this.doc.id });

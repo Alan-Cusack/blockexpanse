@@ -9,13 +9,13 @@
     "directory": "packages/framework/sync"
   },
   "scripts": {
-    "build": "tsc",
-    "test:unit": "nx vite:test --run",
+    "build": "yarn run -T tsc",
+    "test:unit": "yarn run -T nx vite:test --run",
     "test": "yarn test:unit"
   },
   "sideEffects": false,
   "keywords": [],
-  "author": "toeverything",
+  "author": "BlockExpanse Contributors",
   "license": "MPL-2.0",
   "dependencies": {
     "@blockexpanse/global": "workspace:*",

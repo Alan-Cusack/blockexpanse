@@ -1,7 +1,7 @@
 {
   "name": "@blockexpanse/affine-components",
   "version": "1.0.1",
-  "description": "Default BlockExpanse editable blocks.",
+  "description": "Shared UI components for BlockExpanse editors.",
   "type": "module",
   "repository": {
     "type": "git",
@@ -9,14 +9,14 @@
     "directory": "packages/affine/components"
   },
   "scripts": {
-    "build": "tsc",
-    "test:unit": "nx vite:test --run --passWithNoTests",
-    "test:unit:coverage": "nx vite:test --run --coverage",
-    "test:e2e": "playwright test"
+    "build": "yarn run -T tsc",
+    "test:unit": "yarn run -T nx vite:test --run --passWithNoTests",
+    "test:unit:coverage": "yarn run -T nx vite:test --run --coverage",
+    "test:e2e": "yarn run -T playwright test"
   },
   "sideEffects": false,
   "keywords": [],
-  "author": "toeverything",
+  "author": "BlockExpanse Contributors",
   "license": "MPL-2.0",
   "dependencies": {
     "@blockexpanse/affine-model": "workspace:*",

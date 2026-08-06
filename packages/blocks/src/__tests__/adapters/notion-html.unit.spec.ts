@@ -1195,9 +1195,11 @@ describe('notion html to snapshot', () => {
   });
 
   test('image', async () => {
+    const imageUrl =
+      'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiLz4=';
     const html = `<div class="page-body">
       <figure id="ed3d2ae9-62f5-433a-9049-9ddbd1c81ac5" class="image"><a
-          href="https://raw.githubusercontent.com/toeverything/blockexpanse/master/assets/logo.svg"><img src="https://raw.githubusercontent.com/toeverything/blockexpanse/master/assets/logo.svg" /></a>
+          href="${imageUrl}"><img src="${imageUrl}" /></a>
       </figure>
     </div>`;
 

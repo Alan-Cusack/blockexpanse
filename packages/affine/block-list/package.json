@@ -9,14 +9,14 @@
     "directory": "packages/affine/block-list"
   },
   "scripts": {
-    "build": "tsc",
-    "test:unit": "nx vite:test --run --passWithNoTests",
-    "test:unit:coverage": "nx vite:test --run --coverage",
-    "test:e2e": "playwright test"
+    "build": "yarn run -T tsc",
+    "test:unit": "yarn run -T nx vite:test --run --passWithNoTests",
+    "test:unit:coverage": "yarn run -T nx vite:test --run --coverage",
+    "test:e2e": "yarn run -T playwright test"
   },
   "sideEffects": false,
   "keywords": [],
-  "author": "toeverything",
+  "author": "BlockExpanse Contributors",
   "license": "MPL-2.0",
   "dependencies": {
     "@blockexpanse/affine-components": "workspace:*",

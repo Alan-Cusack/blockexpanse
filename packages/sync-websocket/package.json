@@ -9,7 +9,7 @@
     "directory": "packages/sync-websocket"
   },
   "scripts": {
-    "build": "tsc --build"
+    "build": "yarn run -T tsc --build"
   },
   "sideEffects": false,
   "keywords": [
@@ -18,7 +18,7 @@
     "websocket",
     "collaboration"
   ],
-  "author": "toeverything",
+  "author": "BlockExpanse Contributors",
   "license": "MPL-2.0",
   "exports": {
     ".": "./src/index.ts"
