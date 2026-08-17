@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/block-std",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Standard block runtime and extension APIs for BlockExpanse.",
   "type": "module",
   "repository": {

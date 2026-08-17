@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://blockexpanse.dev/schemas/document-data/1.0/schema.json",
+  "title": "BlockExpanse Standard Document Data 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "specVersion", "document", "assets", "extensions"],
+  "properties": {
+    "format": { "const": "blockexpanse-document" },
+    "specVersion": { "const": "1.0" },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "blocks"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string" },
+        "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" } },
+        "metadata": { "$ref": "#/$defs/jsonObject" }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/asset" }
+    },
+    "extensions": { "$ref": "#/$defs/jsonObject" }
+  },
+  "$defs": {
+    "jsonValue": {
+      "anyOf": [
+        { "type": ["string", "number", "boolean", "null"] },
+        { "type": "array", "items": { "$ref": "#/$defs/jsonValue" } },
+        { "$ref": "#/$defs/jsonObject" }
+      ]
+    },
+    "jsonObject": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/jsonValue" }
+    },
+    "mark": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "enum": ["bold", "italic", "underline", "strike", "code"]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "color"],
+          "properties": {
+            "type": { "enum": ["color", "background"] },
+            "color": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "inline": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "text", "marks"],
+          "properties": {
+            "type": { "const": "text" },
+            "text": { "type": "string" },
+            "marks": { "type": "array", "items": { "$ref": "#/$defs/mark" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "href", "text", "marks"],
+          "properties": {
+            "type": { "const": "link" },
+            "href": { "type": "string", "minLength": 1 },
+            "text": { "type": "string" },
+            "marks": { "type": "array", "items": { "$ref": "#/$defs/mark" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "targetType", "targetId"],
+          "properties": {
+            "type": { "const": "mention" },
+            "targetType": { "enum": ["user", "document", "block"] },
+            "targetId": { "type": "string", "minLength": 1 },
+            "label": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "block": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "content", "children"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "type": { "const": "paragraph" },
+            "content": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/inline" }
+            },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/block" }
+            },
+            "metadata": { "$ref": "#/$defs/jsonObject" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "content", "children", "level"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "type": { "const": "heading" },
+            "level": { "type": "integer", "minimum": 1, "maximum": 6 },
+            "content": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/inline" }
+            },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/block" }
+            },
+            "metadata": { "$ref": "#/$defs/jsonObject" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "content", "children", "style"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "type": { "const": "list-item" },
+            "style": { "enum": ["bulleted", "numbered", "todo"] },
+            "checked": { "type": "boolean" },
+            "content": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/inline" }
+            },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/block" }
+            },
+            "metadata": { "$ref": "#/$defs/jsonObject" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "content", "children"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "type": { "const": "quote" },
+            "content": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/inline" }
+            },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/block" }
+            },
+            "metadata": { "$ref": "#/$defs/jsonObject" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "text", "children"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "type": { "const": "code" },
+            "language": { "type": "string" },
+            "text": { "type": "string" },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/block" }
+            },
+            "metadata": { "$ref": "#/$defs/jsonObject" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "children"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "type": { "const": "divider" },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/block" }
+            },
+            "metadata": { "$ref": "#/$defs/jsonObject" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "assetId", "children"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "type": { "const": "image" },
+            "assetId": { "type": "string", "minLength": 1 },
+            "caption": { "type": "string" },
+            "width": { "type": "number", "exclusiveMinimum": 0 },
+            "height": { "type": "number", "exclusiveMinimum": 0 },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/block" }
+            },
+            "metadata": { "$ref": "#/$defs/jsonObject" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "assetId", "children"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "type": { "const": "attachment" },
+            "assetId": { "type": "string", "minLength": 1 },
+            "caption": { "type": "string" },
+            "display": { "enum": ["card", "embed"] },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/block" }
+            },
+            "metadata": { "$ref": "#/$defs/jsonObject" }
+          }
+        }
+      ]
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "checksum": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "name": { "type": "string" },
+        "size": { "type": "integer", "minimum": 0 },
+        "source": { "type": "string" }
+      }
+    }
+  }
+}

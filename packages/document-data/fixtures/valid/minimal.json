@@ -1,0 +1,11 @@
+{
+  "format": "blockexpanse-document",
+  "specVersion": "1.0",
+  "document": {
+    "id": "doc_minimal",
+    "title": "",
+    "blocks": []
+  },
+  "assets": {},
+  "extensions": {}
+}

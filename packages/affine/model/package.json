@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/affine-model",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Models for BlockExpanse.",
   "type": "module",
   "repository": {

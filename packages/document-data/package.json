@@ -1,0 +1,51 @@
+{
+  "name": "@blockexpanse/document-data",
+  "version": "1.0.2",
+  "description": "Versioned, language-neutral BlockExpanse document JSON protocol",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alan-Cusack/blockexpanse.git",
+    "directory": "packages/document-data"
+  },
+  "scripts": {
+    "build": "yarn run -T tsc",
+    "test:unit": "yarn run -T vitest run --config vitest.config.ts"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "blockexpanse",
+    "document",
+    "json",
+    "schema"
+  ],
+  "author": "BlockExpanse Contributors",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema/1.0": "./src/schema/document-data-1.0.schema.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "module": "./dist/index.js",
+        "import": "./dist/index.js"
+      },
+      "./schema/1.0": "./src/schema/document-data-1.0.schema.json"
+    }
+  },
+  "files": [
+    "src",
+    "dist",
+    "fixtures",
+    "!src/__tests__",
+    "!dist/__tests__"
+  ]
+}

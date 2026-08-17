@@ -408,7 +408,11 @@ export class BlockCollection {
   /**
    * If `shouldTransact` is `false`, the transaction will not be push to the history stack.
    */
-  transact(fn: () => void, shouldTransact: boolean = this._shouldTransact) {
+  transact(
+    fn: () => void,
+    shouldTransact: boolean = this._shouldTransact,
+    origin?: unknown
+  ) {
     this._ySpaceDoc.transact(
       () => {
         try {
@@ -420,7 +424,7 @@ export class BlockCollection {
           console.error(e);
         }
       },
-      shouldTransact ? this.rootDoc.clientID : null
+      origin ?? (shouldTransact ? this.rootDoc.clientID : null)
     );
   }
 

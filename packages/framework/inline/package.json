@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/inline",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Inline rich-text editing engine for BlockExpanse.",
   "type": "module",
   "repository": {

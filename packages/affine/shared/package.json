@@ -1,6 +1,6 @@
 {
   "name": "@blockexpanse/affine-shared",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Shared services, themes, types, and utilities for BlockExpanse.",
   "type": "module",
   "repository": {

@@ -26,6 +26,9 @@
   "files": [],
   "references": [
     {
+      "path": "./packages/document-data"
+    },
+    {
       "path": "./packages/framework/block-std"
     },
     {

@@ -1,0 +1,23 @@
+{
+  "format": "blockexpanse-document",
+  "specVersion": "1.0",
+  "document": {
+    "id": "doc_duplicate",
+    "title": "Duplicate IDs",
+    "blocks": [
+      {
+        "id": "same_id",
+        "type": "paragraph",
+        "content": [],
+        "children": []
+      },
+      {
+        "id": "same_id",
+        "type": "divider",
+        "children": []
+      }
+    ]
+  },
+  "assets": {},
+  "extensions": {}
+}

@@ -1999,6 +1999,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@blockexpanse/document-data@workspace:*, @blockexpanse/document-data@workspace:packages/document-data":
+  version: 0.0.0-use.local
+  resolution: "@blockexpanse/document-data@workspace:packages/document-data"
+  dependencies:
+    zod: "npm:^3.23.8"
+  languageName: unknown
+  linkType: soft
+
 "@blockexpanse/e2e@workspace:tests":
   version: 0.0.0-use.local
   resolution: "@blockexpanse/e2e@workspace:tests"
@@ -2147,6 +2155,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@blockexpanse/store@workspace:packages/framework/store"
   dependencies:
+    "@blockexpanse/document-data": "workspace:*"
     "@blockexpanse/global": "workspace:*"
     "@blockexpanse/inline": "workspace:*"
     "@blockexpanse/sync": "workspace:*"
@@ -2180,7 +2189,8 @@ __metadata:
     "@blockexpanse/store": "workspace:*"
     "@blockexpanse/sync": "workspace:*"
     y-protocols: "npm:^1.0.6"
-    yjs: "npm:^13.6.18"
+  peerDependencies:
+    yjs: ^13.6.15
   languageName: unknown
   linkType: soft
 
