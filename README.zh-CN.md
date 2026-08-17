@@ -32,7 +32,7 @@
 |           | BlockExpanse                |
 | --------- | --------------------------- |
 | npm scope | `@blockexpanse`(发布到 npm) |
-| 当前版本  | `1.0.1`                     |
+| 当前版本  | `1.0.2`                     |
 | 协议      | [MPL 2.0](./LICENSE)        |
 
 ### 为什么选 BlockExpanse?
@@ -124,14 +124,15 @@ doc.updateBlock(paragraph, { text: new Text('Hello BlockExpanse!') });
 
 ### 包选择
 
-| 包                        | 用途                        |
-| ------------------------- | --------------------------- |
-| `@blockexpanse/presets`   | 推荐的完整编辑器入口        |
-| `@blockexpanse/blocks`    | 默认块、组件和代码块预览    |
-| `@blockexpanse/store`     | CRDT 文档模型与快照         |
-| `@blockexpanse/theme`     | 默认主题和设计变量          |
-| `@blockexpanse/affine`    | 面向高级用户的聚合入口      |
-| `@blockexpanse/block-std` | 底层 Block 运行时和扩展 API |
+| 包                            | 用途                             |
+| ----------------------------- | -------------------------------- |
+| `@blockexpanse/presets`       | 推荐的完整编辑器入口             |
+| `@blockexpanse/blocks`        | 默认块、组件和代码块预览         |
+| `@blockexpanse/store`         | CRDT 文档模型与快照              |
+| `@blockexpanse/document-data` | 版本化、语言无关的文档 JSON 协议 |
+| `@blockexpanse/theme`         | 默认主题和设计变量               |
+| `@blockexpanse/affine`        | 面向高级用户的聚合入口           |
+| `@blockexpanse/block-std`     | 底层 Block 运行时和扩展 API      |
 
 同一次稳定版发布中的公开包使用统一版本号。
 
@@ -147,6 +148,7 @@ doc.updateBlock(paragraph, { text: new Text('Hello BlockExpanse!') });
 │  @blockexpanse/block-std   块树、选区、拖拽             │
 │  @blockexpanse/inline      行内富文本                 │
 │  @blockexpanse/store       CRDT 文档模型 (Yjs)          │
+│  @blockexpanse/document-data  文档 JSON 协议            │
 └─────────────────────────────────────────────────────────┘
 ```
 

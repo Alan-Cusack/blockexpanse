@@ -32,7 +32,7 @@ Every editor is a native **Web Component**. Mount it with a few lines of code, e
 |           | BlockExpanse                       |
 | --------- | ---------------------------------- |
 | npm scope | `@blockexpanse` (published to npm) |
-| Version   | `1.0.1`                            |
+| Version   | `1.0.2`                            |
 | License   | [MPL 2.0](./LICENSE)               |
 
 ### Why BlockExpanse?
@@ -124,14 +124,15 @@ doc.updateBlock(paragraph, { text: new Text('Hello BlockExpanse!') });
 
 ### Packages
 
-| Package                   | Purpose                                    |
-| ------------------------- | ------------------------------------------ |
-| `@blockexpanse/presets`   | Recommended complete editor entry          |
-| `@blockexpanse/blocks`    | Default blocks, widgets, and code previews |
-| `@blockexpanse/store`     | CRDT document model and snapshots          |
-| `@blockexpanse/theme`     | Default themes and design tokens           |
-| `@blockexpanse/affine`    | Aggregated advanced entry                  |
-| `@blockexpanse/block-std` | Low-level block runtime and extension APIs |
+| Package                       | Purpose                                            |
+| ----------------------------- | -------------------------------------------------- |
+| `@blockexpanse/presets`       | Recommended complete editor entry                  |
+| `@blockexpanse/blocks`        | Default blocks, widgets, and code previews         |
+| `@blockexpanse/store`         | CRDT document model and snapshots                  |
+| `@blockexpanse/document-data` | Versioned, language-neutral document JSON protocol |
+| `@blockexpanse/theme`         | Default themes and design tokens                   |
+| `@blockexpanse/affine`        | Aggregated advanced entry                          |
+| `@blockexpanse/block-std`     | Low-level block runtime and extension APIs         |
 
 Public packages in a stable release use the same version number.
 
@@ -147,6 +148,7 @@ Public packages in a stable release use the same version number.
 │  @blockexpanse/block-std   Block tree, selection, DnD   │
 │  @blockexpanse/inline      Inline rich text             │
 │  @blockexpanse/store       CRDT doc model (Yjs)         │
+│  @blockexpanse/document-data  Document JSON protocol    │
 └─────────────────────────────────────────────────────────┘
 ```
 
